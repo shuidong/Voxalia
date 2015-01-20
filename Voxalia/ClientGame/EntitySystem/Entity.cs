@@ -2,21 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Voxalia.ServerGame.WorldSystem;
 using Voxalia.Shared;
 
-namespace Voxalia.ServerGame.EntitySystem
+namespace Voxalia.ClientGame.EntitySystem
 {
     /// <summary>
     /// Represents a dynamic entity within a world.
     /// </summary>
     public abstract class Entity
     {
-        /// <summary>
-        /// The world this entity is in.
-        /// </summary>
-        public World InWorld;
-
         /// <summary>
         /// Where in the world this entity is in.
         /// </summary>

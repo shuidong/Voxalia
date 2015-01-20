@@ -12,6 +12,8 @@ using OpenTK.Graphics.OpenGL;
 using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.CommandSystem;
 using Frenetic.CommandSystem;
+using Voxalia.ClientGame.EntitySystem;
+using Voxalia.ClientGame.WorldSystem;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -75,6 +77,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
             KeyHandler.Init();
             SysConsole.Output(OutputType.INFO, "Loading interactive console engine...");
             UIConsole.InitConsole();
+            SysConsole.Output(OutputType.INFO, "Loading world...");
+            InitWorld();
             SysConsole.Output(OutputType.INFO, "Displaying window...");
         }
 

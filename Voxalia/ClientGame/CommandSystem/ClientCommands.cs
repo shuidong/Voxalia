@@ -5,7 +5,9 @@ using System.Text;
 using Frenetic;
 using Frenetic.CommandSystem;
 using Voxalia.ClientGame.ClientMainSystem;
+using Voxalia.ClientGame.CommandSystem.CommonCommands;
 using Voxalia.ClientGame.CommandSystem.NetworkCommands;
+using Voxalia.ClientGame.CommandSystem.UICommands;
 
 namespace Voxalia.ClientGame.CommandSystem
 {
@@ -35,8 +37,18 @@ namespace Voxalia.ClientGame.CommandSystem
             CommandSystem.Output = Output;
             CommandSystem.Init();
 
+            // Common Commands
+            CommandSystem.RegisterCommand(new QuitCommand());
+
             // Network Commands
             CommandSystem.RegisterCommand(new ConnectCommand());
+
+            // UI Commands
+            CommandSystem.RegisterCommand(new BackwardCommand());
+            CommandSystem.RegisterCommand(new CaptureCommand());
+            CommandSystem.RegisterCommand(new ForwardCommand());
+            CommandSystem.RegisterCommand(new LeftwardCommand());
+            CommandSystem.RegisterCommand(new RightwardCommand());
         }
 
         /// <summary>

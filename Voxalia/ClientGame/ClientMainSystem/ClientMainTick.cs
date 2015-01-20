@@ -7,6 +7,7 @@ using Voxalia.Shared;
 using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.CommandSystem;
 using Voxalia.ClientGame.NetworkSystem;
+using Voxalia.ClientGame.EntitySystem;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -32,6 +33,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
                 UIConsole.Tick();
                 ClientCommands.Tick();
                 ClientNetworkBase.Tick();
+                TickWorld();
             }
             catch (Exception ex)
             {

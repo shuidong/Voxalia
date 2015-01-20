@@ -30,6 +30,9 @@ namespace Voxalia.ClientGame.CommandSystem
         // Game CVars
         public static CVar g_mapeditor;
 
+        // UI CVars
+        public static CVar u_mouse_sensitivity;
+
         /// <summary>
         /// Prepares the CVar system, generating default CVars.
         /// </summary>
@@ -47,6 +50,8 @@ namespace Voxalia.ClientGame.CommandSystem
             r_height = Register("r_height", "600", CVarFlag.Numeric | CVarFlag.Delayed); // What height the window should be.
             // Game CVars
             g_mapeditor = Register("g_mapeditor", "false", CVarFlag.Boolean | CVarFlag.ServerControl); // Whether the client is currently in map editor mode.
+            // UI CVars
+            u_mouse_sensitivity = Register("u_mouse_sensitivity", "1", CVarFlag.Numeric); // How sensitive the mouse is.
         }
 
         static CVar Register(string name, string value, CVarFlag flags)

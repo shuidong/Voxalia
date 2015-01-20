@@ -212,6 +212,11 @@ namespace Voxalia.ClientGame.UISystem
         static double keymark_delta = 0f;
 
         /// <summary>
+        /// Whether the mouse was captured before the console was opened.
+        /// </summary>
+        public static bool MouseWasCaptured = false;
+
+        /// <summary>
         /// Updates the console, called every tick.
         /// </summary>
         public static void Tick()
@@ -223,10 +228,16 @@ namespace Voxalia.ClientGame.UISystem
                 Open = !Open;
                 if (Open)
                 {
+                    MouseWasCaptured = MouseHandler.MouseCaptured;
+                    MouseHandler.ReleaseMouse();
                     RecentSpot = RecentCommands.Count;
                 }
                 else
                 {
+                    if (MouseWasCaptured)
+                    {
+                        MouseHandler.CaptureMouse();
+                    }
                     Typing = "";
                     TypingText = "";
                     TypingCursor = 0;

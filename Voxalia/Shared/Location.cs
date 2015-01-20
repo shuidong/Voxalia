@@ -286,5 +286,14 @@ namespace Voxalia.Shared
             float Z = BitConverter.ToSingle(bytes, index + 8);
             return new Location(X, Y, Z);
         }
+
+        /// <summary>
+        /// Converts the location to an OpenTK Vector3.
+        /// </summary>
+        /// <returns>The created vector</returns>
+        public OpenTK.Vector3 ToOVector()
+        {
+            return new OpenTK.Vector3((float)X, (float)Y, (float)Z);
+        }
     }
 }
