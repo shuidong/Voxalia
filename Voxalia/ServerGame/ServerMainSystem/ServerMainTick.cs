@@ -1,0 +1,61 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Voxalia.ServerGame.NetworkSystem;
+using Voxalia.ServerGame.NetworkSystem.PacketsOut;
+using Voxalia.Shared;
+
+namespace Voxalia.ServerGame.ServerMainSystem
+{
+    public partial class ServerMain
+    {
+        /// <summary>
+        /// The time, in seconds, between the last tick and this one.
+        /// </summary>
+        public static double Delta;
+
+        /// <summary>
+        /// Ticks the server, include the network,
+        /// and all worlds (and all chunks within those [and all entities within those]).
+        /// </summary>
+        /// <param name="delta">The time between the last tick and this one</param>
+        public static void Tick(double delta)
+        {
+            Delta = delta;
+            try
+            {
+                NetworkBase.Tick();
+            }
+            catch (Exception ex)
+            {
+                SysConsole.Output(OutputType.ERROR, "Error / networktick: " + ex.ToString());
+            }
+            try
+            {
+                for (int i = 0; i < Worlds.Count; i++)
+                {
+                    Worlds[i].Tick();
+                }
+            }
+            catch (Exception ex)
+            {
+                SysConsole.Output(OutputType.ERROR, "Error / worldtick: " + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Announces (sends) a message to all clients, and the server console.
+        /// </summary>
+        /// <param name="message">The message to announce</param>
+        public static void Announce(string message)
+        {
+            SysConsole.Output(OutputType.INFO, "[Announce] " + message);
+            MessagePacketOut packet = new MessagePacketOut(message);
+            for (int i = 0; i < Players.Count; i++)
+            {
+                Players[i].Send(packet);
+            }
+        }
+    }
+}
