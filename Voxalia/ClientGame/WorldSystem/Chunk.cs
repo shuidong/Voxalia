@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using Voxalia.Shared;
 using Voxalia.ClientGame.EntitySystem;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
+using Voxalia.ClientGame.GraphicsSystem;
 
 namespace Voxalia.ClientGame.WorldSystem
 {
@@ -82,6 +86,29 @@ namespace Voxalia.ClientGame.WorldSystem
             return new Block(this, localX, localY, localZ);
         }
 
+        public void FromBytes(byte[] data)
+        {
+            if (data.Length == 30 * 30 * 30 * 2)
+            {
+                int index = 0;
+                for (int x = 0; x < 30; x++)
+                {
+                    for (int y = 0; y < 30; y++)
+                    {
+                        for (int z = 0; z < 30; z++)
+                        {
+                            Blocks[x, y, z].Type = BitConverter.ToUInt16(data, index);
+                            index += 2;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Invalid chunk packet size!");
+            }
+        }
+
         /// <summary>
         /// Ticks the chunk (and all entities within it).
         /// </summary>
@@ -97,6 +124,90 @@ namespace Voxalia.ClientGame.WorldSystem
                     Entities.Remove(e);
                     i--;
                 }
+            }
+        }
+
+        List<ChunkVBO> VBOs = new List<ChunkVBO>();
+
+        public void Render()
+        {
+            for (int i = 0; i < VBOs.Count; i++)
+            {
+                VBOs[i].Render();
+            }
+        }
+
+        ChunkVBO GetVBO(Texture text)
+        {
+            if (text == null)
+            {
+                return null;
+            }
+            for (int i = 0; i < VBOs.Count; i++)
+            {
+                if (VBOs[i].VBOTexture.Internal_Texture == text.Internal_Texture)
+                {
+                    return VBOs[i];
+                }
+            }
+            ChunkVBO cvbo = new ChunkVBO();
+            cvbo.VBOTexture = text;
+            VBOs.Add(cvbo);
+            return cvbo;
+        }
+
+        /// <summary>
+        /// (Re-)Generate the Vertex Buffer Object for this chunk (IE, update its rendered state on the GPU.)
+        /// </summary>
+        public void UpdateVBO()
+        {
+            for (int i = 0; i < VBOs.Count; i++)
+            {
+                VBOs[i].Destroy();
+            }
+            VBOs = new List<ChunkVBO>();
+            Console.WriteLine("Generating chunk at " + X + ", " + Y + ", " + Z);
+            for (int x = 0; x < 30; x++)
+            {
+                for (int y = 0; y < 30; y++)
+                {
+                    for (int z = 0; z < 30; z++)
+                    {
+                        Texture tex = MaterialTexture.GetTexture((Material)Blocks[x, y, z].Type);
+                        if (tex != null)
+                        {
+                            // TODO: Simplify. Can this be a loop?
+                            if (z == 29 || !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 0, 1));
+                            }
+                            if (z == 0 || !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 0, -1));
+                            }
+                            if (x == 29 || !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(1, 0, 0));
+                            }
+                            if (x == 0 || !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(-1, 0, 0));
+                            }
+                            if (y == 29 || !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 1, 0));
+                            }
+                            if (y == 0 || !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
+                            {
+                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, -1, 0));
+                            }
+                        }
+                    }
+                }
+            }
+            for (int i = 0; i < VBOs.Count; i++)
+            {
+                VBOs[i].Build();
             }
         }
     }

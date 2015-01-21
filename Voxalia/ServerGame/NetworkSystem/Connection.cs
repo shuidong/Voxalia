@@ -154,7 +154,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                                     if (!Utilities.ValidateUsername(username))
                                     {
                                         SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
-                                            + ") discarded: invalid username (" + username + ").");
+                                            + ") discarded: entirely invalid username (" + username + ") [probably an edited client].");
                                         InternalSocket.Close();
                                         TickMe = false;
                                     }

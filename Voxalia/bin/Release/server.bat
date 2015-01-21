@@ -1,1 +1,1 @@
-VoxelTest server
+Voxalia server

@@ -8,6 +8,7 @@ using OpenTK.Graphics.OpenGL;
 using Voxalia.ClientGame.GraphicsSystem;
 using Voxalia.Shared;
 using Voxalia.ClientGame.UISystem;
+using Voxalia.ClientGame.WorldSystem;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -75,6 +76,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
 
         static void Setup3D()
         {
+            GL.Color4(Color4.White);
+            Shader.ColorMultShader.Bind();
             GL.MatrixMode(MatrixMode.Projection);
             GL.Enable(EnableCap.DepthTest);
             Matrix4 proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraFOV), Window.Width / Window.Height, CameraZNear, CameraZFar);
@@ -85,13 +88,10 @@ namespace Voxalia.ClientGame.ClientMainSystem
 
         static void Run3D()
         {
-            UIConsole.ConsoleTexture.Bind();
-            GL.Begin(PrimitiveType.Quads);
-            GL.Vertex3(0, 0, 0);
-            GL.Vertex3(1, 0, 0);
-            GL.Vertex3(1, 1, 0);
-            GL.Vertex3(0, 1, 0);
-            GL.End();
+            foreach (KeyValuePair<Location, Chunk> chunkdata in Chunks)
+            {
+                chunkdata.Value.Render();
+            }
         }
 
         static void End3D()
@@ -109,7 +109,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
 
         static void Run2D()
         {
-            FontSet.Standard.DrawColoredText("^0^e^7Hello World!", new Location(0, 0, 0));
+            FontSet.Standard.DrawColoredText("^0^e^7Hello World! " + ThePlayer.Position.ToString(), new Location(0, 0, 0));
             UIConsole.Draw();
         }
 

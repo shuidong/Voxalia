@@ -21,4 +21,18 @@ namespace Voxalia.Shared
         /// <summary>Wood block = 4.</summary>
         WOOD = 4
     }
+
+    public static class MaterialExtensions
+    {
+        public static bool OccupiesWholeBlock(this Material mat)
+        {
+            switch (mat)
+            {
+                case Material.AIR:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+    }
 }

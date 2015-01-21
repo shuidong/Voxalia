@@ -13,7 +13,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <summary>
         /// A list of all loaded chunks.
         /// </summary>
-        public static List<Chunk> Chunks;
+        public static Dictionary<Location, Chunk> Chunks;
 
         /// <summary>
         /// A list of all entities loaded in the world.
@@ -37,7 +37,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         {
             ThePlayer = new Player();
             ThePlayer.Position = new Location(0, 0, 1);
-            Chunks = new List<Chunk>();
+            Chunks = new Dictionary<Location, Chunk>();
             Entities = new List<Entity>();
             Tickers = new List<Entity>();
             Entities.Add(ThePlayer);
@@ -53,6 +53,23 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 Tickers[i].Tick();
             }
+        }
+
+        /// <summary>
+        /// Gets or spawns the chunk for the given location.
+        /// </summary>
+        /// <param name="pos">The location</param>
+        /// <returns>The chunk</returns>
+        public static Chunk GetChunk(Location pos)
+        {
+            Chunk chunk;
+            if (Chunks.TryGetValue(pos, out chunk))
+            {
+                return chunk;
+            }
+            chunk = new Chunk((int)pos.X, (int)pos.Y, (int)pos.Z);
+            Chunks.Add(pos, chunk);
+            return chunk;
         }
     }
 }

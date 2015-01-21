@@ -98,7 +98,9 @@
     <Compile Include="ClientGame\UISystem\UIConsole.cs" />
     <Compile Include="ClientGame\WorldSystem\Block.cs" />
     <Compile Include="ClientGame\WorldSystem\Chunk.cs" />
+    <Compile Include="ClientGame\WorldSystem\ChunkVBO.cs" />
     <Compile Include="ClientGame\WorldSystem\InternalBlockData.cs" />
+    <Compile Include="ClientGame\WorldSystem\MaterialTexture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerGame\EntitySystem\Entity.cs" />

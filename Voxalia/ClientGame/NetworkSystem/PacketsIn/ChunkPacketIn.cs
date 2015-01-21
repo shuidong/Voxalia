@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Voxalia.Shared;
+using Voxalia.ClientGame.ClientMainSystem;
+using Voxalia.ClientGame.WorldSystem;
 
 namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 {
@@ -26,8 +28,9 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
-            // TODO: Implement
-            SysConsole.Output(OutputType.WARNING, "CHUNK PACKETS NOT YET IMPLEMENTED");
+            Chunk chunk = ClientMain.GetChunk(loc);
+            chunk.FromBytes(chunkdetail);
+            chunk.UpdateVBO();
         }
     }
 }
