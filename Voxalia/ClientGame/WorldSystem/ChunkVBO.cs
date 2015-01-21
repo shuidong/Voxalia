@@ -99,88 +99,88 @@ namespace Voxalia.ClientGame.WorldSystem
             }
             else if (Normal.X == -1)
             {
-                Texs.Add(new Vector2(0, 0));
+                Texs.Add(new Vector2(0, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 0));
+                Texs.Add(new Vector2(1, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y + 1, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 1));
+                Texs.Add(new Vector2(1, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y + 1, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(0, 1));
+                Texs.Add(new Vector2(0, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
             }
             else if (Normal.X == 1)
             {
-                Texs.Add(new Vector2(0, 0));
+                Texs.Add(new Vector2(0, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(0, 1));
+                Texs.Add(new Vector2(0, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 1));
+                Texs.Add(new Vector2(1, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y + 1, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 0));
+                Texs.Add(new Vector2(1, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y + 1, z));
                 Inds.Add((uint)(Vecs.Count - 1));
             }
             else if (Normal.Y == -1)
             {
-                Texs.Add(new Vector2(0, 0));
+                Texs.Add(new Vector2(0, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(0, 1));
+                Texs.Add(new Vector2(0, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 1));
+                Texs.Add(new Vector2(1, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 0));
+                Texs.Add(new Vector2(1, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y, z));
                 Inds.Add((uint)(Vecs.Count - 1));
             }
             else if (Normal.Y == 1)
             {
-                Texs.Add(new Vector2(0, 0));
+                Texs.Add(new Vector2(0, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y + 1, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 0));
+                Texs.Add(new Vector2(1, 1));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y + 1, z));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(1, 1));
+                Texs.Add(new Vector2(1, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x + 1, y + 1, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
 
-                Texs.Add(new Vector2(0, 1));
+                Texs.Add(new Vector2(0, 0));
                 Norms.Add(new Vector3(0, 0, 1));
                 Vecs.Add(new Vector3(x, y + 1, z + 1));
                 Inds.Add((uint)(Vecs.Count - 1));
