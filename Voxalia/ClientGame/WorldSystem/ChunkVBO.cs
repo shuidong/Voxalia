@@ -26,9 +26,15 @@ namespace Voxalia.ClientGame.WorldSystem
         List<Vector3> Norms = new List<Vector3>();
         List<Vector2> Texs = new List<Vector2>();
         List<uint> Inds = new List<uint>();
-
+        
+        /// <summary>
+        /// The texture this ChunkVBO uses.
+        /// </summary>
         public Texture VBOTexture;
 
+        /// <summary>
+        /// Destroys the internal VBO, so this can be safely deleted.
+        /// </summary>
         public void Destroy()
         {
             GL.DeleteBuffer(VBO);
@@ -37,6 +43,13 @@ namespace Voxalia.ClientGame.WorldSystem
             GL.DeleteBuffer(VBOIndices);
         }
 
+        /// <summary>
+        /// Adds a flat side to the renderer.
+        /// </summary>
+        /// <param name="x">The absolute X coordinate</param>
+        /// <param name="y">The absolute Y coordinate</param>
+        /// <param name="z">The absolute Z coordinate</param>
+        /// <param name="Normal">The normal of the side to add, must be a unit vector facing directly down an axis</param>
         public void AddSide(float x, float y, float z, Vector3 Normal)
         {
             // TODO: Simplify
@@ -174,6 +187,9 @@ namespace Voxalia.ClientGame.WorldSystem
             }
         }
 
+        /// <summary>
+        /// Turns the local VBO build information into an actual internal GPU-side VBO.
+        /// </summary>
         public void Build()
         {
             Positions = Vecs.ToArray();
@@ -210,6 +226,9 @@ namespace Voxalia.ClientGame.WorldSystem
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
 
+        /// <summary>
+        /// Renders the internal VBO to screen.
+        /// </summary>
         public void Render()
         {
             VBOTexture.Bind();

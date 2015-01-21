@@ -165,7 +165,7 @@ namespace Voxalia.ClientGame.WorldSystem
             {
                 VBOs[i].Destroy();
             }
-            VBOs = new List<ChunkVBO>();
+            VBOs.Clear();
             Console.WriteLine("Generating chunk at " + X + ", " + Y + ", " + Z);
             for (int x = 0; x < 30; x++)
             {
@@ -179,27 +179,27 @@ namespace Voxalia.ClientGame.WorldSystem
                             // TODO: Simplify. Can this be a loop?
                             if (z == 29 || !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 0, 1));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, 1));
                             }
                             if (z == 0 || !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 0, -1));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, -1));
                             }
                             if (x == 29 || !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(1, 0, 0));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(1, 0, 0));
                             }
                             if (x == 0 || !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(-1, 0, 0));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(-1, 0, 0));
                             }
                             if (y == 29 || !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, 1, 0));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 1, 0));
                             }
                             if (y == 0 || !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex).AddSide(x, y, z, new Vector3(0, -1, 0));
+                                GetVBO(tex).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, -1, 0));
                             }
                         }
                     }

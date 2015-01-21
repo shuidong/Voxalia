@@ -52,7 +52,7 @@ namespace Voxalia.ServerGame.WorldSystem
                 {
                     for (int z = 0; z < 30; z++)
                     {
-                        chunk.SetBlock(x, y, z, (ushort)Utilities.UtilRandom.Next(5));
+                        chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(3) == 1 ? (ushort)0: (ushort)Utilities.UtilRandom.Next(5));
                     }
                 }
             }
