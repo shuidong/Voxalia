@@ -312,6 +312,10 @@ namespace Voxalia.Shared
         /// <returns>Whether the username is valid</returns>
         public static bool ValidateUsername(string str)
         {
+            if (str == null)
+            {
+                return false;
+            }
             // Length = 4-15
             if (str.Length < 4 || str.Length > 15)
             {

@@ -10,6 +10,7 @@ using System.Threading;
 using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.NetworkSystem.PacketsIn;
 using Voxalia.ClientGame.CommandSystem;
+using Voxalia.ClientGame.ClientMainSystem;
 
 namespace Voxalia.ClientGame.NetworkSystem
 {
@@ -281,7 +282,8 @@ namespace Voxalia.ClientGame.NetworkSystem
                 Connection.ReceiveBufferSize = 5 * 1024 * 1024;
                 Connection.SendBufferSize = 5 * 1024 * 1024;
                 Connection.Connect(new IPEndPoint(address, CurrentPort));
-                Connection.Send(FileHandler.encoding.GetBytes("VOX_ \rBob\r000\r" + CurrentHost + "\r" + CurrentPort + "\n"));
+                Connection.Send(FileHandler.encoding.GetBytes("VOX_ \r" + ClientMain.Username
+                    + "\r000\r" + CurrentHost + "\r" + CurrentPort + "\n"));
                 byte[] resp = ReceiveUntil(Connection, 50, (byte)'\n');
                 if (FileHandler.encoding.GetString(resp) != "ACCEPT")
                 {

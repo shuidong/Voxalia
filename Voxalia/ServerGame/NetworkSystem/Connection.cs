@@ -151,14 +151,24 @@ namespace Voxalia.ServerGame.NetworkSystem
                                     received -= pos + 1;
                                     recd = temp;
                                     Step = 1;
-                                    Player player = new Player(this);
-                                    player.Username = username;
-                                    player.ConnectedHost = host;
-                                    player.ConnectedPort = port;
-                                    InternalSocket.Send(FileHandler.encoding.GetBytes("ACCEPT\n"));
-                                    ServerMain.SpawnPlayer(player);
-                                    SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
-                                        + ") accepted: Username=" + username + ", connected to " + host + ":" + port);
+                                    if (!Utilities.ValidateUsername(username))
+                                    {
+                                        SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
+                                            + ") discarded: invalid username (" + username + ").");
+                                        InternalSocket.Close();
+                                        TickMe = false;
+                                    }
+                                    else
+                                    {
+                                        Player player = new Player(this);
+                                        player.Username = username;
+                                        player.ConnectedHost = host;
+                                        player.ConnectedPort = port;
+                                        InternalSocket.Send(FileHandler.encoding.GetBytes("ACCEPT\n"));
+                                        ServerMain.SpawnPlayer(player);
+                                        SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
+                                            + ") accepted: Username=" + username + ", connected to " + host + ":" + port);
+                                    }
                                 }
                             }
                         }

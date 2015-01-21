@@ -26,18 +26,30 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// The client's OpenGL rendering window.
         /// </summary>
         public static GameWindow Window;
+        
+        /// <summary>
+        /// The username chosen by the client.
+        /// </summary>
+        public static string Username;
 
         /// <summary>
         /// Starts up the client.
         /// </summary>
         public static void Init()
         {
-            SysConsole.Output(OutputType.INFO, "Loading client...");
-            SysConsole.Output(OutputType.INFO, "Loading command engine...");
+            SysConsole.Output(OutputType.INIT, "Loading client...");
+            SysConsole.Output(OutputType.INIT, "Loading command engine...");
+            Username = Program.GetSetting("username");
+            SysConsole.Output(OutputType.INFO, "Username: " + Username);
+            if (!Utilities.ValidateUsername(Username))
+            {
+                SysConsole.Output(OutputType.ERROR, "Invalid username!");
+                Process.GetCurrentProcess().Kill();
+            }
             ClientOutputter output = new ClientOutputter();
             ClientCommands.Init(output);
             ClientCVar.Init(output);
-            SysConsole.Output(OutputType.INFO, "Loading window...");
+            SysConsole.Output(OutputType.INIT, "Loading window...");
             Window = new GameWindow(800, 600, GraphicsMode.Default, Program.GameName, GameWindowFlags.FixedWindow);
             Window.UpdateFrame += new EventHandler<FrameEventArgs>(Window_UpdateFrame);
             Window.RenderFrame += new EventHandler<FrameEventArgs>(Window_RenderFrame);
@@ -59,27 +71,27 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <param name="e">The empty event args object</param>
         static void Window_Load(object sender, EventArgs e)
         {
-            SysConsole.Output(OutputType.INFO, "Loading texture engine...");
+            SysConsole.Output(OutputType.INIT, "Loading texture engine...");
             Texture.InitTextureSystem();
-            SysConsole.Output(OutputType.INFO, "Loading shader engine...");
+            SysConsole.Output(OutputType.INIT, "Loading shader engine...");
             Shader.InitShaderSystem();
-            SysConsole.Output(OutputType.INFO, "Loading text engine...");
+            SysConsole.Output(OutputType.INIT, "Loading text engine...");
             GLFont.Init();
-            SysConsole.Output(OutputType.INFO, "Loading font-set engine...");
+            SysConsole.Output(OutputType.INIT, "Loading font-set engine...");
             FontSet.Init();
-            SysConsole.Output(OutputType.INFO, "Adjusting OpenGL settings...");
+            SysConsole.Output(OutputType.INIT, "Adjusting OpenGL settings...");
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.Texture2D);
             GL.Viewport(0, 0, Window.Width, Window.Height);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            SysConsole.Output(OutputType.INFO, "Loading keyboard handling engine...");
+            SysConsole.Output(OutputType.INIT, "Loading keyboard handling engine...");
             KeyHandler.Init();
-            SysConsole.Output(OutputType.INFO, "Loading interactive console engine...");
+            SysConsole.Output(OutputType.INIT, "Loading interactive console engine...");
             UIConsole.InitConsole();
-            SysConsole.Output(OutputType.INFO, "Loading world...");
+            SysConsole.Output(OutputType.INIT, "Loading world...");
             InitWorld();
-            SysConsole.Output(OutputType.INFO, "Displaying window...");
+            SysConsole.Output(OutputType.INIT, "Displaying window...");
         }
 
         /// <summary>
