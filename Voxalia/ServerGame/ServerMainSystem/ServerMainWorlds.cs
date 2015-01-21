@@ -17,6 +17,11 @@ namespace Voxalia.ServerGame.ServerMainSystem
         public static List<World> Worlds;
 
         /// <summary>
+        /// A list of all players waiting to join.
+        /// </summary>
+        public static List<Player> WaitingPlayers = new List<Player>();
+
+        /// <summary>
         /// All players connected to the server.
         /// </summary>
         public static List<Player> Players = new List<Player>();
@@ -30,9 +35,10 @@ namespace Voxalia.ServerGame.ServerMainSystem
             // TODO: Load player details
             Players.Add(player);
             Worlds[0].Spawn(player);
-            player.Send(new ChunkPacketOut(Worlds[0].LoadChunk(new Location(0, 0, 0))));
+            player.SendToSecondary(new ChunkPacketOut(Worlds[0].LoadChunk(new Location(0, 0, 0))));
             player.PingMarker = 0;
             player.Send(new PingPacketOut(0));
+            player.SendToSecondary(new PingPacketOut(0));
         }
 
         /// <summary>

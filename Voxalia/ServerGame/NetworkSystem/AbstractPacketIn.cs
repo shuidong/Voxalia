@@ -11,15 +11,18 @@ namespace Voxalia.ServerGame.NetworkSystem
         /// <summary>
         /// The player that sent this packet.
         /// </summary>
-        public Player Sender;
+        public readonly Player Sender;
+
+        public readonly bool IsChunkConnection;
 
         /// <summary>
         /// Constructs an abstract packet in.
         /// </summary>
         /// <param name="sender">The player that sent this packet</param>
-        public AbstractPacketIn(Player sender)
+        public AbstractPacketIn(Player sender, bool mode)
         {
             Sender = sender;
+            IsChunkConnection = mode;
         }
 
         /// <summary>

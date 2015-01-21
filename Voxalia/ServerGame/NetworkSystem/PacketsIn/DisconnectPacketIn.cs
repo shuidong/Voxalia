@@ -17,8 +17,8 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
         /// Constructs a received disconnect packet.
         /// </summary>
         /// <param name="sender">The player that sent this packet</param>
-        public DisconnectPacketIn(Player sender)
-            : base(sender)
+        public DisconnectPacketIn(Player sender, bool mode)
+            : base(sender, mode)
         {
         }
 

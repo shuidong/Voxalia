@@ -18,9 +18,19 @@ namespace Voxalia.ServerGame.EntitySystem
         public Connection Network;
 
         /// <summary>
+        /// The secondard network connection for this player.
+        /// </summary>
+        public Connection ChunkNetwork;
+
+        /// <summary>
         /// This player's username.
         /// </summary>
         public string Username;
+
+        /// <summary>
+        /// The key this player used to connect.
+        /// </summary>
+        public string ConnectionKey;
 
         /// <summary>
         /// The host the player connected to, to get to the server.
@@ -36,6 +46,26 @@ namespace Voxalia.ServerGame.EntitySystem
         /// The last ping marker for this client.
         /// </summary>
         public byte PingMarker;
+
+        /// <summary>
+        /// The last ping marker on this client's secondary connection.
+        /// </summary>
+        public byte SecondayPingMarker;
+
+        /// <summary>
+        /// The last time the client pinged the server.
+        /// </summary>
+        public double LastPing;
+
+        /// <summary>
+        /// The last time the client pinged the server on the secondary connection.
+        /// </summary>
+        public double LastSecondaryPing;
+
+        /// <summary>
+        /// When the player first connected.
+        /// </summary>
+        public double JoinTime;
 
         /// <summary>
         /// Constructs a player entity.
@@ -75,10 +105,10 @@ namespace Voxalia.ServerGame.EntitySystem
                     switch (type)
                     {
                         case 1:
-                            packet = new PingPacketIn(this);
+                            packet = new PingPacketIn(this, false);
                             break;
                         case 255:
-                            packet = new DisconnectPacketIn(this);
+                            packet = new DisconnectPacketIn(this, false);
                             return;
                         default:
                             Kick("Invalid packet " + (int)type);
@@ -98,6 +128,52 @@ namespace Voxalia.ServerGame.EntitySystem
                     catch (Exception ex)
                     {
                         SysConsole.Output(OutputType.ERROR, "Networking / player / receive packet: " + ex.ToString());
+                        Kick("Invalid packet " + (int)type);
+                    }
+                }
+            }
+            if (ChunkNetwork.received > 4)
+            {
+                int len = BitConverter.ToInt32(ChunkNetwork.recd, 0);
+                byte type = ChunkNetwork.recd[4];
+                if (ChunkNetwork.received - 5 >= len)
+                {
+                    byte[] data = new byte[len];
+                    if (len > 0)
+                    {
+                        Array.Copy(ChunkNetwork.recd, 5, data, 0, len);
+                    }
+                    ChunkNetwork.received -= 5 + len;
+                    byte[] newdata = new byte[ChunkNetwork.Max];
+                    if (ChunkNetwork.received > 0)
+                    {
+                        Array.Copy(ChunkNetwork.recd, 5 + len, newdata, 0, ChunkNetwork.received);
+                    }
+                    ChunkNetwork.recd = newdata;
+                    AbstractPacketIn packet;
+                    switch (type)
+                    {
+                        case 1:
+                            packet = new PingPacketIn(this, true);
+                            break;
+                        default:
+                            Kick("Invalid packet " + (int)type);
+                            return;
+                    }
+                    try
+                    {
+                        if (packet.ReadBytes(data))
+                        {
+                            packet.Apply();
+                        }
+                        else
+                        {
+                            Kick("Impure packet " + (int)type);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SysConsole.Output(OutputType.ERROR, "Networking / player / receive c-packet: " + ex.ToString());
                         Kick("Invalid packet " + (int)type);
                     }
                 }
@@ -126,6 +202,22 @@ namespace Voxalia.ServerGame.EntitySystem
             catch (Exception ex)
             {
                 SysConsole.Output(OutputType.ERROR, "Error sending packet to player: " + ex.ToString());
+            }
+        }
+
+        public void SendToSecondary(AbstractPacketOut packet)
+        {
+            try
+            {
+                byte[] data = new byte[packet.Data.Length + 5];
+                BitConverter.GetBytes(packet.Data.Length).CopyTo(data, 0);
+                data[4] = packet.ID;
+                packet.Data.CopyTo(data, 5);
+                ChunkNetwork.InternalSocket.Send(data);
+            }
+            catch (Exception ex)
+            {
+                SysConsole.Output(OutputType.ERROR, "Error sending packet to player (secondary): " + ex.ToString());
             }
         }
     }

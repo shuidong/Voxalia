@@ -16,6 +16,11 @@ namespace Voxalia.ServerGame.ServerMainSystem
         public static double Delta;
 
         /// <summary>
+        /// The current time on the server, in seconds.
+        /// </summary>
+        public static double GlobalTickTime;
+
+        /// <summary>
         /// Ticks the server, include the network,
         /// and all worlds (and all chunks within those [and all entities within those]).
         /// </summary>
@@ -23,6 +28,7 @@ namespace Voxalia.ServerGame.ServerMainSystem
         public static void Tick(double delta)
         {
             Delta = delta;
+            GlobalTickTime += delta;
             try
             {
                 NetworkBase.Tick();
@@ -41,6 +47,31 @@ namespace Voxalia.ServerGame.ServerMainSystem
             catch (Exception ex)
             {
                 SysConsole.Output(OutputType.ERROR, "Error / worldtick: " + ex.ToString());
+            }
+            try
+            {
+                for (int i = 0; i < WaitingPlayers.Count; i++)
+                {
+                    if (GlobalTickTime - WaitingPlayers[i].JoinTime > 10)
+                    {
+                        WaitingPlayers.RemoveAt(i);
+                        i--;
+                    }
+                }
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    // TODO: CVar
+                    if (GlobalTickTime - Players[i].LastPing > 60
+                        || GlobalTickTime - Players[i].LastSecondaryPing > 60)
+                    {
+                        DespawnPlayer(Players[i]);
+                        i--;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SysConsole.Output(OutputType.ERROR, "Error / general tick: " + ex.ToString());
             }
         }
 

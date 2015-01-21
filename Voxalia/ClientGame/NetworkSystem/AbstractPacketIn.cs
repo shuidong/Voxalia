@@ -11,6 +11,11 @@ namespace Voxalia.ClientGame.NetworkSystem
     public abstract class AbstractPacketIn
     {
         /// <summary>
+        /// Whether this packet was sent via the secondary (chunk) connection.
+        /// </summary>
+        public bool IsChunkConnection = false;
+
+        /// <summary>
         /// Read the bytes sent in as a packet, and return whether it is a valid packet.
         /// </summary>
         /// <param name="data">The bytes sent in</param>

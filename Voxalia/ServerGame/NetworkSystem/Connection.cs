@@ -132,14 +132,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                             {
                                 string datastr = Utilities.encoding.GetString(recd, 0, pos);
                                 string[] split = datastr.Split('\r');
-                                if (split.Length != 5)
-                                {
-                                    SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
-                                        + ") discarded: invalid header (VOX_ with invalid parameters).");
-                                    InternalSocket.Close();
-                                    TickMe = false;
-                                }
-                                else
+                                if (split.Length == 5)
                                 {
                                     // VOX_ \rUsername\rEntrykey\rHost\rPort\n
                                     string username = split[1];
@@ -164,11 +157,58 @@ namespace Voxalia.ServerGame.NetworkSystem
                                         player.Username = username;
                                         player.ConnectedHost = host;
                                         player.ConnectedPort = port;
+                                        player.ConnectionKey = entrykey;
+                                        player.JoinTime = ServerMain.GlobalTickTime;
+                                        player.LastPing = ServerMain.GlobalTickTime;
+                                        player.LastSecondaryPing = ServerMain.GlobalTickTime;
                                         InternalSocket.Send(FileHandler.encoding.GetBytes("ACCEPT\n"));
-                                        ServerMain.SpawnPlayer(player);
+                                        // ServerMain.SpawnPlayer(player);
+                                        ServerMain.WaitingPlayers.Add(player);
                                         SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
                                             + ") accepted: Username=" + username + ", connected to " + host + ":" + port);
                                     }
+                                }
+                                else if (split.Length == 2)
+                                {
+                                    // VOX_ \rEntrykey\n
+                                    string key = split[1];
+                                    byte[] temp = new byte[Max];
+                                    Array.Copy(recd, pos + 1, temp, 0, Max - (pos + 1));
+                                    received -= pos + 1;
+                                    recd = temp;
+                                    Step = 1;
+                                    Player player = null;
+                                    for (int i = 0; i < ServerMain.WaitingPlayers.Count; i++)
+                                    {
+                                        if (ServerMain.WaitingPlayers[i].ConnectionKey == key)
+                                        {
+                                            player = ServerMain.WaitingPlayers[i];
+                                            break;
+                                        }
+                                    }
+                                    if (player == null)
+                                    {
+                                        SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
+                                            + ") discarded: invalid header (VOX_ secondary with unknown key).");
+                                        InternalSocket.Close();
+                                        TickMe = false;
+                                    }
+                                    else
+                                    {
+                                        InternalSocket.Send(FileHandler.encoding.GetBytes("ACCEPT\n"));
+                                        ServerMain.WaitingPlayers.Remove(player);
+                                        player.ChunkNetwork = this;
+                                        ServerMain.SpawnPlayer(player);
+                                        SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
+                                            + ") accepted: Username=" + player.Username + ", now joining!");
+                                    }
+                                }
+                                else
+                                {
+                                    SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
+                                        + ") discarded: invalid header (VOX_ with invalid parameters).");
+                                    InternalSocket.Close();
+                                    TickMe = false;
                                 }
                             }
                         }

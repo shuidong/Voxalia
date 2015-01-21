@@ -5,6 +5,7 @@ using System.Text;
 using Voxalia.ServerGame.EntitySystem;
 using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.Shared;
+using Voxalia.ServerGame.ServerMainSystem;
 
 namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
 {
@@ -17,8 +18,8 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
         /// Constructs a received ping packet.
         /// </summary>
         /// <param name="sender">The player that sent this packet</param>
-        public PingPacketIn(Player sender)
-            : base(sender)
+        public PingPacketIn(Player sender, bool mode)
+            : base(sender, mode)
         {
         }
 
@@ -36,13 +37,28 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
-            if (marker != Sender.PingMarker)
+            if (IsChunkConnection)
             {
-                Sender.Kick("Invalid ping marker, got: " + (int)marker + " while expecting " + (int)Sender.PingMarker);
-                return;
+                if (marker != Sender.SecondayPingMarker)
+                {
+                    Sender.Kick("Invalid secondary ping marker, got: " + (int)marker + " while expecting " + (int)Sender.SecondayPingMarker);
+                    return;
+                }
+                Sender.SecondayPingMarker = (byte)Utilities.UtilRandom.Next(256);
+                Sender.SendToSecondary(new PingPacketOut(Sender.SecondayPingMarker));
+                Sender.LastSecondaryPing = ServerMain.GlobalTickTime;
             }
-            Sender.PingMarker = (byte)Utilities.UtilRandom.Next(256);
-            Sender.Send(new PingPacketOut(Sender.PingMarker));
+            else
+            {
+                if (marker != Sender.PingMarker)
+                {
+                    Sender.Kick("Invalid ping marker, got: " + (int)marker + " while expecting " + (int)Sender.PingMarker);
+                    return;
+                }
+                Sender.PingMarker = (byte)Utilities.UtilRandom.Next(256);
+                Sender.Send(new PingPacketOut(Sender.PingMarker));
+                Sender.LastPing = ServerMain.GlobalTickTime;
+            }
         }
     }
 }

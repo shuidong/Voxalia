@@ -25,7 +25,14 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
-            ClientNetworkBase.SendPacket(new PingPacketOut(marker));
+            if (IsChunkConnection)
+            {
+                ClientNetworkBase.SendPacketToSecondary(new PingPacketOut(marker));
+            }
+            else
+            {
+                ClientNetworkBase.SendPacket(new PingPacketOut(marker));
+            }
         }
     }
 }
