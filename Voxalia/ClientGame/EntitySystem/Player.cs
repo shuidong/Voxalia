@@ -120,7 +120,7 @@ namespace Voxalia.ClientGame.EntitySystem
                 || Upward != pUpward || Downward != pDownward
                 || Direction.X != pDirection.X
                 || Direction.Y != pDirection.Y)
-                && ltime > 0.1)
+                || ltime > 0.1)
             {
                 pForward = Forward;
                 pBackward = Backward;

@@ -162,99 +162,113 @@ namespace Voxalia.ServerGame.EntitySystem
             TickMovement(ServerMain.Delta);
             if (Network.received > 4)
             {
-                int len = BitConverter.ToInt32(Network.recd, 0);
-                byte type = Network.recd[4];
-                if (Network.received - 5 >= len)
+                while (true)
                 {
-                    byte[] data = new byte[len];
-                    if (len > 0)
+                    int len = BitConverter.ToInt32(Network.recd, 0);
+                    byte type = Network.recd[4];
+                    if (Network.received - 5 >= len)
                     {
-                        Array.Copy(Network.recd, 5, data, 0, len);
-                    }
-                    Network.received -= 5 + len;
-                    byte[] newdata = new byte[Network.Max];
-                    if (Network.received > 0)
-                    {
-                        Array.Copy(Network.recd, 5 + len, newdata, 0, Network.received);
-                    }
-                    Network.recd = newdata;
-                    AbstractPacketIn packet;
-                    switch (type)
-                    {
-                        case 1:
-                            packet = new PingPacketIn(this, false);
-                            break;
-                        case 2:
-                            packet = new MoveKeysPacketIn(this, false);
-                            break;
-                        case 255:
-                            packet = new DisconnectPacketIn(this, false);
-                            return;
-                        default:
+                        byte[] data = new byte[len];
+                        if (len > 0)
+                        {
+                            Array.Copy(Network.recd, 5, data, 0, len);
+                        }
+                        Network.received -= 5 + len;
+                        byte[] newdata = new byte[Network.Max];
+                        if (Network.received > 0)
+                        {
+                            Array.Copy(Network.recd, 5 + len, newdata, 0, Network.received);
+                        }
+                        Network.recd = newdata;
+                        AbstractPacketIn packet;
+                        switch (type)
+                        {
+                            case 1:
+                                packet = new PingPacketIn(this, false);
+                                break;
+                            case 2:
+                                packet = new MoveKeysPacketIn(this, false);
+                                break;
+                            case 255:
+                                packet = new DisconnectPacketIn(this, false);
+                                return;
+                            default:
+                                Kick("Invalid packet " + (int)type);
+                                return;
+                        }
+                        try
+                        {
+                            if (packet.ReadBytes(data))
+                            {
+                                packet.Apply();
+                            }
+                            else
+                            {
+                                Kick("Impure packet " + (int)type);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SysConsole.Output(OutputType.ERROR, "Networking / player / receive packet: " + ex.ToString());
                             Kick("Invalid packet " + (int)type);
-                            return;
-                    }
-                    try
-                    {
-                        if (packet.ReadBytes(data))
-                        {
-                            packet.Apply();
-                        }
-                        else
-                        {
-                            Kick("Impure packet " + (int)type);
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        SysConsole.Output(OutputType.ERROR, "Networking / player / receive packet: " + ex.ToString());
-                        Kick("Invalid packet " + (int)type);
+                        break;
                     }
                 }
             }
             if (ChunkNetwork.received > 4)
             {
-                int len = BitConverter.ToInt32(ChunkNetwork.recd, 0);
-                byte type = ChunkNetwork.recd[4];
-                if (ChunkNetwork.received - 5 >= len)
+                while (true)
                 {
-                    byte[] data = new byte[len];
-                    if (len > 0)
+                    int len = BitConverter.ToInt32(ChunkNetwork.recd, 0);
+                    byte type = ChunkNetwork.recd[4];
+                    if (ChunkNetwork.received - 5 >= len)
                     {
-                        Array.Copy(ChunkNetwork.recd, 5, data, 0, len);
-                    }
-                    ChunkNetwork.received -= 5 + len;
-                    byte[] newdata = new byte[ChunkNetwork.Max];
-                    if (ChunkNetwork.received > 0)
-                    {
-                        Array.Copy(ChunkNetwork.recd, 5 + len, newdata, 0, ChunkNetwork.received);
-                    }
-                    ChunkNetwork.recd = newdata;
-                    AbstractPacketIn packet;
-                    switch (type)
-                    {
-                        case 1:
-                            packet = new PingPacketIn(this, true);
-                            break;
-                        default:
+                        byte[] data = new byte[len];
+                        if (len > 0)
+                        {
+                            Array.Copy(ChunkNetwork.recd, 5, data, 0, len);
+                        }
+                        ChunkNetwork.received -= 5 + len;
+                        byte[] newdata = new byte[ChunkNetwork.Max];
+                        if (ChunkNetwork.received > 0)
+                        {
+                            Array.Copy(ChunkNetwork.recd, 5 + len, newdata, 0, ChunkNetwork.received);
+                        }
+                        ChunkNetwork.recd = newdata;
+                        AbstractPacketIn packet;
+                        switch (type)
+                        {
+                            case 1:
+                                packet = new PingPacketIn(this, true);
+                                break;
+                            default:
+                                Kick("Invalid packet " + (int)type);
+                                return;
+                        }
+                        try
+                        {
+                            if (packet.ReadBytes(data))
+                            {
+                                packet.Apply();
+                            }
+                            else
+                            {
+                                Kick("Impure packet " + (int)type);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            SysConsole.Output(OutputType.ERROR, "Networking / player / receive c-packet: " + ex.ToString());
                             Kick("Invalid packet " + (int)type);
-                            return;
-                    }
-                    try
-                    {
-                        if (packet.ReadBytes(data))
-                        {
-                            packet.Apply();
-                        }
-                        else
-                        {
-                            Kick("Impure packet " + (int)type);
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        SysConsole.Output(OutputType.ERROR, "Networking / player / receive c-packet: " + ex.ToString());
-                        Kick("Invalid packet " + (int)type);
+                        break;
                     }
                 }
             }
