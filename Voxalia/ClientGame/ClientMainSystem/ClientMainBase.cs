@@ -85,8 +85,9 @@ namespace Voxalia.ClientGame.ClientMainSystem
             GL.Enable(EnableCap.Texture2D);
             GL.Viewport(0, 0, Window.Width, Window.Height);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.CullFace);
-            GL.CullFace(CullFaceMode.Front);
+            //GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.VertexArray);
+            //GL.CullFace(CullFaceMode.Front);
             SysConsole.Output(OutputType.INIT, "Loading material->texture map...");
             MaterialTexture.Init();
             SysConsole.Output(OutputType.INIT, "Loading keyboard handling engine...");

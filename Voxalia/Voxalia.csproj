@@ -85,8 +85,10 @@
     <Compile Include="ClientGame\EntitySystem\Player.cs" />
     <Compile Include="ClientGame\GraphicsSystem\FontSet.cs" />
     <Compile Include="ClientGame\GraphicsSystem\GLFont.cs" />
+    <Compile Include="ClientGame\GraphicsSystem\RenderedVBO.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Shader.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Texture.cs" />
+    <Compile Include="ClientGame\GraphicsSystem\VBOSet.cs" />
     <Compile Include="ClientGame\NetworkSystem\AbstractPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\AbstractPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\ClientNetworkBase.cs" />

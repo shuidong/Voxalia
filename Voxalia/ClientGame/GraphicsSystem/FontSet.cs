@@ -156,6 +156,8 @@ namespace Voxalia.ClientGame.GraphicsSystem
             return Color.FromArgb(trans, colors[color].R, colors[color].G, colors[color].B);
         }
 
+        VBOSet cset = new VBOSet();
+
         /// <summary>
         /// Fully renders colorful/fancy text (unless the text is not marked as fancy, or fancy rendering is disabled)
         /// </summary>
@@ -194,12 +196,11 @@ namespace Voxalia.ClientGame.GraphicsSystem
             int htrans = (int)(255 * transmod);
             int strans = (int)(255 * transmod);
             int utrans = (int)(255 * transmod);
-            double X = Position.X;
-            double Y = Position.Y;
+            float X = (float)Position.X;
+            float Y = (float)Position.Y;
             GLFont font = font_default;
-            font.BaseTexture.Bind();
             Shader.ColorMultShader.Bind();
-            GL.Begin(PrimitiveType.Quads);
+            cset.Destroy();
             for (int i = 0; i < lines.Length; i++)
             {
                 string line = lines[i];
@@ -221,49 +222,52 @@ namespace Voxalia.ClientGame.GraphicsSystem
                             float width = font.MeasureString(drawme);
                             if (highlight)
                             {
-                                DrawRectangle(X, Y, width, font.Height, ColorFor(hcolor, htrans));
+                                DrawRectangle(X, Y, width, font.Height,
+                                    cset.GetVBO(font.BaseTexture, ColorFor(hcolor, htrans)));
                             }
                             if (underline)
                             {
-                                DrawRectangle(X, Y + ((float)font.Height * 4 / 5), width, 1, ColorFor(ucolor, utrans));
+                                DrawRectangle(X, Y + ((float)font.Height * 4 / 5), width, 1,
+                                    cset.GetVBO(font.BaseTexture, ColorFor(ucolor, utrans)));
                             }
                             if (overline)
                             {
-                                DrawRectangle(X, Y + 2, width, 1, ColorFor(ocolor, otrans));
+                                DrawRectangle(X, Y + 2, width, 1,
+                                    cset.GetVBO(font.BaseTexture, ColorFor(ocolor, otrans)));
                             }
                             if (extrashadow)
                             {
                                 foreach (Point point in ShadowPoints)
                                 {
-                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, trans / 2, flip);
+                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, cset, trans / 2, flip);
                                 }
                             }
                             if (shadow)
                             {
                                 foreach (Point point in ShadowPoints)
                                 {
-                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, 255, flip);
+                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, cset, 255, flip);
                                 }
                                 foreach (Point point in BetterShadowPoints)
                                 {
-                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, 255, flip);
+                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, 0, cset, 255, flip);
                                 }
                             }
                             if (emphasis)
                             {
                                 foreach (Point point in EmphasisPoints)
                                 {
-                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, ecolor, etrans, flip);
+                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, ecolor, cset, etrans, flip);
                                 }
                                 foreach (Point point in BetterEmphasisPoints)
                                 {
-                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, ecolor, etrans, flip);
+                                    RenderBaseText(X + point.X, Y + point.Y, drawme, font, ecolor, cset, etrans, flip);
                                 }
                             }
-                            RenderBaseText(X, Y, drawme, font, color, trans, flip, pseudo, random, jello, obfu);
+                            RenderBaseText(X, Y, drawme, font, color, cset, trans, flip, pseudo, random, jello, obfu);
                             if (strike)
                             {
-                                DrawRectangle(X, Y + (font.Height / 2), width, 1, ColorFor(scolor, strans));
+                                DrawRectangle(X, Y + (font.Height / 2), width, 1, cset.GetVBO(font.BaseTexture, ColorFor(scolor, strans)));
                             }
                             X += width;
                         }
@@ -416,10 +420,10 @@ namespace Voxalia.ClientGame.GraphicsSystem
                     }
                 }
                 Y += font_default.Height;
-                X = Position.X;
+                X = (float)Position.X;
             }
-            GL.End();
-            GL.UseProgram(0);
+            cset.Build();
+            cset.Render();
         }
 
         /// <summary>
@@ -437,8 +441,9 @@ namespace Voxalia.ClientGame.GraphicsSystem
         /// <param name="random">Whether to use real-random color</param>
         /// <param name="jello">Whether to use a jello effect</param>
         /// <param name="obfu">Whether to randomize letters</param>
+        /// <param name="set">The VBOSet to use</param>
         /// <returns>The length of the rendered text in pixels</returns>
-        public static double RenderBaseText(double X, double Y, string text, GLFont font, int color,
+        public static float RenderBaseText(float X, float Y, string text, GLFont font, int color, VBOSet set,
             int trans = 255, bool flip = false, bool pseudo = false, bool random = false, bool jello = false, bool obfu = false)
         {
             if (obfu || pseudo || random || jello)
@@ -448,13 +453,14 @@ namespace Voxalia.ClientGame.GraphicsSystem
                 {
                     char chr = text[z];
                     int col = color;
+                    Color4 color4 = ColorFor(color, trans);
                     if (pseudo)
                     {
-                        GL.Color4(ColorFor((chr % (colors.Length - 1)) + 1, trans));
+                        color4 = ColorFor((chr % (colors.Length - 1)) + 1, trans);
                     }
                     if (random)
                     {
-                        GL.Color4(ColorFor(Utilities.UtilRandom.Next(colors.Length), trans));
+                        color4 = ColorFor(Utilities.UtilRandom.Next(colors.Length), trans);
                     }
                     if (obfu)
                     {
@@ -467,15 +473,14 @@ namespace Voxalia.ClientGame.GraphicsSystem
                         iX = Utilities.UtilRandom.Next(-1, 1);
                         iY = Utilities.UtilRandom.Next(-1, 1);
                     }
-                    font.DrawSingleCharacter(chr, X + iX + nX, Y + iY, flip);
+                    font.DrawSingleCharacter(chr, X + iX + nX, Y + iY, flip, set.GetVBO(font.BaseTexture, color4));
                     nX += font.RectForSymbol(text[z]).Width;
                 }
                 return nX;
             }
             else
             {
-                GL.Color4(ColorFor(color, trans));
-                return font.DrawString(text, X, Y, flip);
+                return font.DrawString(text, X, Y, set.GetVBO(font.BaseTexture, ColorFor(color, trans)), flip);
             }
         }
 
@@ -563,18 +568,11 @@ namespace Voxalia.ClientGame.GraphicsSystem
         /// <param name="Y">The starting Y</param>
         /// <param name="width">The width</param>
         /// <param name="height">The height</param>
-        /// <param name="c">The color to use</param>
-        public static void DrawRectangle(double X, double Y, float width, float height, Color c)
+        /// <param name="vbo">The VBO to use</param>
+        public static void DrawRectangle(float X, float Y, float width, float height, RenderedVBO vbo)
         {
-            if (c != null) GL.Color4(c);
-            GL.TexCoord2(2f / 1024f, 2 / 1024f);
-            GL.Vertex2(X, Y);
-            GL.TexCoord2(4f / 1024f, 2f / 1024f);
-            GL.Vertex2(X + width, Y);
-            GL.TexCoord2(4f / 1024f, 4f / 1024f);
-            GL.Vertex2(X + width, Y + height);
-            GL.TexCoord2(2f / 1024f, 4f / 1024f);
-            GL.Vertex2(X, Y + height);
+            vbo.AddQuad(new Vector3(X, Y, 0), new Vector3(X + width, Y + height, 0),
+                new Vector2(2f / 1024f, 2f / 1024f), new Vector2(4f / 1024f, 4f / 1024f));
         }
 
         /// <summary>

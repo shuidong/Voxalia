@@ -340,31 +340,21 @@ namespace Voxalia.ClientGame.GraphicsSystem
         /// <param name="symbol">The symbol to draw.</param>
         /// <param name="X">The X location to draw it at</param>
         /// <param name="Y">The Y location to draw it at</param>
+        /// <param name="flip">Whether to flip the character</param>
+        /// <param name="vbo">The VBO to use</param>
         /// <returns>The length of the character in pixels</returns>
-        public double DrawSingleCharacter(char symbol, double X, double Y, bool flip)
+        public float DrawSingleCharacter(char symbol, float X, float Y, bool flip, RenderedVBO vbo)
         {
             RectangleF rec = RectForSymbol(symbol);
             if (flip)
             {
-                GL.TexCoord2(rec.X / 1024, rec.Y / 1024);
-                GL.Vertex2(X, Y + rec.Height);
-                GL.TexCoord2((rec.X + rec.Width) / 1024, rec.Y / 1024);
-                GL.Vertex2(X + rec.Width, Y + rec.Height);
-                GL.TexCoord2((rec.X + rec.Width) / 1024, (rec.Y + rec.Height) / 1024);
-                GL.Vertex2(X + rec.Width, Y);
-                GL.TexCoord2(rec.X / 1024, (rec.Y + rec.Height) / 1024);
-                GL.Vertex2(X, Y);
+                vbo.AddQuad(new Vector3(X, Y, 0), new Vector3(X + rec.Width, Y + rec.Height, 0),
+                    new Vector2(rec.X / 1024, (rec.Y + rec.Height) / 1024), new Vector2((rec.X + rec.Width) / 1024, rec.Y / 1024));
             }
             else
             {
-                GL.TexCoord2(rec.X / 1024, rec.Y / 1024);
-                GL.Vertex2(X, Y);
-                GL.TexCoord2((rec.X + rec.Width) / 1024, rec.Y / 1024);
-                GL.Vertex2(X + rec.Width, Y);
-                GL.TexCoord2((rec.X + rec.Width) / 1024, (rec.Y + rec.Height) / 1024);
-                GL.Vertex2(X + rec.Width, Y + rec.Height);
-                GL.TexCoord2(rec.X / 1024, (rec.Y + rec.Height) / 1024);
-                GL.Vertex2(X, Y + rec.Height);
+                vbo.AddQuad(new Vector3(X, Y, 0), new Vector3(X + rec.Width, Y + rec.Height, 0),
+                    new Vector2(rec.X / 1024, rec.Y / 1024), new Vector2((rec.X + rec.Width) / 1024, (rec.Y + rec.Height) / 1024));
             }
             return rec.Width;
         }
@@ -375,10 +365,12 @@ namespace Voxalia.ClientGame.GraphicsSystem
         /// <param name="str">The string to draw.</param>
         /// <param name="X">The X location to draw it at</param>
         /// <param name="Y">The Y location to draw it at</param>
+        /// <param name="flip">Whether to flip the characters</param>
+        /// <param name="vbo">The VBO to use</param>
         /// <returns>The length of the string in pixels</returns>
-        public double DrawString(string str, double X, double Y, bool flip = false)
+        public float DrawString(string str, float X, float Y, RenderedVBO vbo, bool flip = false)
         {
-            double nX = 0;
+            float nX = 0;
             for (int i = 0; i < str.Length; i++)
             {
                 if (str[i] == '\n')
@@ -387,26 +379,9 @@ namespace Voxalia.ClientGame.GraphicsSystem
                     nX = 0;
                     Console.WriteLine("\n!");
                 }
-                nX += DrawSingleCharacter(str[i], X + nX, Y, flip);
+                nX += DrawSingleCharacter(str[i], X + nX, Y, flip, vbo);
             }
             return nX;
-        }
-
-        /// <summary>
-        /// Draws a string, handling all relevant graphics code.
-        /// </summary>
-        /// <param name="str">The string to draw.</param>
-        /// <param name="X">The X location to draw it at</param>
-        /// <param name="Y">The Y location to draw it at</param>
-        /// <param name="c">The color to draw it in</param>
-        public void DrawStringFull(string str, double X, double Y, Color c)
-        {
-            BaseTexture.Bind();
-            Shader.ColorMultShader.Bind();
-            GL.Color4(c);
-            GL.Begin(PrimitiveType.Quads);
-            DrawString(str, X, Y, false);
-            GL.End();
         }
 
         /// <summary>

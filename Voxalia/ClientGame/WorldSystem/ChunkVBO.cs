@@ -11,6 +11,7 @@ namespace Voxalia.ClientGame.WorldSystem
 {
     /// <summary>
     /// Holds a Vertex Buffer Object for a single texture within a chunk.
+    /// TODO: Merge with renderedVBO
     /// </summary>
     public class ChunkVBO
     {

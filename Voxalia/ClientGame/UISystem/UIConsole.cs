@@ -472,7 +472,7 @@ namespace Voxalia.ClientGame.UISystem
                     {
                         XAdd -= FontSet.Standard.font_default.MeasureString(Typing[TypingCursor].ToString());
                     }
-                    FontSet.Standard.font_default.DrawStringFull("|", TypingLoc.X + XAdd, TypingLoc.Y, System.Drawing.Color.White);
+                    FontSet.Standard.DrawColoredText("|", new Location(TypingLoc.X + XAdd, TypingLoc.Y, 0));
                 }
                 // Render the console text
                 FontSet.Standard.DrawColoredText(ConsoleText, ConsoleTextLoc, (int)(ClientMain.Window.Height / 2 - FontSet.Standard.font_default.Height * 3));
