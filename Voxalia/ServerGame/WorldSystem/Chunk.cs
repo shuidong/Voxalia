@@ -109,7 +109,7 @@ namespace Voxalia.ServerGame.WorldSystem
                     }
                 }
             }
-            return data;
+            return FileHandler.GZip(data);
         }
 
         /// <summary>

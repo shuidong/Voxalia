@@ -16,6 +16,7 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override bool ReadBytes(byte[] data)
         {
+            data = FileHandler.UnGZip(data);
             if (data.Length != 30 * 30 * 30 * 2 + 12)
             {
                 return false;

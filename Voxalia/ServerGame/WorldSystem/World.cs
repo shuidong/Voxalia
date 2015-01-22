@@ -46,7 +46,6 @@ namespace Voxalia.ServerGame.WorldSystem
             }
             // TEMPORARY
             chunk = new Chunk((int)chunkLoc.X, (int)chunkLoc.Y, (int)chunkLoc.Z, this);
-            SysConsole.Output(OutputType.INFO, "Generating chunk at " + chunkLoc.ToSimpleString());
             for (int x = 0; x < 30; x++)
             {
                 for (int y = 0; y < 30; y++)
