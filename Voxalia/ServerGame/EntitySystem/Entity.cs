@@ -58,5 +58,17 @@ namespace Voxalia.ServerGame.EntitySystem
         /// This entity's ID. Unique in the world.
         /// </summary>
         public ulong ID;
+
+        public void Reposition(Location pos)
+        {
+            Location chunkloc = World.GetChunkLocation(Position);
+            Location chunkloc2 = World.GetChunkLocation(pos);
+            if (pos != Position)
+            {
+                InWorld.Remove(this);
+                Position = pos;
+                InWorld.Spawn(this);
+            }
+        }
     }
 }

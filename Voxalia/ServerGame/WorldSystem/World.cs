@@ -46,13 +46,25 @@ namespace Voxalia.ServerGame.WorldSystem
             }
             // TEMPORARY
             chunk = new Chunk((int)chunkLoc.X, (int)chunkLoc.Y, (int)chunkLoc.Z, this);
+            SysConsole.Output(OutputType.INFO, "Generating chunk at " + chunkLoc.ToSimpleString());
             for (int x = 0; x < 30; x++)
             {
                 for (int y = 0; y < 30; y++)
                 {
                     for (int z = 0; z < 30; z++)
                     {
-                        chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(3) == 1 ? (ushort)0: (ushort)Utilities.UtilRandom.Next(5));
+                        if (chunkLoc.Z == 0)
+                        {
+                            chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(3) == 1 ? (ushort)0 : (ushort)Utilities.UtilRandom.Next(5));
+                        }
+                        else if (Math.Abs(chunkLoc.Z) == 1)
+                        {
+                            chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(15) == 1 ? (ushort)Utilities.UtilRandom.Next(5) : (ushort)0);
+                        }
+                        else
+                        {
+                            // Nothing
+                        }
                     }
                 }
             }
@@ -65,7 +77,9 @@ namespace Voxalia.ServerGame.WorldSystem
         /// </summary>
         public void Tick()
         {
-            foreach (KeyValuePair<Location, Chunk> chunk in LoadedChunks)
+            // TODO: optimize. There must be a better way to avoid errors when chunks are loaded mid-tick.
+            Dictionary<Location, Chunk> chunks = new Dictionary<Location,Chunk>(LoadedChunks);
+            foreach (KeyValuePair<Location, Chunk> chunk in chunks)
             {
                 chunk.Value.Tick();
             }
@@ -77,9 +91,9 @@ namespace Voxalia.ServerGame.WorldSystem
         /// </summary>
         /// <param name="worldLocation">The world coordinates</param>
         /// <returns>The chunk coordinates</returns>
-        public Location GetChunkLocation(Location worldLocation)
+        public static Location GetChunkLocation(Location worldLocation)
         {
-            return new Location((int)(worldLocation.X / 30), (int)(worldLocation.Y / 30), (int)(worldLocation.Z / 30));
+            return new Location(Math.Floor(worldLocation.X / 30), Math.Floor(worldLocation.Y / 30), Math.Floor(worldLocation.Z / 30));
         }
 
         /// <summary>

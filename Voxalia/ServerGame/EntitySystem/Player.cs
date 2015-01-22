@@ -7,6 +7,7 @@ using Voxalia.ServerGame.NetworkSystem.PacketsIn;
 using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.ServerGame.ServerMainSystem;
 using Voxalia.Shared;
+using Voxalia.ServerGame.WorldSystem;
 
 namespace Voxalia.ServerGame.EntitySystem
 {
@@ -150,8 +151,10 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Position += movement * delta;
+            Reposition(Position + movement * delta * 30);
         }
+
+        public Chunk CurrentChunk = null;
 
         public override void Tick()
         {
@@ -160,6 +163,12 @@ namespace Voxalia.ServerGame.EntitySystem
                 return;
             }
             TickMovement(ServerMain.Delta);
+            Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(Position));
+            if (ch != CurrentChunk)
+            {
+                SendToSecondary(new ChunkPacketOut(ch));
+                CurrentChunk = ch;
+            }
             if (Network.received > 4)
             {
                 while (true)

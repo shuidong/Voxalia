@@ -104,7 +104,7 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Position += movement * delta;
+            Position += movement * delta * 30;
         }
 
         public override void Tick()

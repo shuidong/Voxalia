@@ -52,7 +52,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
                     return; // Discard
                 }
                 Sender.LastMovePacket.ApplyInternal();
-                Sender.Position = Sender.LastMovePosition;
+                Sender.Reposition(Sender.LastMovePosition);
                 Sender.TickMovement(Time - Sender.LastMovePacketTime);
             }
             ApplyInternal();

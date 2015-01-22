@@ -35,7 +35,6 @@ namespace Voxalia.ServerGame.ServerMainSystem
             // TODO: Load player details
             Players.Add(player);
             Worlds[0].Spawn(player);
-            player.SendToSecondary(new ChunkPacketOut(Worlds[0].LoadChunk(new Location(0, 0, 0))));
             player.PingMarker = 0;
             player.Send(new PingPacketOut(0));
             player.SendToSecondary(new PingPacketOut(0));
