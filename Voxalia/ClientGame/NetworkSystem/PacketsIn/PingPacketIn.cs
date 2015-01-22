@@ -46,6 +46,14 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                 {
                     ClientMain.GlobalTickTime = Time;
                 }
+                else if (ClientMain.GlobalTickTime - Time > 0.1)
+                {
+                    ClientMain.GlobalTickTime -= 0.1;
+                }
+                else if (ClientMain.GlobalTickTime - Time < -0.1)
+                {
+                    ClientMain.GlobalTickTime += 0.1;
+                }
                 else if (ClientMain.GlobalTickTime - Time > 0.01)
                 {
                     ClientMain.GlobalTickTime -= 0.01;

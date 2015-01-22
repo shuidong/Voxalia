@@ -61,7 +61,6 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                         ctime = Time;
                         for (int x = i + 1; x < ClientMain.ThePlayer.MoveStates.Count; x++)
                         {
-                            // Apply the movement from the last point to this one
                             ms = ClientMain.ThePlayer.MoveStates[x];
                             Target = ms.Time - ctime;
                             while (Target > 1f / 60f)
@@ -79,8 +78,6 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                             ClientMain.ThePlayer.Downward = ms.Downward;
                             ClientMain.ThePlayer.Direction = ms.Direction;
                         }
-                        //ClientMain.ThePlayer.TickMovement(ClientMain.GlobalTickTime - ctime);
-                        //ClientMain.ThePlayer.MoveStates.Clear();
                         ClientMain.ThePlayer.AddMS();
                         break;
                     }

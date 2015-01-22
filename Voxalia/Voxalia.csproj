@@ -80,6 +80,7 @@
     <Compile Include="ClientGame\CommandSystem\UICommands\RightwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\LeftwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\ForwardCommand.cs" />
+    <Compile Include="ClientGame\EntitySystem\Dot.cs" />
     <Compile Include="ClientGame\EntitySystem\Entity.cs" />
     <Compile Include="ClientGame\EntitySystem\Player.cs" />
     <Compile Include="ClientGame\GraphicsSystem\FontSet.cs" />

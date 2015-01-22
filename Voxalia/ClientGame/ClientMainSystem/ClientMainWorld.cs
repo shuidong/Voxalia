@@ -71,5 +71,14 @@ namespace Voxalia.ClientGame.ClientMainSystem
             Chunks.Add(pos, chunk);
             return chunk;
         }
+
+        public static void SpawnEntity(Entity ent)
+        {
+            Entities.Add(ent);
+            if (ent.TickMe)
+            {
+                Tickers.Add(ent);
+            }
+        }
     }
 }

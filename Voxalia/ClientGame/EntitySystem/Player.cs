@@ -115,12 +115,12 @@ namespace Voxalia.ClientGame.EntitySystem
             ClientMain.CameraEye = Position;
             ClientMain.CameraTarget = Position + Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
             ltime += ClientMain.Delta;
-            if (Forward != pForward || Backward != pBackward
+            if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
                 || Upward != pUpward || Downward != pDownward
                 || Direction.X != pDirection.X
-                || Direction.Y != pDirection.Y
-                || ltime > 0.1)
+                || Direction.Y != pDirection.Y)
+                && ltime > 0.1)
             {
                 pForward = Forward;
                 pBackward = Backward;
@@ -130,16 +130,16 @@ namespace Voxalia.ClientGame.EntitySystem
                 pDownward = Downward;
                 pDirection = Direction;
                 ltime = 0;
+                AddMS();
                 if (ClientNetworkBase.Connected)
                 {
                     ClientNetworkBase.SendPacket(new MoveKeysPacketOut(MoveStates[MoveStates.Count - 1]));
                 }
-                if (MoveStates.Count > 100)
+                if (MoveStates.Count > 500)
                 {
-                    MoveStates.RemoveRange(0, 10);
+                    MoveStates.RemoveRange(0, 100);
                 }
             }
-            AddMS();
         }
 
         double ltime = 0;
@@ -163,6 +163,10 @@ namespace Voxalia.ClientGame.EntitySystem
                                              Direction = Direction,
                                              Time = ClientMain.GlobalTickTime
             });
+        }
+
+        public override void Render3D()
+        {
         }
 
     }

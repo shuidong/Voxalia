@@ -52,5 +52,10 @@ namespace Voxalia.ClientGame.EntitySystem
         /// This entity's ID. Unique in the world.
         /// </summary>
         public ulong ID;
+
+        /// <summary>
+        /// Renders the object into the 3D world.
+        /// </summary>
+        public abstract void Render3D();
     }
 }

@@ -9,6 +9,7 @@ using Voxalia.ClientGame.GraphicsSystem;
 using Voxalia.Shared;
 using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.WorldSystem;
+using Voxalia.ClientGame.EntitySystem;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -29,12 +30,15 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 GL.MatrixMode(MatrixMode.Projection);
                 GL.LoadIdentity();
-                Setup3D();
-                Run3D();
-                End3D();
-                Setup2D();
-                Run2D();
-                End2D();
+                if (Window.Height > 0)
+                {
+                    Setup3D();
+                    Run3D();
+                    End3D();
+                    Setup2D();
+                    Run2D();
+                    End2D();
+                }
             }
             catch (Exception ex)
             {
@@ -91,6 +95,10 @@ namespace Voxalia.ClientGame.ClientMainSystem
             foreach (KeyValuePair<Location, Chunk> chunkdata in Chunks)
             {
                 chunkdata.Value.Render();
+            }
+            foreach (Entity ent in Entities)
+            {
+                ent.Render3D();
             }
         }
 

@@ -60,7 +60,6 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             Sender.LastMovePosition = Sender.Position;
             Sender.Send(new PositionPacketOut(Sender, Time));
             Sender.LastMovePacket = this;
-            //Sender.TickMovement(ServerMain.GlobalTickTime - Time);
         }
 
         /// <summary>
