@@ -244,7 +244,7 @@ namespace Voxalia.ClientGame.WorldSystem
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, VBOIndices);
             GL.DrawElements(PrimitiveType.Quads, Indices.Length, DrawElementsType.UnsignedInt, IntPtr.Zero);
-            GL.Finish();
+            //GL.Finish();
             GL.PopClientAttrib();
         }
     }

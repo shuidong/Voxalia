@@ -55,11 +55,18 @@ namespace Voxalia.ServerGame.WorldSystem
                     {
                         if (chunkLoc.Z == 0)
                         {
-                            chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(3) == 1 ? (ushort)0 : (ushort)Utilities.UtilRandom.Next(5));
+                            if (z > 15)
+                            {
+                                chunk.SetBlock(x, y, z, (ushort)(Utilities.UtilRandom.Next(4) + 1));
+                            }
+                            else
+                            {
+                                chunk.SetBlock(x, y, z, (ushort)1);
+                            }
                         }
-                        else if (Math.Abs(chunkLoc.Z) == 1)
+                        else if (chunkLoc.Z < 0)
                         {
-                            chunk.SetBlock(x, y, z, Utilities.UtilRandom.Next(15) == 1 ? (ushort)Utilities.UtilRandom.Next(5) : (ushort)0);
+                            chunk.SetBlock(x, y, z, (ushort)1);
                         }
                         else
                         {
