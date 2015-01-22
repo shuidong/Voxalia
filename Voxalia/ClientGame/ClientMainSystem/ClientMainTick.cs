@@ -16,7 +16,12 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <summary>
         /// The time between this update tick and the last.
         /// </summary>
-        public static double Delta;
+        public static double Delta = 0;
+
+        /// <summary>
+        /// The time on the server.
+        /// </summary>
+        public static double GlobalTickTime = 0;
 
         /// <summary>
         /// The primary tick entry point from the OpenGL window.
@@ -28,6 +33,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
             try
             {
                 Delta = e.Time;
+                GlobalTickTime += Delta;
                 MouseHandler.Tick();
                 KeyHandler.Tick();
                 UIConsole.Tick();

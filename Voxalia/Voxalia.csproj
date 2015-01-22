@@ -90,8 +90,10 @@
     <Compile Include="ClientGame\NetworkSystem\AbstractPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\ClientNetworkBase.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ChunkPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\ConfirmPositionPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsOut\MoveKeysPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
     <Compile Include="ClientGame\UISystem\KeyHandler.cs" />
     <Compile Include="ClientGame\UISystem\MouseHandler.cs" />
@@ -110,11 +112,13 @@
     <Compile Include="ServerGame\NetworkSystem\Connection.cs" />
     <Compile Include="ServerGame\NetworkSystem\NetworkBase.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsIn\MoveKeysPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\ChunkPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\KickPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\MessagePacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsOut\PositionPacketOut.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainBase.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainTick.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainWorlds.cs" />

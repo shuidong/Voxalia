@@ -25,10 +25,7 @@ namespace Voxalia.ClientGame.CommandSystem
         public static CVar n_first;
 
         // Renderer CVars
-        public static CVar r_fullscreen, r_width, r_height;
-
-        // Game CVars
-        public static CVar g_mapeditor;
+        public static CVar r_fullscreen, r_width, r_height, r_antialiasing;
 
         // UI CVars
         public static CVar u_mouse_sensitivity;
@@ -48,8 +45,7 @@ namespace Voxalia.ClientGame.CommandSystem
             r_fullscreen = Register("r_fullscreen", "false", CVarFlag.Boolean | CVarFlag.Delayed); // Whether to use fullscreen mode.
             r_width = Register("r_width", "800", CVarFlag.Numeric | CVarFlag.Delayed); // What width the window should be.
             r_height = Register("r_height", "600", CVarFlag.Numeric | CVarFlag.Delayed); // What height the window should be.
-            // Game CVars
-            g_mapeditor = Register("g_mapeditor", "false", CVarFlag.Boolean | CVarFlag.ServerControl); // Whether the client is currently in map editor mode.
+            r_antialiasing = Register("r_antialiasing", "2", CVarFlag.Numeric | CVarFlag.Delayed); // What AA mode to use (0 = none).
             // UI CVars
             u_mouse_sensitivity = Register("u_mouse_sensitivity", "1", CVarFlag.Numeric); // How sensitive the mouse is.
         }

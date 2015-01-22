@@ -13,12 +13,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
         /// <summary>
         /// The time, in seconds, between the last tick and this one.
         /// </summary>
-        public static double Delta;
+        public static double Delta = 0;
 
         /// <summary>
         /// The current time on the server, in seconds.
         /// </summary>
-        public static double GlobalTickTime;
+        public static double GlobalTickTime = 0;
 
         /// <summary>
         /// Ticks the server, include the network,

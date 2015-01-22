@@ -13,6 +13,36 @@ namespace Voxalia.ServerGame.EntitySystem
     public class Player: Entity
     {
         /// <summary>
+        /// Whether the player is trying to move forward.
+        /// </summary>
+        public bool Forward = false;
+
+        /// <summary>
+        /// Whether the player is trying to move backward.
+        /// </summary>
+        public bool Backward = false;
+
+        /// <summary>
+        /// Whether the player is trying to move leftward.
+        /// </summary>
+        public bool Leftward = false;
+
+        /// <summary>
+        /// Whether the player is trying to move rightward.
+        /// </summary>
+        public bool Rightward = false;
+
+        /// <summary>
+        /// Whether the player is trying move upward (jump).
+        /// </summary>
+        public bool Upward = false;
+
+        /// <summary>
+        /// Whether the player is trying to move downward (crouch).
+        /// </summary>
+        public bool Downward = false;
+
+        /// <summary>
         /// The network connection for this player.
         /// </summary>
         public Connection Network;
@@ -77,12 +107,59 @@ namespace Voxalia.ServerGame.EntitySystem
             Network = conn;
         }
 
+        public MoveKeysPacketIn LastMovePacket = null;
+        public double LastMovePacketTime = 0;
+        public Location LastMovePosition = Location.Zero;
+
+        public void TickMovement(double delta)
+        {
+            while (Direction.X < 0)
+            {
+                Direction.X += 360;
+            }
+            while (Direction.X > 360)
+            {
+                Direction.X -= 360;
+            }
+            if (Direction.Y > 89.9f)
+            {
+                Direction.Y = 89.9f;
+            }
+            if (Direction.Y < -89.9f)
+            {
+                Direction.Y = -89.9f;
+            }
+            Location movement = Location.Zero;
+            if (Leftward)
+            {
+                movement.Y = -1;
+            }
+            if (Rightward)
+            {
+                movement.Y = 1;
+            }
+            if (Backward)
+            {
+                movement.X = 1;
+            }
+            if (Forward)
+            {
+                movement.X = -1;
+            }
+            if (movement.LengthSquared() > 0)
+            {
+                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
+            }
+            Position += movement * delta;
+        }
+
         public override void Tick()
         {
             if (!IsValid)
             {
                 return;
             }
+            TickMovement(ServerMain.Delta);
             if (Network.received > 4)
             {
                 int len = BitConverter.ToInt32(Network.recd, 0);
@@ -106,6 +183,9 @@ namespace Voxalia.ServerGame.EntitySystem
                     {
                         case 1:
                             packet = new PingPacketIn(this, false);
+                            break;
+                        case 2:
+                            packet = new MoveKeysPacketIn(this, false);
                             break;
                         case 255:
                             packet = new DisconnectPacketIn(this, false);
@@ -180,8 +260,11 @@ namespace Voxalia.ServerGame.EntitySystem
             }
         }
 
+        bool tdisco = false;
+
         public void Kick(string message)
         {
+            tdisco = true;
             ServerMain.DespawnPlayer(this);
             Network.TickMe = false;
             ServerMain.Announce("Player " + Username + " disconnected: " + message);
@@ -201,7 +284,11 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             catch (Exception ex)
             {
-                SysConsole.Output(OutputType.ERROR, "Error sending packet to player: " + ex.ToString());
+                if (!tdisco)
+                {
+                    SysConsole.Output(OutputType.ERROR, "Error sending packet to player: " + ex.ToString());
+                    Kick("Error sending packet");
+                }
             }
         }
 
@@ -217,7 +304,11 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             catch (Exception ex)
             {
-                SysConsole.Output(OutputType.ERROR, "Error sending packet to player (secondary): " + ex.ToString());
+                if (!tdisco)
+                {
+                    SysConsole.Output(OutputType.ERROR, "Error sending packet to player (secondary): " + ex.ToString());
+                    Kick("Error sending secondary packet");
+                }
             }
         }
     }

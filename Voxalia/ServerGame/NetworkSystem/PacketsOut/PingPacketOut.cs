@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Voxalia.Shared;
+using Voxalia.ServerGame.ServerMainSystem;
 
 namespace Voxalia.ServerGame.NetworkSystem.PacketsOut
 {
@@ -18,7 +19,9 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsOut
         public PingPacketOut(byte marker)
         {
             ID = 1;
-            Data = new byte[] { marker };
+            Data = new byte[9];
+            BitConverter.GetBytes(ServerMain.GlobalTickTime).CopyTo(Data, 1);
+            Data[0] = marker;
         }
     }
 }

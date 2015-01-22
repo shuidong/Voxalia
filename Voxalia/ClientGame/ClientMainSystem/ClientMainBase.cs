@@ -50,7 +50,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
             ClientCommands.Init(output);
             ClientCVar.Init(output);
             SysConsole.Output(OutputType.INIT, "Loading window...");
-            Window = new GameWindow(800, 600, GraphicsMode.Default, Program.GameName, GameWindowFlags.FixedWindow);
+            Window = new GameWindow(800, 600, new GraphicsMode(32, 24, 0/* TODO: Are these values good? */, ClientCVar.r_antialiasing.ValueI), Program.GameName, GameWindowFlags.FixedWindow);
             Window.UpdateFrame += new EventHandler<FrameEventArgs>(Window_UpdateFrame);
             Window.RenderFrame += new EventHandler<FrameEventArgs>(Window_RenderFrame);
             Window.Closed += new EventHandler<EventArgs>(Window_Closed);
@@ -60,7 +60,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
             Window.KeyDown += new EventHandler<KeyboardKeyEventArgs>(KeyHandler.PrimaryGameWindow_KeyDown);
             Window.MouseDown += new EventHandler<MouseButtonEventArgs>(KeyHandler.Mouse_ButtonDown);
             Window.MouseUp += new EventHandler<MouseButtonEventArgs>(KeyHandler.Mouse_ButtonUp);
-            SysConsole.Output(OutputType.INFO, "Running window startup sequence...");
+            SysConsole.Output(OutputType.INIT, "Running window startup sequence...");
             Window.Run(60, 60);
         }
 
