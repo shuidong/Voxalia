@@ -136,6 +136,10 @@ namespace Voxalia.Shared
         public Location Normalize()
         {
             double len = Length();
+            if (len == 0)
+            {
+                return Location.Zero;
+            }
             return new Location(X / len, Y / len, Z / len);
         }
 
@@ -294,6 +298,15 @@ namespace Voxalia.Shared
         public OpenTK.Vector3 ToOVector()
         {
             return new OpenTK.Vector3((float)X, (float)Y, (float)Z);
+        }
+
+        /// <summary>
+        /// Converts the location to an BulletSharp Vector3.
+        /// </summary>
+        /// <returns>The created vector</returns>
+        public BulletSharp.Vector3 ToBVector()
+        {
+            return new BulletSharp.Vector3((float)X, (float)Y, (float)Z);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Voxalia.Shared;
 using Voxalia.ClientGame.ClientMainSystem;
+using BulletSharp;
 
 namespace Voxalia.ClientGame.WorldSystem
 {
@@ -44,9 +45,19 @@ namespace Voxalia.ClientGame.WorldSystem
         /// <param name="start">The starting location</param>
         /// <param name="end">The ideal ending location</param>
         /// <returns>The actual ending location of a ray trace</returns>
-        public Location RayTrace(Location start, Location end)
+        public static Location RayTrace(Location start, Location end)
         {
-            return end; // TODO
+            Vector3 s = start.ToBVector();
+            Vector3 e = end.ToBVector();
+            CollisionWorld.ClosestRayResultCallback rcc = new CollisionWorld.ClosestRayResultCallback(s, e);
+            ClientMain.PhysicsWorld.RayTest(s, e, rcc);
+            Location hit = new Location(rcc.HitPointWorld.X, rcc.HitPointWorld.Y, rcc.HitPointWorld.Z);
+            if (hit.IsNaN() || !rcc.HasHit)
+            {
+                return end;
+            }
+            Console.WriteLine("Collision: " + (start - end).Normalize() * 0.001f);
+            return hit + (start - end).Normalize() * 0.001f; // TODO
         }
     }
 }

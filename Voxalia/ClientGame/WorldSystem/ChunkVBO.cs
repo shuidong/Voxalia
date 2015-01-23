@@ -22,7 +22,12 @@ namespace Voxalia.ClientGame.WorldSystem
         Vector3[] Normals;
         Vector2[] TexCoords;
         uint[] Indices;
-        List<Vector3> Vecs = new List<Vector3>();
+
+        /// <summary>
+        /// All vertices on this VBO.
+        /// </summary>
+        public List<Vector3> Vecs = new List<Vector3>();
+
         List<Vector3> Norms = new List<Vector3>();
         List<Vector2> Texs = new List<Vector2>();
         List<uint> Inds = new List<uint>();

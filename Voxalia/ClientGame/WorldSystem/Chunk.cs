@@ -8,6 +8,8 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Voxalia.ClientGame.GraphicsSystem;
+using Voxalia.ClientGame.ClientMainSystem;
+using BulletSharp;
 
 namespace Voxalia.ClientGame.WorldSystem
 {
@@ -30,6 +32,11 @@ namespace Voxalia.ClientGame.WorldSystem
         /// The Z coordinate of the chunk. Z * 30 = actual coordinate.
         /// </summary>
         public int Z;
+
+        /// <summary>
+        /// The physics world static body of this chunk.
+        /// </summary>
+        public RigidBody Body = null;
 
         /// <summary>
         /// All blocks within the chunk.
@@ -161,6 +168,7 @@ namespace Voxalia.ClientGame.WorldSystem
         /// </summary>
         public void UpdateVBO()
         {
+            TriangleMesh mesh = new TriangleMesh(false, false);
             for (int i = 0; i < VBOs.Count; i++)
             {
                 VBOs[i].Destroy();
@@ -178,27 +186,27 @@ namespace Voxalia.ClientGame.WorldSystem
                             // TODO: Simplify. Can this be a loop?
                             if (z == 29 || !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.TOP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, 1));
+                                GetVBO(tex.Textures[(int)Sides.TOP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 0, 1));
                             }
                             if (z == 0 || !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.BOTTOM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, -1));
+                                GetVBO(tex.Textures[(int)Sides.BOTTOM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 0, -1));
                             }
                             if (x == 29 || !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.XP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(1, 0, 0));
+                                GetVBO(tex.Textures[(int)Sides.XP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(1, 0, 0));
                             }
                             if (x == 0 || !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.XM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(-1, 0, 0));
+                                GetVBO(tex.Textures[(int)Sides.XM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(-1, 0, 0));
                             }
                             if (y == 29 || !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.YP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 1, 0));
+                                GetVBO(tex.Textures[(int)Sides.YP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 1, 0));
                             }
                             if (y == 0 || !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
                             {
-                                GetVBO(tex.Textures[(int)Sides.YM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, -1, 0));
+                                GetVBO(tex.Textures[(int)Sides.YM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, -1, 0));
                             }
                         }
                     }
@@ -206,8 +214,35 @@ namespace Voxalia.ClientGame.WorldSystem
             }
             for (int i = 0; i < VBOs.Count; i++)
             {
+                for (int x = 0; x < VBOs[i].Vecs.Count; x += 4)
+                {
+                    mesh.AddTriangle(new BulletSharp.Vector3(VBOs[i].Vecs[x].X, VBOs[i].Vecs[x].Y, VBOs[i].Vecs[x].Z),
+                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 1].X, VBOs[i].Vecs[x + 1].Y, VBOs[i].Vecs[x + 1].Z),
+                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 2].X, VBOs[i].Vecs[x + 2].Y, VBOs[i].Vecs[x + 2].Z));
+                    mesh.AddTriangle(new BulletSharp.Vector3(VBOs[i].Vecs[x].X, VBOs[i].Vecs[x].Y, VBOs[i].Vecs[x].Z),
+                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 3].X, VBOs[i].Vecs[x + 3].Y, VBOs[i].Vecs[x + 3].Z),
+                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 2].X, VBOs[i].Vecs[x + 2].Y, VBOs[i].Vecs[x + 2].Z));
+                }
                 VBOs[i].Build();
             }
+            if (Body != null)
+            {
+                ClientMain.PhysicsWorld.RemoveRigidBody(Body);
+            }
+            if (mesh.NumTriangles == 0)
+            {
+                Body = null;
+                return;
+            }
+            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(X * 30, Y * 30, Z * 30));
+            RigidBodyConstructionInfo rigid_body_ci;
+            BvhTriangleMeshShape trianglemesh = new BvhTriangleMeshShape(mesh, false);
+            trianglemesh.BuildOptimizedBvh();
+            rigid_body_ci = new RigidBodyConstructionInfo(0f, body_motion_state, trianglemesh);
+            rigid_body_ci.Friction = 0.5f;
+            Body = new RigidBody(rigid_body_ci);
+            Body.WorldTransform = Matrix.Translation(X * 30, Y * 30, Z * 30);
+            ClientMain.PhysicsWorld.AddRigidBody(Body);
         }
     }
 }

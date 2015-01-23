@@ -5,6 +5,7 @@ using System.Text;
 using Voxalia.ClientGame.WorldSystem;
 using Voxalia.ClientGame.EntitySystem;
 using Voxalia.Shared;
+using BulletSharp;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -31,17 +32,37 @@ namespace Voxalia.ClientGame.ClientMainSystem
         public static Player ThePlayer;
 
         /// <summary>
+        /// The main physics world (BulletSharp).
+        /// </summary>
+        public static DynamicsWorld PhysicsWorld;
+
+        /// <summary>
         /// Prepares the world.
         /// </summary>
         public static void InitWorld()
         {
             ThePlayer = new Player();
-            ThePlayer.Position = new Location(0, 0, 1);
             Chunks = new Dictionary<Location, Chunk>();
             Entities = new List<Entity>();
             Tickers = new List<Entity>();
             Entities.Add(ThePlayer);
             Tickers.Add(ThePlayer);
+            SysConsole.Output(OutputType.INIT, "Loading physics engine (BulletSharp)...");
+            SysConsole.Output(OutputType.INIT, "Load physics engine...");
+            // Choose which broadphase to use - Dbvt = ?
+            BroadphaseInterface broadphase = new DbvtBroadphase();
+            // Choose collision configuration - default = ?
+            DefaultCollisionConfiguration collision_configuration = new DefaultCollisionConfiguration();
+            // Set the dispatcher
+            CollisionDispatcher dispatcher = new CollisionDispatcher(collision_configuration);
+            // Register the dispatcher
+            GImpactCollisionAlgorithm.RegisterAlgorithm(dispatcher);
+            // Choose solver - SquentialImpulseConstract = ?
+            SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
+            // Create the world for physics to happen it
+            PhysicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collision_configuration);
+            // Set the world's general default gravity
+            PhysicsWorld.Gravity = new BulletSharp.Vector3(0, 0, -9.8f * 2);
         }
 
         /// <summary>
@@ -102,8 +123,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <returns>The block</returns>
         public static Block GetBlock(Location loc)
         {
-            Location ch = GetChunkLocation(loc);
-            return new Block(GetChunk(ch), (int)(loc.X - ch.X), (int)(loc.Y - ch.Y), (int)(loc.Z - ch.Z));
+            Location ch = GetChunkLocation(loc) * 30;
+            return new Block(GetChunk(ch), (int)(Math.Floor(loc.X) - ch.X), (int)(Math.Floor(loc.Y) - ch.Y), (int)(Math.Floor(loc.Z) - ch.Z));
         }
     }
 }

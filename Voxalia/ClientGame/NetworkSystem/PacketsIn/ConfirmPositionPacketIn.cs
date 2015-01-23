@@ -30,6 +30,7 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
+            return; //TODO: Remove after adding physics to server.
             if (Time > ClientMain.GlobalTickTime)
             {
                 ClientMain.ThePlayer.Position = position;

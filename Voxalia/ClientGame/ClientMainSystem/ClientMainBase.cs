@@ -38,7 +38,6 @@ namespace Voxalia.ClientGame.ClientMainSystem
         public static void Init()
         {
             SysConsole.Output(OutputType.INIT, "Loading client...");
-            SysConsole.Output(OutputType.INIT, "Loading command engine...");
             Username = Program.GetSetting("username");
             SysConsole.Output(OutputType.INFO, "Username: " + Username);
             if (!Utilities.ValidateUsername(Username))
@@ -46,6 +45,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
                 SysConsole.Output(OutputType.ERROR, "Invalid username!");
                 Process.GetCurrentProcess().Kill();
             }
+            SysConsole.Output(OutputType.INIT, "Loading command engine (Frenetic)...");
             ClientOutputter output = new ClientOutputter();
             ClientCommands.Init(output);
             ClientCVar.Init(output);

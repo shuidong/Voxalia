@@ -49,6 +49,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BulletSharp">
+      <HintPath>.\BulletSharp.dll</HintPath>
+    </Reference>
     <Reference Include="Frenetic">
       <HintPath>.\Frenetic.dll</HintPath>
     </Reference>
@@ -102,6 +105,7 @@
     <Compile Include="ClientGame\WorldSystem\Block.cs" />
     <Compile Include="ClientGame\WorldSystem\Chunk.cs" />
     <Compile Include="ClientGame\WorldSystem\ChunkVBO.cs" />
+    <Compile Include="ClientGame\WorldSystem\Collision.cs" />
     <Compile Include="ClientGame\WorldSystem\InternalBlockData.cs" />
     <Compile Include="ClientGame\WorldSystem\MaterialTexture.cs" />
     <Compile Include="Program.cs" />

@@ -7,6 +7,8 @@ using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.ClientMainSystem;
 using Voxalia.ClientGame.NetworkSystem;
 using Voxalia.ClientGame.NetworkSystem.PacketsOut;
+using Voxalia.ClientGame.WorldSystem;
+using BulletSharp;
 
 namespace Voxalia.ClientGame.EntitySystem
 {
@@ -15,6 +17,11 @@ namespace Voxalia.ClientGame.EntitySystem
     /// </summary>
     public class Player: Entity
     {
+        /// <summary>
+        /// Half the size of the player by default.
+        /// </summary>
+        public static Location DefaultHalfSize = new Location(0.6f, 1.5f, 0.6f);
+
         /// <summary>
         /// Whether the player is trying to move forward.
         /// </summary>
@@ -59,6 +66,7 @@ namespace Voxalia.ClientGame.EntitySystem
         public Player()
             : base(true)
         {
+            Position = new Location(0, 0, 40);
         }
 
         /// <summary>
@@ -104,7 +112,7 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Position += movement * delta * 30;
+            Position = Collision.RayTrace(Position, Position + movement * delta * 30);
         }
 
         public override void Tick()
