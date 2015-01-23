@@ -129,5 +129,15 @@ namespace Voxalia.ServerGame.WorldSystem
                 }
             }
         }
+
+        public override int GetHashCode()
+        {
+            return X + Y + Z;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Chunk && ((Chunk)obj).X == X && ((Chunk)obj).Y == Y && ((Chunk)obj).Z == Z;
+        }
     }
 }

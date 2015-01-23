@@ -95,6 +95,7 @@ namespace Voxalia.ClientGame.WorldSystem
 
         public void FromBytes(byte[] data)
         {
+            SysConsole.Output(OutputType.INFO, "Prepare chunk at " + X + ", " + Y + ", " + Z);
             if (data.Length == 30 * 30 * 30 * 2)
             {
                 int index = 0;
@@ -229,7 +230,7 @@ namespace Voxalia.ClientGame.WorldSystem
             {
                 ClientMain.PhysicsWorld.RemoveRigidBody(Body);
             }
-            if (mesh.NumTriangles == 0)
+            if (mesh.NumTriangles < 2)
             {
                 Body = null;
                 return;

@@ -59,7 +59,11 @@ namespace Voxalia.ServerGame.EntitySystem
         /// </summary>
         public ulong ID;
 
-        public void Reposition(Location pos)
+        /// <summary>
+        /// Change the position of the entity, updating it's data.
+        /// </summary>
+        /// <param name="pos">The new position</param>
+        public virtual void Reposition(Location pos)
         {
             Location chunkloc = World.GetChunkLocation(Position);
             Location chunkloc2 = World.GetChunkLocation(pos);

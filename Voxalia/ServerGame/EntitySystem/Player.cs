@@ -106,6 +106,7 @@ namespace Voxalia.ServerGame.EntitySystem
             : base(true)
         {
             Network = conn;
+            Position = new Location(99999f, 99999f, 99999f);
         }
 
         public MoveKeysPacketIn LastMovePacket = null;
@@ -163,11 +164,15 @@ namespace Voxalia.ServerGame.EntitySystem
                 return;
             }
             TickMovement(ServerMain.Delta);
-            Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(Position));
-            if (ch != CurrentChunk)
+            sendtimer += ServerMain.Delta;
+            if (sendtimer >= 0.1f)
             {
-                SendToSecondary(new ChunkPacketOut(ch));
-                CurrentChunk = ch;
+                sendtimer = 0f;
+                if (ToSend.Count > 0)
+                {
+                    SendToSecondary(new ChunkPacketOut(InWorld.LoadChunk(ToSend[0])));
+                    ToSend.RemoveAt(0);
+                }
             }
             if (Network.received > 4)
             {
@@ -285,6 +290,10 @@ namespace Voxalia.ServerGame.EntitySystem
 
         bool tdisco = false;
 
+        /// <summary>
+        /// Kicks the player with a given message.
+        /// </summary>
+        /// <param name="message">The kick message</param>
         public void Kick(string message)
         {
             tdisco = true;
@@ -295,6 +304,10 @@ namespace Voxalia.ServerGame.EntitySystem
             Network.InternalSocket.Close(2);
         }
 
+        /// <summary>
+        /// Send a packet along the primary socket.
+        /// </summary>
+        /// <param name="packet">The packet to send</param>
         public void Send(AbstractPacketOut packet)
         {
             try
@@ -315,6 +328,10 @@ namespace Voxalia.ServerGame.EntitySystem
             }
         }
 
+        /// <summary>
+        /// Send a packet along the secondary socket.
+        /// </summary>
+        /// <param name="packet">The packet to send</param>
         public void SendToSecondary(AbstractPacketOut packet)
         {
             try
@@ -333,6 +350,72 @@ namespace Voxalia.ServerGame.EntitySystem
                     Kick("Error sending secondary packet");
                 }
             }
+        }
+
+        List<Location> GetChunksNear(Location pos)
+        {
+            List<Location> chunks = new List<Location>();
+            // TODO: Spiral algorithm?
+            chunks.Add(pos + new Location(0, 0, 0));
+            chunks.Add(pos + new Location(0, 0, -1));
+            chunks.Add(pos + new Location(0, 0, -2));
+            chunks.Add(pos + new Location(0, 0, 1));
+            chunks.Add(pos + new Location(0, 0, 2));
+            chunks.Add(pos + new Location(0, 1, 0));
+            chunks.Add(pos + new Location(1, 0, 0));
+            chunks.Add(pos + new Location(1, 1, 0));
+            chunks.Add(pos + new Location(0, 1, 1));
+            chunks.Add(pos + new Location(1, 0, 1));
+            chunks.Add(pos + new Location(1, 1, 1));
+            chunks.Add(pos + new Location(0, -1, 0));
+            chunks.Add(pos + new Location(-1, 0, 0));
+            chunks.Add(pos + new Location(1, 1, 0));
+            chunks.Add(pos + new Location(0, 1, -1));
+            chunks.Add(pos + new Location(-1, 0, -1));
+            chunks.Add(pos + new Location(-1, -1, -1));
+            chunks.Add(pos + new Location(0, 2, 0));
+            chunks.Add(pos + new Location(0, -2, 0));
+            chunks.Add(pos + new Location(-2, 0, 0));
+            chunks.Add(pos + new Location(2, 0, 0));
+            for (int x = -3; x < 4; x++)
+            {
+                for (int y = -3; y < 4; y++)
+                {
+                    for (int z = -3; z < 4; z++)
+                    {
+                        Location ch = pos + new Location(x, y, z);
+                        if (!chunks.Contains(ch))
+                        {
+                            chunks.Add(ch);
+                        }
+                    }
+                }
+            }
+            return chunks;
+        }
+
+        List<Location> ToSend = new List<Location>();
+
+        double sendtimer = 0;
+
+        public override void Reposition(Location pos)
+        {
+            Location oldpos = World.GetChunkLocation(Position);
+            Location newpos = World.GetChunkLocation(pos);
+            if (oldpos != newpos)
+            {
+                List<Location> oldchunks = GetChunksNear(oldpos);
+                List<Location> newchunks = GetChunksNear(newpos);
+                for (int i = 0; i < oldchunks.Count; i++)
+                {
+                    newchunks.Remove(oldchunks[i]);
+                }
+                for (int i = 0; i < newchunks.Count; i++)
+                {
+                    ToSend.Add(newchunks[i]);
+                }
+            }
+            base.Reposition(pos);
         }
     }
 }
