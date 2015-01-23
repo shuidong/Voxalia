@@ -24,7 +24,28 @@ namespace Voxalia.Shared
 
     public static class MaterialExtensions
     {
+        /// <summary>
+        /// Returns whether the material occupies the entire block.
+        /// </summary>
+        /// <param name="mat">The material</param>
+        /// <returns>Whether it occupies the whole block</returns>
         public static bool OccupiesWholeBlock(this Material mat)
+        {
+            switch (mat)
+            {
+                case Material.AIR:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+
+        /// <summary>
+        /// Returns whether a block of the material is solid.
+        /// </summary>
+        /// <param name="mat">The material</param>
+        /// <returns>Whether it is solid</returns>
+        public static bool IsSolid(this Material mat)
         {
             switch (mat)
             {

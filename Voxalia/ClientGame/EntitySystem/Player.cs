@@ -112,8 +112,8 @@ namespace Voxalia.ClientGame.EntitySystem
             Direction.X += MouseHandler.MouseDelta.X;
             Direction.Y += MouseHandler.MouseDelta.Y;
             TickMovement(ClientMain.Delta);
-            ClientMain.CameraEye = Position;
-            ClientMain.CameraTarget = Position + Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
+            ClientMain.CameraEye = Position + new Location(0, 0, 2.75f);
+            ClientMain.CameraTarget = Position + Utilities.ForwardVector_Deg(Direction.X, Direction.Y) + new Location(0, 0, 2.75f);
             ltime += ClientMain.Delta;
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward

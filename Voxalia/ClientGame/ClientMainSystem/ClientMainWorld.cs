@@ -72,6 +72,10 @@ namespace Voxalia.ClientGame.ClientMainSystem
             return chunk;
         }
 
+        /// <summary>
+        /// Spawn an entity in the world.
+        /// </summary>
+        /// <param name="ent">The entity to spawn</param>
         public static void SpawnEntity(Entity ent)
         {
             Entities.Add(ent);
@@ -79,6 +83,27 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 Tickers.Add(ent);
             }
+        }
+
+        /// <summary>
+        /// Gets the chunk coordinates for the given world coordinates.
+        /// </summary>
+        /// <param name="worldLocation">The world coordinates</param>
+        /// <returns>The chunk coordinates</returns>
+        public static Location GetChunkLocation(Location worldLocation)
+        {
+            return new Location(Math.Floor(worldLocation.X / 30f), Math.Floor(worldLocation.Y / 30f), Math.Floor(worldLocation.Z / 30f));
+        }
+
+        /// <summary>
+        /// Gets the block at a world location.
+        /// </summary>
+        /// <param name="loc">The global location</param>
+        /// <returns>The block</returns>
+        public static Block GetBlock(Location loc)
+        {
+            Location ch = GetChunkLocation(loc);
+            return new Block(GetChunk(ch), (int)(loc.X - ch.X), (int)(loc.Y - ch.Y), (int)(loc.Z - ch.Z));
         }
     }
 }

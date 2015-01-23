@@ -99,7 +99,7 @@ namespace Voxalia.ServerGame.WorldSystem
         /// <returns>The chunk coordinates</returns>
         public static Location GetChunkLocation(Location worldLocation)
         {
-            return new Location(Math.Floor(worldLocation.X / 30), Math.Floor(worldLocation.Y / 30), Math.Floor(worldLocation.Z / 30));
+            return new Location(Math.Floor(worldLocation.X / 30f), Math.Floor(worldLocation.Y / 30f), Math.Floor(worldLocation.Z / 30f));
         }
 
         /// <summary>
