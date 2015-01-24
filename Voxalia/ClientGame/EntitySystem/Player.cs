@@ -112,7 +112,14 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Position = Collision.RayTrace(Position, Position + movement * delta * 30);
+            Location target = Position + movement * delta * 30;
+            if (target != Position)
+            {
+                // TODO: Better handling (Based on impact normal)
+                Position = Collision.RayTrace(Position, new Location(target.X, Position.Y, Position.Z), true);
+                Position = Collision.RayTrace(Position, new Location(Position.X, target.Y, Position.Z), true);
+                Position = Collision.RayTrace(Position, new Location(Position.X, Position.Y, target.Z), true);
+            }
         }
 
         public override void Tick()

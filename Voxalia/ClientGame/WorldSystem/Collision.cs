@@ -45,7 +45,7 @@ namespace Voxalia.ClientGame.WorldSystem
         /// <param name="start">The starting location</param>
         /// <param name="end">The ideal ending location</param>
         /// <returns>The actual ending location of a ray trace</returns>
-        public static Location RayTrace(Location start, Location end)
+        public static Location RayTrace(Location start, Location end, bool bounceback = false)
         {
             Vector3 s = start.ToBVector();
             Vector3 e = end.ToBVector();
@@ -56,8 +56,7 @@ namespace Voxalia.ClientGame.WorldSystem
             {
                 return end;
             }
-            Console.WriteLine("Collision: " + (start - end).Normalize() * 0.001f);
-            return hit + (start - end).Normalize() * 0.001f; // TODO
+            return hit + (bounceback ? (start - end).Normalize() * 0.001f: Location.Zero);
         }
     }
 }

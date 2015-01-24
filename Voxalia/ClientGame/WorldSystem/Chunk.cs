@@ -235,14 +235,14 @@ namespace Voxalia.ClientGame.WorldSystem
                 Body = null;
                 return;
             }
-            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(X * 30, Y * 30, Z * 30));
+            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(0, 0, 0));
             RigidBodyConstructionInfo rigid_body_ci;
             BvhTriangleMeshShape trianglemesh = new BvhTriangleMeshShape(mesh, false);
             trianglemesh.BuildOptimizedBvh();
             rigid_body_ci = new RigidBodyConstructionInfo(0f, body_motion_state, trianglemesh);
             rigid_body_ci.Friction = 0.5f;
             Body = new RigidBody(rigid_body_ci);
-            Body.WorldTransform = Matrix.Translation(X * 30, Y * 30, Z * 30);
+            Body.WorldTransform = Matrix.Translation(0, 0, 0);
             ClientMain.PhysicsWorld.AddRigidBody(Body);
         }
     }
