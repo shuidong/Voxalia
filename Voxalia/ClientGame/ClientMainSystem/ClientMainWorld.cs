@@ -41,14 +41,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// </summary>
         public static void InitWorld()
         {
-            ThePlayer = new Player();
-            Chunks = new Dictionary<Location, Chunk>();
-            Entities = new List<Entity>();
-            Tickers = new List<Entity>();
-            Entities.Add(ThePlayer);
-            Tickers.Add(ThePlayer);
             SysConsole.Output(OutputType.INIT, "Loading physics engine (BulletSharp)...");
-            SysConsole.Output(OutputType.INIT, "Load physics engine...");
             // Choose which broadphase to use - Dbvt = ?
             BroadphaseInterface broadphase = new DbvtBroadphase();
             // Choose collision configuration - default = ?
@@ -63,6 +56,12 @@ namespace Voxalia.ClientGame.ClientMainSystem
             PhysicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collision_configuration);
             // Set the world's general default gravity
             PhysicsWorld.Gravity = new BulletSharp.Vector3(0, 0, -9.8f * 2);
+            ThePlayer = new Player();
+            Chunks = new Dictionary<Location, Chunk>();
+            Entities = new List<Entity>();
+            Tickers = new List<Entity>();
+            Entities.Add(ThePlayer);
+            Tickers.Add(ThePlayer);
         }
 
         /// <summary>
@@ -70,6 +69,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// </summary>
         public static void TickWorld()
         {
+            PhysicsWorld.StepSimulation((float)Delta);
             for (int i = 0; i < Tickers.Count; i++)
             {
                 Tickers[i].Tick();

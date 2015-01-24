@@ -38,7 +38,7 @@ namespace Voxalia.ServerGame.ServerMainSystem
             player.PingMarker = 0;
             player.Send(new PingPacketOut(0));
             player.SendToSecondary(new PingPacketOut(0));
-            player.Reposition(new Location(0, 0, 36));
+            player.Reposition(new Location(1, 1, 50));
         }
 
         /// <summary>

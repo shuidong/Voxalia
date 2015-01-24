@@ -49,6 +49,7 @@ namespace Voxalia.ClientGame.CommandSystem
             CommandSystem.RegisterCommand(new ForwardCommand());
             CommandSystem.RegisterCommand(new LeftwardCommand());
             CommandSystem.RegisterCommand(new RightwardCommand());
+            CommandSystem.RegisterCommand(new UpwardCommand());
         }
 
         /// <summary>

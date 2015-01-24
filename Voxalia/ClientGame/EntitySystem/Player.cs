@@ -20,7 +20,7 @@ namespace Voxalia.ClientGame.EntitySystem
         /// <summary>
         /// Half the size of the player by default.
         /// </summary>
-        public static Location DefaultHalfSize = new Location(0.6f, 1.5f, 0.6f);
+        public static Location DefaultHalfSize = new Location(0.6f, 0.6f, 1.5f);
 
         /// <summary>
         /// Whether the player is trying to move forward.
@@ -67,13 +67,71 @@ namespace Voxalia.ClientGame.EntitySystem
             : base(true)
         {
             Position = new Location(0, 0, 40);
+            halfX = (float)DefaultHalfSize.X;
+            halfY = (float)DefaultHalfSize.Y;
+            halfZ = (float)DefaultHalfSize.Z;
+            SpawnInternal();
         }
+
+        /// <summary>
+        /// Sets the velocity of the player.
+        /// </summary>
+        /// <param name="loc">The velocity</param>
+        public void SetVelocity(Location loc)
+        {
+            Console.WriteLine("SETVEL: " + loc);
+            Body.LinearVelocity = loc.ToBVector();
+        }
+
+        void SpawnInternal()
+        {
+            CollisionShape cshape = new BoxShape(halfX, halfY, halfZ);
+            DefaultMotionState motstate;
+            motstate = new DefaultMotionState(Matrix.Translation(Position.ToBVector()));
+            RigidBodyConstructionInfo coninfo;
+            coninfo = new RigidBodyConstructionInfo(Mass, motstate, cshape);
+            coninfo.AngularDamping = 1;
+            Body = new RigidBody(coninfo);
+            Body.Friction = 1f;
+            ClientMain.PhysicsWorld.AddRigidBody(Body);
+            if (!Gravity.IsNaN())
+            {
+                Body.Gravity = Gravity.ToBVector();
+            }
+            Body.LinearVelocity = LinearVelocity.ToBVector();
+            Body.Activate();
+            //Body.CollisionFlags = CollisionFlags.KinematicObject;
+        }
+
+        Location GetBodyPosition()
+        {
+            Vector3 vec = Body.WorldTransform.Origin;
+            return new Location(vec.X, vec.Y, vec.Z);
+        }
+
+        /// <summary>
+        /// Set the position of the entity.
+        /// </summary>
+        public void SetPosition(Location pos)
+        {
+            Console.WriteLine("SETPOS: " + pos);
+            Body.WorldTransform = Matrix.Translation(pos.ToBVector());
+            Position = pos;
+        }
+
+        float halfX;
+        float halfY;
+        float halfZ;
+        float Mass = 5;
+        RigidBody Body;
+        Location Gravity = Location.NaN;
+        Location LinearVelocity = Location.Zero;
 
         /// <summary>
         /// Ticks the movement of the player.
         /// </summary>
         /// <param name="delta">How much time has passed since the last TickMovement</param>
-        public void TickMovement(double delta)
+        public void TickMovement(double delta, bool custom = false)
         {
             while (Direction.X < 0)
             {
@@ -108,18 +166,50 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement.X = -1;
             }
+            if (Upward)
+            {
+                Body.ApplyCentralImpulse(Vector3.UnitZ * 50);
+            }
             if (movement.LengthSquared() > 0)
             {
-                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
+                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180);//, Direction.Y * Utilities.PI180);
             }
-            Location target = Position + movement * delta * 30;
+            Body.ApplyCentralImpulse((movement * delta * 30 * Mass).ToBVector());
+            Body.Activate();
+            /*Location target = Position + movement * delta * 30;
             if (target != Position)
             {
                 // TODO: Better handling (Based on impact normal)
-                Position = Collision.RayTrace(Position, new Location(target.X, Position.Y, Position.Z), true);
-                Position = Collision.RayTrace(Position, new Location(Position.X, target.Y, Position.Z), true);
-                Position = Collision.RayTrace(Position, new Location(Position.X, Position.Y, target.Z), true);
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), true);
+            }*/
+            if (custom)
+            {
+                foreach (Entity e in ClientMain.Entities)
+                {
+                    e.Freeze();
+                }
+                Unfreeze();
+                ClientMain.PhysicsWorld.StepSimulation((float)delta);
+                foreach (Entity e in ClientMain.Entities)
+                {
+                    e.Unfreeze();
+                }
             }
+            Position = GetBodyPosition();
+        }
+
+        ActivationState prefeeze;
+        public override void Freeze()
+        {
+            prefeeze = Body.ActivationState;
+            Body.ForceActivationState(ActivationState.DisableSimulation);
+        }
+
+        public override void Unfreeze()
+        {
+            Body.ForceActivationState(prefeeze);
         }
 
         public override void Tick()
@@ -135,7 +225,7 @@ namespace Voxalia.ClientGame.EntitySystem
                 || Upward != pUpward || Downward != pDownward
                 || Direction.X != pDirection.X
                 || Direction.Y != pDirection.Y)
-                || ltime > 0.1)
+                || ltime >= 0.1)
             {
                 pForward = Forward;
                 pBackward = Backward;

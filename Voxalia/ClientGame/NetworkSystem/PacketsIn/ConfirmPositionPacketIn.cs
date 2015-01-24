@@ -15,25 +15,27 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
     {
         Location position;
 
+        Location velocity;
+
         double Time;
 
         public override bool ReadBytes(byte[] data)
         {
-            if (data.Length != 12 + 8)
+            if (data.Length != 12 + 8 + 12)
             {
                 return false;
             }
             position = Location.FromBytes(data, 0);
             Time = BitConverter.ToDouble(data, 12);
+            velocity = Location.FromBytes(data, 12 + 8);
             return true;
         }
 
         public override void Apply()
         {
-            return; //TODO: Remove after adding physics to server.
             if (Time > ClientMain.GlobalTickTime)
             {
-                ClientMain.ThePlayer.Position = position;
+                ClientMain.ThePlayer.SetPosition(position);
             }
             else
             {
@@ -49,16 +51,17 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                         ClientMain.ThePlayer.Rightward = ms.Rightward;
                         ClientMain.ThePlayer.Upward = ms.Upward;
                         ClientMain.ThePlayer.Downward = ms.Downward;
-                        ClientMain.ThePlayer.Position = ms.Position;
                         ClientMain.ThePlayer.Direction = ms.Direction;
-                        double ctime = ms.Time;
+                        ClientMain.ThePlayer.SetPosition(position);
+                        ClientMain.ThePlayer.SetVelocity(velocity);
+                        double ctime = Time;
                         double Target = Time - ctime;
                         while (Target > 1d / 60d)
                         {
-                            ClientMain.ThePlayer.TickMovement(1d / 60d);
+                            ClientMain.ThePlayer.TickMovement(1d / 60d, true);
                             Target -= 1d / 60d;
                         }
-                        ClientMain.ThePlayer.TickMovement(Target);
+                        ClientMain.ThePlayer.TickMovement(Target, true);
                         ctime = Time;
                         for (int x = i + 1; x < ClientMain.ThePlayer.MoveStates.Count; x++)
                         {
@@ -66,10 +69,10 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                             Target = ms.Time - ctime;
                             while (Target > 1f / 60f)
                             {
-                                ClientMain.ThePlayer.TickMovement(1d / 60d);
+                                ClientMain.ThePlayer.TickMovement(1d / 60d, true);
                                 Target -= 1d / 60d;
                             }
-                            ClientMain.ThePlayer.TickMovement(Target);
+                            ClientMain.ThePlayer.TickMovement(Target, true);
                             ctime = ms.Time;
                             ClientMain.ThePlayer.Forward = ms.Forward;
                             ClientMain.ThePlayer.Backward = ms.Backward;

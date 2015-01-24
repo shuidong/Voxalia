@@ -8,11 +8,17 @@ using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.ServerGame.ServerMainSystem;
 using Voxalia.Shared;
 using Voxalia.ServerGame.WorldSystem;
+using BulletSharp;
 
 namespace Voxalia.ServerGame.EntitySystem
 {
     public class Player: Entity
     {
+        /// <summary>
+        /// Half the size of the player by default.
+        /// </summary>
+        public static Location DefaultHalfSize = new Location(0.6f, 0.6f, 1.5f);
+
         /// <summary>
         /// Whether the player is trying to move forward.
         /// </summary>
@@ -107,13 +113,83 @@ namespace Voxalia.ServerGame.EntitySystem
         {
             Network = conn;
             Position = new Location(99999f, 99999f, 99999f);
+            halfX = (float)DefaultHalfSize.X;
+            halfY = (float)DefaultHalfSize.Y;
+            halfZ = (float)DefaultHalfSize.Z;
         }
+
+        /// <summary>
+        /// Sets the velocity of the player.
+        /// </summary>
+        /// <param name="loc">The velocity</param>
+        public void SetVelocity(Location loc)
+        {
+            Console.WriteLine("SETVEL: " + loc);
+            Body.LinearVelocity = loc.ToBVector();
+        }
+
+        /// <summary>
+        /// Returns the velocity of the player.
+        /// </summary>
+        /// <returns>The velocity</returns>
+        public Location GetVelocity()
+        {
+            return new Location(Body.LinearVelocity.X, Body.LinearVelocity.Y, Body.LinearVelocity.Z);
+        }
+
+        /// <summary>
+        /// Spawn this player into the physical world.
+        /// </summary>
+        public void SpawnInternal()
+        {
+            SysConsole.Output(OutputType.INFO, "Body spawned!");
+            CollisionShape cshape = new BoxShape(halfX, halfY, halfZ);
+            DefaultMotionState motstate;
+            motstate = new DefaultMotionState(Matrix.Translation(Position.ToBVector()));
+            RigidBodyConstructionInfo coninfo;
+            coninfo = new RigidBodyConstructionInfo(Mass, motstate, cshape);
+            coninfo.AngularDamping = 1;
+            Body = new RigidBody(coninfo);
+            Body.Friction = 1f;
+            InWorld.PhysicsWorld.AddRigidBody(Body);
+            if (!Gravity.IsNaN())
+            {
+                Body.Gravity = Gravity.ToBVector();
+            }
+            Body.LinearVelocity = LinearVelocity.ToBVector();
+            Body.Activate();
+            //Body.CollisionFlags = CollisionFlags.KinematicObject;
+        }
+
+        Location GetBodyPosition()
+        {
+            Vector3 vec = Body.WorldTransform.Origin;
+            return new Location(vec.X, vec.Y, vec.Z);
+        }
+
+        /// <summary>
+        /// Set the position of the entity.
+        /// </summary>
+        public void SetPosition(Location pos)
+        {
+            Body.WorldTransform = Matrix.Translation(pos.ToBVector());
+            Position = pos;
+        }
+
+        float halfX;
+        float halfY;
+        float halfZ;
+        float Mass = 5;
+        RigidBody Body;
+        Location Gravity = Location.NaN;
+        Location LinearVelocity = Location.Zero;
 
         public MoveKeysPacketIn LastMovePacket = null;
         public double LastMovePacketTime = 0;
         public Location LastMovePosition = Location.Zero;
+        public Location LastMoveVelocity = Location.Zero;
 
-        public void TickMovement(double delta)
+        public void TickMovement(double delta, bool custom = false)
         {
             while (Direction.X < 0)
             {
@@ -148,12 +224,62 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 movement.X = -1;
             }
+            if (Upward)
+            {
+                Body.ApplyCentralImpulse(Vector3.UnitZ * 50);
+            }
             if (movement.LengthSquared() > 0)
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Reposition(Position + movement * delta * 30);
+            Body.ApplyCentralImpulse((movement * delta * 30 * Mass).ToBVector());
+            Body.Activate();
+            Position = GetBodyPosition();
+            /*Location target = Position + movement * delta * 30;
+            if (target != Position)
+            {
+                // TODO: Better handling (Based on impact normal)
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), true);
+            }*/
+            if (custom)
+            {
+                foreach (Chunk c in InWorld.LoadedChunks.Values)
+                {
+                    foreach (Entity e in c.Entities)
+                    {
+                        e.Freeze();
+                    }
+                }
+                Unfreeze();
+                Body.Activate();
+                Console.WriteLine("P1:" + GetBodyPosition() + " for " + ((float)delta));
+                InWorld.PhysicsWorld.StepSimulation((float)delta);
+                Console.WriteLine("P2:" + GetBodyPosition());
+                foreach (Chunk c in InWorld.LoadedChunks.Values)
+                {
+                    foreach (Entity e in c.Entities)
+                    {
+                        e.Unfreeze();
+                    }
+                }
+            }
+            Reposition(GetBodyPosition());
         }
+
+        ActivationState prefeeze;
+        public override void Freeze()
+        {
+            prefeeze = Body.ActivationState;
+            Body.ForceActivationState(ActivationState.DisableSimulation);
+        }
+
+        public override void Unfreeze()
+        {
+            Body.ForceActivationState(prefeeze);
+        }
+
 
         public Chunk CurrentChunk = null;
 
@@ -355,7 +481,7 @@ namespace Voxalia.ServerGame.EntitySystem
         List<Location> GetChunksNear(Location pos)
         {
             List<Location> chunks = new List<Location>();
-            // TODO: Spiral algorithm?
+            // TODO: Spiral algorithm? Perhaps trace the player's forward look direction and spawn chunks in a cone that direction!
             chunks.Add(pos + new Location(0, 0, 0));
             chunks.Add(pos + new Location(0, 0, -1));
             chunks.Add(pos + new Location(0, 0, -2));
@@ -408,13 +534,17 @@ namespace Voxalia.ServerGame.EntitySystem
                 List<Location> newchunks = GetChunksNear(newpos);
                 for (int i = 0; i < oldchunks.Count; i++)
                 {
-                    newchunks.Remove(oldchunks[i]);
+                    if (!newchunks.Remove(oldchunks[i]))
+                    {
+                        ToSend.Remove(oldchunks[i]);
+                    }
                 }
                 for (int i = 0; i < newchunks.Count; i++)
                 {
                     ToSend.Add(newchunks[i]);
                 }
             }
+            Body.WorldTransform = Matrix.Translation(pos.ToBVector());
             base.Reposition(pos);
         }
     }

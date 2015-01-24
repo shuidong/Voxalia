@@ -35,8 +35,8 @@ namespace Voxalia.ClientGame.UISystem
             BindKey(Key.S, "+backward");
             BindKey(Key.A, "+leftward");
             BindKey(Key.D, "+rightward");
-            BindKey(Key.C, "+down");
-            BindKey(Key.Space, "+up");
+            BindKey(Key.C, "+downward");
+            BindKey(Key.Space, "+upward");
             BindKey(Key.LShift, "+walk");
             BindKey(Key.F12, "screenshot");
             BindKey(Key.F35, "+attack");

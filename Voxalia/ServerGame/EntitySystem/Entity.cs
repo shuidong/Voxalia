@@ -74,5 +74,19 @@ namespace Voxalia.ServerGame.EntitySystem
                 InWorld.Spawn(this);
             }
         }
+
+        /// <summary>
+        /// Freezes the entity.
+        /// </summary>
+        public virtual void Freeze()
+        {
+        }
+
+        /// <summary>
+        /// Unfreezes the entity.
+        /// </summary>
+        public virtual void Unfreeze()
+        {
+        }
     }
 }

@@ -95,7 +95,6 @@ namespace Voxalia.ClientGame.WorldSystem
 
         public void FromBytes(byte[] data)
         {
-            SysConsole.Output(OutputType.INFO, "Prepare chunk at " + X + ", " + Y + ", " + Z);
             if (data.Length == 30 * 30 * 30 * 2)
             {
                 int index = 0;
@@ -226,6 +225,8 @@ namespace Voxalia.ClientGame.WorldSystem
                 }
                 VBOs[i].Build();
             }
+            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(0, 0, 0));
+            RigidBodyConstructionInfo rigid_body_ci;
             if (Body != null)
             {
                 ClientMain.PhysicsWorld.RemoveRigidBody(Body);
@@ -235,8 +236,6 @@ namespace Voxalia.ClientGame.WorldSystem
                 Body = null;
                 return;
             }
-            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(0, 0, 0));
-            RigidBodyConstructionInfo rigid_body_ci;
             BvhTriangleMeshShape trianglemesh = new BvhTriangleMeshShape(mesh, false);
             trianglemesh.BuildOptimizedBvh();
             rigid_body_ci = new RigidBodyConstructionInfo(0f, body_motion_state, trianglemesh);

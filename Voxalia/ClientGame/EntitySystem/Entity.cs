@@ -57,5 +57,19 @@ namespace Voxalia.ClientGame.EntitySystem
         /// Renders the object into the 3D world.
         /// </summary>
         public abstract void Render3D();
+
+        /// <summary>
+        /// Freezes the entity.
+        /// </summary>
+        public virtual void Freeze()
+        {
+        }
+
+        /// <summary>
+        /// Unfreezes the entity.
+        /// </summary>
+        public virtual void Unfreeze()
+        {
+        }
     }
 }

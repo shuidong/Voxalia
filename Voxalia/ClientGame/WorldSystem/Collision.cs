@@ -58,5 +58,27 @@ namespace Voxalia.ClientGame.WorldSystem
             }
             return hit + (bounceback ? (start - end).Normalize() * 0.001f: Location.Zero);
         }
+
+        /// <summary>
+        /// Returns the closest to the end a box-ray can get through the physical world.
+        /// </summary>
+        /// <param name="start">The starting location</param>
+        /// <param name="end">The ideal ending location</param>
+        /// <param name="halfextent">Half the size of the box</param>
+        /// <returns>The actual ending location of a ray trace</returns>
+        public static Location BoxRayTrace(Location halfextent, Location start, Location end, bool bounceback = false)
+        {
+            Vector3 s = start.ToBVector();
+            Vector3 e = end.ToBVector();
+            BoxShape box = new BoxShape(halfextent.ToBVector());
+            CollisionWorld.ClosestConvexResultCallback rcc = new CollisionWorld.ClosestConvexResultCallback(s, e);
+            ClientMain.PhysicsWorld.ConvexSweepTest(box, Matrix.Translation(s), Matrix.Translation(e), rcc);
+            Location hit = new Location(rcc.HitPointWorld.X, rcc.HitPointWorld.Y, rcc.HitPointWorld.Z);
+            if (hit.IsNaN() || !rcc.HasHit)
+            {
+                return end;
+            }
+            return hit + (bounceback ? (start - end).Normalize() * 0.001f : Location.Zero);
+        }
     }
 }
