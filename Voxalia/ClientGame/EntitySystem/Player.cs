@@ -111,16 +111,19 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement.X = -1;
             }
-            if (Upward)
+            if (Upward && Collision.Box(Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01)
             {
-                Velocity.Z = 50;
+                Velocity.Z += 10;
             }
             if (movement.LengthSquared() > 0)
             {
-                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
+                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180);
             }
-            Velocity += movement * delta * 30;
-            Velocity += Location.UnitZ * delta * -9.8 / 0.5666; // 1 unit = 0.5666 meters
+            bool slow = false;
+            float MoveSpeed = 15;
+            Velocity.X += ((movement.X * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.X) * delta * 8;
+            Velocity.Y += ((movement.Y * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.Y) * delta * 8;
+            Velocity.Z += delta * -9.8 / 0.5666; // 1 unit = 0.5666 meters
             Location ppos = Position;
             Location target = Position + Velocity * delta;
             if (target != Position)

@@ -31,16 +31,16 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
             return true;
         }
 
-        //static bool flip = false;
+        static bool flip = false;
         public override void Apply()
         {
-            /*ClientMain.SpawnEntity(new Dot() { Position = position });
+            ClientMain.SpawnEntity(new Dot() { Position = position });
             if (flip)
             {
                 return;
             }
             flip = true;
-            SysConsole.Output(OutputType.INFO, "Receive packet: " + position + ", " + velocity);*/
+            SysConsole.Output(OutputType.INFO, "Receive packet: " + position + ", " + velocity);
             if (Time > ClientMain.GlobalTickTime)
             {
                 ClientMain.ThePlayer.Position = position;

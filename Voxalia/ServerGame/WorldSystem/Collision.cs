@@ -37,7 +37,37 @@ namespace Voxalia.ServerGame.WorldSystem
         /// <returns>Whether there is anything solid within the block</returns>
         public static bool Box(World world, Location min, Location max)
         {
-            return false; // TODO
+            foreach (KeyValuePair<Location, Chunk> chunk in world.LoadedChunks)
+            {
+                Location cpos = new Location(chunk.Value.X * 30, chunk.Value.Y * 30, chunk.Value.Z * 30);
+                if (CollisionUtil.BoxContains(cpos, cpos + new Location(30), min, max))
+                {
+                    // TODO: Less stupid code.
+                    for (int z = 0; z < 30; z++)
+                    {
+                        if (CollisionUtil.BoxContains(cpos + new Location(0, 0, z), cpos + new Location(30, 30, z + 1), min, max))
+                        {
+                            for (int x = 0; x < 30; x++)
+                            {
+                                if (CollisionUtil.BoxContains(cpos + new Location(x, 0, z), cpos + new Location(x + 1, 30, z + 1), min, max))
+                                {
+                                    for (int y = 0; y < 30; y++)
+                                    {
+                                        if (((Material)chunk.Value.Blocks[x, y, z].Type).OccupiesWholeBlock())
+                                        {
+                                            if (CollisionUtil.BoxContains(cpos + new Location(x, y, z), cpos + new Location(x + 1, y + 1, z + 1), min, max))
+                                            {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -76,7 +106,8 @@ namespace Voxalia.ServerGame.WorldSystem
                                     {
                                         if (((Material)chunk.Value.Blocks[x, y, z].Type).OccupiesWholeBlock())
                                         {
-                                            Location hit = CollisionUtil.AABBClosestBox(new Location(cpos.X + x, cpos.Y + y, cpos.Z + z), Location.Zero, Location.One, mins, maxes, start, tend, out normal);
+                                            Location hit = CollisionUtil.AABBClosestBox(new Location(cpos.X + x, cpos.Y + y, cpos.Z + z),
+                                                Location.Zero, Location.One, mins, maxes, start, tend, out normal);
                                             if (!hit.IsNaN())
                                             {
                                                 fnormal = normal;
@@ -90,7 +121,7 @@ namespace Voxalia.ServerGame.WorldSystem
                     }
                 }
             }
-            return tend + (bounceback ? fnormal * 0.01f : Location.Zero);
+            return tend + (bounceback ? fnormal * 0.001f : Location.Zero);
         }
 
     }
