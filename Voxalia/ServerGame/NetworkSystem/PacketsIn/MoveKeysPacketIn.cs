@@ -43,7 +43,11 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
         {
             if (Time > ServerMain.GlobalTickTime + 1.5)
             {
-                SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time > real time");
+                if (ServerMain.GlobalTickTime > Sender.LastMoveWarningTime + 1)
+                {
+                    SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time > real time");
+                    Sender.LastMoveWarningTime = ServerMain.GlobalTickTime;
+                }
                 return; // Discard (weird ticking miscount)
             }
             if (Time > ServerMain.GlobalTickTime)
@@ -52,15 +56,23 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             }
             if (Time < ServerMain.GlobalTickTime - 1.5)
             {
-                SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < real time");
+                if (ServerMain.GlobalTickTime > Sender.LastMoveWarningTime + 1)
+                {
+                    SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < real time");
+                    Sender.LastMoveWarningTime = ServerMain.GlobalTickTime;
+                }
                 return; // Discard (slow networking)
             }
             if (Sender.LastMovePacket != null)
             {
                 if (Time < Sender.LastMovePacketTime - 0.1)
                 {
-                    SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < last time");
-                    return; // Discard (fully invalid packet!)
+                    if (ServerMain.GlobalTickTime > Sender.LastMoveWarningTime + 1)
+                    {
+                        SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < last time");
+                        Sender.LastMoveWarningTime = ServerMain.GlobalTickTime;
+                    }
+                    return; // Discard (fully invalid packet, or client ticked horribly wrong!)
                 }
                 Sender.LastMovePacket.ApplyInternal();
                 Sender.Reposition(Sender.LastMovePosition);

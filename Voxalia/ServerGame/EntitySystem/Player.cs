@@ -109,6 +109,11 @@ namespace Voxalia.ServerGame.EntitySystem
         public double JoinTime;
 
         /// <summary>
+        /// When was the last time the MoveKeysPacketIn showed a warning for this client (if ever).
+        /// </summary>
+        public double LastMoveWarningTime = 0;
+
+        /// <summary>
         /// Constructs a player entity.
         /// </summary>
         /// <param name="conn">The network connection to use</param>
