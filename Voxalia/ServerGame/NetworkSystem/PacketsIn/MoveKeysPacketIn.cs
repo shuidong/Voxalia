@@ -41,20 +41,30 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
-            if (Time > ServerMain.GlobalTickTime)
+            if (Time > ServerMain.GlobalTickTime + 1.5)
             {
-                return; // Discard
+                SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time > real time");
+                return; // Discard (weird ticking miscount)
+            }
+            if (Time < ServerMain.GlobalTickTime - 1.5)
+            {
+                SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < real time");
+                return; // Discard (slow networking)
             }
             if (Sender.LastMovePacket != null)
             {
-                if (Time < Sender.LastMovePacketTime)
+                if (Time < Sender.LastMovePacketTime - 0.1)
                 {
-                    return; // Discard
+                    SysConsole.Output(OutputType.WARNING, "Client " + Sender.Username + " sent invalid move packet: time < last time");
+                    return; // Discard (fully invalid packet!)
                 }
-                Sender.LastMovePacket.ApplyInternal();
-                Sender.Reposition(Sender.LastMovePosition);
-                Sender.Velocity = Sender.LastMoveVelocity;
-                Sender.TickMovement(Time - Sender.LastMovePacketTime, true);
+                if (Time >= Sender.LastMovePacketTime)
+                {
+                    Sender.LastMovePacket.ApplyInternal();
+                    Sender.Reposition(Sender.LastMovePosition);
+                    Sender.Velocity = Sender.LastMoveVelocity;
+                    Sender.TickMovement(Time - Sender.LastMovePacketTime, true);
+                }
             }
             ApplyInternal();
             Sender.LastMovePacketTime = Time;

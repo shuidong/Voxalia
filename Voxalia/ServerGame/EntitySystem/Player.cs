@@ -193,7 +193,7 @@ namespace Voxalia.ServerGame.EntitySystem
                 return;
             }
             TickMovement(ServerMain.Delta);
-            sendtimer += ServerMain.Delta;
+            // TODO: Better tracking of what chunks to send
             List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));
             foreach (Location loc in locs)
             {
@@ -211,15 +211,17 @@ namespace Voxalia.ServerGame.EntitySystem
                     ChunksAware.RemoveAt(i--);
                 }
             }
+            sendtimer += ServerMain.Delta;
             if (sendtimer >= 0.05f)
             {
-                sendtimer = 0f;
+                sendtimer = 0.05f;
                 if (ToSend.Count > 0)
                 {
                     SendToSecondary(new ChunkPacketOut(InWorld.LoadChunk(ToSend[0])));
                     ToSend.RemoveAt(0);
                 }
             }
+            // Handle networking
             if (Network.received > 4)
             {
                 while (true)

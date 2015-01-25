@@ -20,6 +20,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
         /// </summary>
         public static double GlobalTickTime = 0;
 
+        static void OncePerSecondTick()
+        {
+        }
+
+        static double secondTracker = 0;
+
         /// <summary>
         /// Ticks the server, include the network,
         /// and all worlds (and all chunks within those [and all entities within those]).
@@ -39,6 +45,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
             }
             try
             {
+                secondTracker += Delta;
+                if (secondTracker >= 1.0)
+                {
+                    secondTracker -= 1.0;
+                    OncePerSecondTick();
+                }
                 for (int i = 0; i < Worlds.Count; i++)
                 {
                     Worlds[i].Tick();

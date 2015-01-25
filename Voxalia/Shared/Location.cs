@@ -155,6 +155,7 @@ namespace Voxalia.Shared
 
         /// <summary>
         /// Converts the Location to a simple byte[] representation.
+        /// Contains 12 bytes.
         /// Inverts .FromBytes()
         /// </summary>
         /// <returns></returns>
@@ -274,6 +275,7 @@ namespace Voxalia.Shared
 
         /// <summary>
         /// Reads the byte array to a Location object.
+        /// Expects 12 bytes.
         /// Inverts .ToBytes()
         /// </summary>
         /// <param name="bytes">The bytes to read</param>
