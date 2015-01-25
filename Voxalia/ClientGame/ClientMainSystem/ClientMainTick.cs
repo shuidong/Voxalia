@@ -8,6 +8,7 @@ using Voxalia.ClientGame.UISystem;
 using Voxalia.ClientGame.CommandSystem;
 using Voxalia.ClientGame.NetworkSystem;
 using Voxalia.ClientGame.EntitySystem;
+using System.Diagnostics;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -23,6 +24,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// </summary>
         public static double GlobalTickTime = 0;
 
+        static Stopwatch Ticker = new Stopwatch();
+
         /// <summary>
         /// The primary tick entry point from the OpenGL window.
         /// </summary>
@@ -30,9 +33,11 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <param name="e">The frame event details, including delta timing</param>
         static void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
+            Delta = ((double)Ticker.ElapsedTicks) / ((double)Stopwatch.Frequency);
+            Ticker.Reset();
+            Ticker.Start();
             try
             {
-                Delta = e.Time;
                 GlobalTickTime += Delta;
                 MouseHandler.Tick();
                 KeyHandler.Tick();

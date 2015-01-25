@@ -143,9 +143,10 @@ namespace Voxalia.ClientGame.EntitySystem
             if (target != Position)
             {
                 // TODO: Better handling (Based on impact normal)
-                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), true);
-                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), true);
-                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), true);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, target.Y, Position.Z), 1);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), 1);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), 1);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), 1);
                 Velocity = (Position - ppos) / delta;
             }
         }

@@ -77,7 +77,7 @@ namespace Voxalia.ClientGame.WorldSystem
         /// <param name="maxes">The higher part of the box</param>
         /// <param name="bounceback">Whether to jump the collision point back a little</param>
         /// <returns>The actual ending location of a ray trace</returns>
-        public static Location BoxRayTrace(Location mins, Location maxes, Location start, Location end, bool bounceback = false)
+        public static Location BoxRayTrace(Location mins, Location maxes, Location start, Location end, float bounceback = 0)
         {
             Location tend = end;
             Location normal;
@@ -118,7 +118,7 @@ namespace Voxalia.ClientGame.WorldSystem
                     }
                 }
             }
-            return tend + (bounceback ? fnormal * 0.001f : Location.Zero);
+            return tend + bounceback * fnormal * 0.001f;
         }
     }
 }

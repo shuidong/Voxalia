@@ -172,10 +172,6 @@ namespace Voxalia.ServerGame.EntitySystem
                     Velocity.Z += 10;
                     Jumped = true;
                 }
-                else
-                {
-                    SysConsole.Output(OutputType.INFO, "Jumped: " + Jumped + ", on_ground: " + on_ground + ", vel.Z" + Velocity.Z);
-                }
             }
             else
             {
@@ -196,13 +192,16 @@ namespace Voxalia.ServerGame.EntitySystem
             if (target != pos)
             {
                 // TODO: Better handling (Based on impact normal)
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(target.X, pos.Y, pos.Z), true);
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, target.Y, pos.Z), true);
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, pos.Y, target.Z), true);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(target.X, target.Y, pos.Z), 1);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(target.X, pos.Y, pos.Z), 1);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, target.Y, pos.Z), 1);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, pos.Y, target.Z), 1);
                 Reposition(pos);
                 Velocity = (pos - ppos) / delta;
             }
         }
+
+        public List<MoveKeysPacketIn> PacketsToApply = new List<MoveKeysPacketIn>();
 
         public Chunk CurrentChunk = null;
 
@@ -214,6 +213,12 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 return;
             }
+            int pc = PacketsToApply.Count;
+            for (int i = 0; i < pc; i++)
+            {
+                PacketsToApply[i].Apply();
+            }
+            PacketsToApply.RemoveRange(0, pc);
             TickMovement(ServerMain.Delta);
             // TODO: Better tracking of what chunks to send
             List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));
