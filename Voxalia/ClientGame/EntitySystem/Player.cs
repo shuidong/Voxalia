@@ -120,6 +120,7 @@ namespace Voxalia.ClientGame.EntitySystem
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
             Velocity += movement * delta * 30;
+            Velocity += Location.UnitZ * delta * -9.8 / 0.5666; // 1 unit = 0.5666 meters
             Location ppos = Position;
             Location target = Position + Velocity * delta;
             if (target != Position)
