@@ -183,6 +183,8 @@ namespace Voxalia.ServerGame.EntitySystem
 
         public Chunk CurrentChunk = null;
 
+        List<Location> ChunksAware = new List<Location>();
+
         public override void Tick()
         {
             if (!IsValid)
@@ -191,7 +193,15 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             TickMovement(ServerMain.Delta);
             sendtimer += ServerMain.Delta;
-            if (sendtimer >= 0.1f)
+            foreach (Location loc in GetChunksNear(World.GetChunkLocation(Position)))
+            {
+                if (!ChunksAware.Contains(loc))
+                {
+                    ToSend.Add(loc);
+                    ChunksAware.Add(loc);
+                }
+            }
+            if (sendtimer >= 0.05f)
             {
                 sendtimer = 0f;
                 if (ToSend.Count > 0)
@@ -423,28 +433,5 @@ namespace Voxalia.ServerGame.EntitySystem
         List<Location> ToSend = new List<Location>();
 
         double sendtimer = 0;
-
-        public override void Reposition(Location pos)
-        {
-            Location oldpos = World.GetChunkLocation(Position);
-            Location newpos = World.GetChunkLocation(pos);
-            if (oldpos != newpos)
-            {
-                List<Location> oldchunks = GetChunksNear(oldpos);
-                List<Location> newchunks = GetChunksNear(newpos);
-                for (int i = 0; i < oldchunks.Count; i++)
-                {
-                    if (!newchunks.Remove(oldchunks[i]))
-                    {
-                        ToSend.Remove(oldchunks[i]);
-                    }
-                }
-                for (int i = 0; i < newchunks.Count; i++)
-                {
-                    ToSend.Add(newchunks[i]);
-                }
-            }
-            base.Reposition(pos);
-        }
     }
 }
