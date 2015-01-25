@@ -193,12 +193,21 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             TickMovement(ServerMain.Delta);
             sendtimer += ServerMain.Delta;
-            foreach (Location loc in GetChunksNear(World.GetChunkLocation(Position)))
+            List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));
+            foreach (Location loc in locs)
             {
                 if (!ChunksAware.Contains(loc))
                 {
                     ToSend.Add(loc);
                     ChunksAware.Add(loc);
+                }
+            }
+            for (int i = 0; i < ChunksAware.Count; i++)
+            {
+                if (!locs.Contains(ChunksAware[i]))
+                {
+                    ToSend.Remove(ChunksAware[i]);
+                    ChunksAware.RemoveAt(i--);
                 }
             }
             if (sendtimer >= 0.05f)
@@ -388,7 +397,7 @@ namespace Voxalia.ServerGame.EntitySystem
             }
         }
 
-        List<Location> GetChunksNear(Location pos)
+        static List<Location> GetChunksNear(Location pos)
         {
             List<Location> chunks = new List<Location>();
             // TODO: Spiral algorithm? Perhaps trace the player's forward look direction and spawn chunks in a cone that direction!

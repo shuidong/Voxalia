@@ -52,6 +52,33 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 Tickers[i].Tick();
             }
+            // Remove far away chunks
+            List<Location> locs = GetChunksNear(GetChunkLocation(ThePlayer.Position));
+            List<Chunk> chunks = new List<Chunk>(Chunks.Values);
+            for (int i = 0; i < chunks.Count; i++)
+            {
+                Location cur = new Location(chunks[i].X, chunks[i].Y, chunks[i].Z);
+                if (!locs.Contains(cur))
+                {
+                    Chunks.Remove(cur);
+                }
+            }
+        }
+
+        static List<Location> GetChunksNear(Location pos)
+        {
+            List<Location> chunks = new List<Location>();
+            for (int x = -3; x < 4; x++)
+            {
+                for (int y = -3; y < 4; y++)
+                {
+                    for (int z = -3; z < 4; z++)
+                    {
+                        chunks.Add(pos + new Location(x, y, z));
+                    }
+                }
+            }
+            return chunks;
         }
 
         /// <summary>
