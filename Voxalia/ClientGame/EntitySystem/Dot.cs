@@ -6,6 +6,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Voxalia.ClientGame.UISystem;
+using Voxalia.ClientGame.ClientMainSystem;
 
 namespace Voxalia.ClientGame.EntitySystem
 {
@@ -30,9 +31,21 @@ namespace Voxalia.ClientGame.EntitySystem
             GL.TexCoord2(0, 1);
             GL.Vertex3(Position.X, Position.Y + 0.01, Position.Z);
             GL.TexCoord2(1, 1);
-            GL.Vertex3(Position.X + 0.01, Position.Y + 0.01, Position.Z);
+            GL.Vertex3(Position.X + 0.1, Position.Y + 0.1, Position.Z);
             GL.TexCoord2(1, 0);
-            GL.Vertex3(Position.X + 0.01, Position.Y, Position.Z);
+            GL.Vertex3(Position.X + 0.1, Position.Y, Position.Z);
+            GL.TexCoord2(1, 0);
+            GL.Vertex3(Position.X + 0.1, Position.Y, Position.Z);
+            GL.TexCoord2(1, 1);
+            GL.Vertex3(Position.X + 0.1, Position.Y + 0.1, Position.Z);
+            GL.TexCoord2(0, 1);
+            GL.Vertex3(Position.X, Position.Y + 0.01, Position.Z);
+            GL.TexCoord2(0, 0);
+            GL.Vertex3(Position.X, Position.Y, Position.Z);
+            GL.End();
+            GL.Begin(PrimitiveType.Lines);
+            GL.Vertex3(ClientMain.ThePlayer.Position.ToOVector());
+            GL.Vertex3(Position.ToOVector());
             GL.End();
         }
     }

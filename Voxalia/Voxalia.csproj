@@ -129,6 +129,7 @@
     <Compile Include="ServerGame\WorldSystem\Chunk.cs" />
     <Compile Include="ServerGame\WorldSystem\Collision.cs" />
     <Compile Include="ServerGame\WorldSystem\InternalBlockData.cs" />
+    <Compile Include="Shared\CollisionUtil.cs" />
     <Compile Include="Shared\ConsoleHandler.cs" />
     <Compile Include="Shared\DataStream.cs" />
     <Compile Include="Shared\FileHandler.cs" />

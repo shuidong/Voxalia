@@ -173,9 +173,9 @@ namespace Voxalia.ServerGame.EntitySystem
             if (target != pos)
             {
                 // TODO: Better handling (Based on impact normal)
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, pos.Y, pos.Z), true);
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(pos.X, target.Y, pos.Z), true);
-                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(pos.X, pos.Y, target.Z), true);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(target.X, pos.Y, pos.Z), true);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, target.Y, pos.Z), true);
+                pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, pos, new Location(pos.X, pos.Y, target.Z), true);
                 Reposition(pos);
                 Velocity = (pos - ppos) / delta;
             }
