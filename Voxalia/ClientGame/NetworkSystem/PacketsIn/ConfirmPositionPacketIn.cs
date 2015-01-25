@@ -19,21 +19,25 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         double Time;
 
+        bool Jumped;
+
         public override bool ReadBytes(byte[] data)
         {
-            if (data.Length != 12 + 8 + 12)
+            if (data.Length != 12 + 8 + 12 + 1)
             {
                 return false;
             }
             position = Location.FromBytes(data, 0);
             Time = BitConverter.ToDouble(data, 12);
             velocity = Location.FromBytes(data, 12 + 8);
+            Jumped = (data[12 + 8 + 12] & 1) != 0;
             return true;
         }
 
-        static bool flip = false;
+        //static bool flip = false;
         public override void Apply()
         {
+            /*
             ClientMain.SpawnEntity(new Dot() { Position = position });
             if (flip)
             {
@@ -41,6 +45,7 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
             }
             flip = true;
             SysConsole.Output(OutputType.INFO, "Receive packet: " + position + ", " + velocity);
+            */
             if (Time > ClientMain.GlobalTickTime)
             {
                 ClientMain.ThePlayer.Position = position;
@@ -62,6 +67,7 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                         ClientMain.ThePlayer.Direction = ms.Direction;
                         ClientMain.ThePlayer.Position = position;
                         ClientMain.ThePlayer.Velocity = velocity;
+                        ClientMain.ThePlayer.Jumped = Jumped;
                         double ctime = Time;
                         double Target = Time - ctime;
                         while (Target > 1d / 60d)

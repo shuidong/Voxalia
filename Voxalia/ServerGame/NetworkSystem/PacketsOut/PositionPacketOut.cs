@@ -15,10 +15,12 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsOut
         public PositionPacketOut(Player sender, double time)
         {
             ID = 2;
-            Data = new byte[12 + 8 + 12];
+            Data = new byte[12 + 8 + 12 + 1];
             sender.Position.ToBytes().CopyTo(Data, 0);
             BitConverter.GetBytes(time).CopyTo(Data, 12);
             sender.Velocity.ToBytes().CopyTo(Data, 12 + 8);
+            Data[12 + 8 + 12] = 0;
+            Data[12 + 8 + 12] |= (byte)(sender.Jumped ? 1 : 0);
         }
     }
 }

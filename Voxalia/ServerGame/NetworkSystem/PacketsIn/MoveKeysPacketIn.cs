@@ -63,6 +63,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
                     Sender.LastMovePacket.ApplyInternal();
                     Sender.Reposition(Sender.LastMovePosition);
                     Sender.Velocity = Sender.LastMoveVelocity;
+                    Sender.Jumped = Sender.LastJumped;
                     Sender.TickMovement(Time - Sender.LastMovePacketTime, true);
                 }
             }
@@ -70,6 +71,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             Sender.LastMovePacketTime = Time;
             Sender.LastMovePosition = Sender.Position;
             Sender.LastMoveVelocity = Sender.Velocity;
+            Sender.LastJumped = Sender.Jumped;
             Sender.Send(new PositionPacketOut(Sender, Time));
             Sender.LastMovePacket = this;
         }

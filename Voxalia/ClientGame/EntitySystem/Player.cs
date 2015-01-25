@@ -57,6 +57,11 @@ namespace Voxalia.ClientGame.EntitySystem
         public bool Downward = false;
         bool pDownward = false;
 
+        /// <summary>
+        /// Whether the player has jumped since the last time they pressed space.
+        /// </summary>
+        public bool Jumped = false;
+
         Location pDirection = Location.Zero;
 
         /// <summary>
@@ -111,9 +116,18 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement.X = -1;
             }
-            if (Upward && Collision.Box(Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01)
+            bool on_ground = Collision.Box(Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01;
+            if (Upward)
             {
-                Velocity.Z += 10;
+                if (on_ground && !Jumped)
+                {
+                    Velocity.Z += 10;
+                    Jumped = true;
+                }
+            }
+            else
+            {
+                Jumped = false;
             }
             if (movement.LengthSquared() > 0)
             {
@@ -190,6 +204,7 @@ namespace Voxalia.ClientGame.EntitySystem
                                              Upward = Upward,
                                              Downward = Downward,
                                              Direction = Direction,
+                                             Jumped = Jumped,
                                              Time = ClientMain.GlobalTickTime
             });
         }
@@ -210,5 +225,6 @@ namespace Voxalia.ClientGame.EntitySystem
         public bool Downward;
         public Location Direction;
         public double Time;
+        public bool Jumped;
     }
 }

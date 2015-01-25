@@ -39,6 +39,11 @@ namespace Voxalia.ServerGame.EntitySystem
         public bool Rightward = false;
 
         /// <summary>
+        /// Whether the player has jumped since the last time they pressed space.
+        /// </summary>
+        public bool Jumped = false;
+
+        /// <summary>
         /// Whether the player is trying move upward (jump).
         /// </summary>
         public bool Upward = false;
@@ -118,6 +123,7 @@ namespace Voxalia.ServerGame.EntitySystem
         public double LastMovePacketTime = 0;
         public Location LastMovePosition = Location.Zero;
         public Location LastMoveVelocity = Location.Zero;
+        public bool LastJumped = false;
 
         public void TickMovement(double delta, bool custom = false)
         {
@@ -158,9 +164,22 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 movement.X = -1;
             }
-            if (Upward && Collision.Box(InWorld, Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01)
+            bool on_ground = Collision.Box(InWorld, Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01;
+            if (Upward)
             {
-                Velocity.Z += 10;
+                if (on_ground && !Jumped)
+                {
+                    Velocity.Z += 10;
+                    Jumped = true;
+                }
+                else
+                {
+                    SysConsole.Output(OutputType.INFO, "Jumped: " + Jumped + ", on_ground: " + on_ground + ", vel.Z" + Velocity.Z);
+                }
+            }
+            else
+            {
+                Jumped = false;
             }
             if (movement.LengthSquared() > 0)
             {
