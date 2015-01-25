@@ -151,14 +151,26 @@ namespace Voxalia.ClientGame.EntitySystem
             }
         }
 
+        /// <summary>
+        /// What block the player has selected.
+        /// </summary>
+        public Location SelectedBlock;
+
         public override void Tick()
         {
             Direction.X += MouseHandler.MouseDelta.X;
             Direction.Y += MouseHandler.MouseDelta.Y;
             TickMovement(ClientMain.Delta);
             ClientMain.CameraEye = Position + new Location(0, 0, 2.75f);
-            ClientMain.CameraTarget = Position + Utilities.ForwardVector_Deg(Direction.X, Direction.Y) + new Location(0, 0, 2.75f);
+            Location forward = Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
+            ClientMain.CameraTarget = Position + forward + new Location(0, 0, 2.75f);
             ltime += ClientMain.Delta;
+            Location seltarg = ClientMain.CameraEye + forward * 10;
+            SelectedBlock = Collision.BoxRayTrace(new Location(-0.1), new Location(0.1), ClientMain.CameraEye, seltarg, -2);
+            if (SelectedBlock == seltarg)
+            {
+                SelectedBlock = Location.NaN;
+            }
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
                 || Upward != pUpward || Downward != pDownward

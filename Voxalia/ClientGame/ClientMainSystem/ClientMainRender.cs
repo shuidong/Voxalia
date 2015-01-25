@@ -100,6 +100,12 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 ent.Render3D();
             }
+            GL.Disable(EnableCap.DepthTest);
+            if (!ThePlayer.SelectedBlock.IsNaN())
+            {
+                Location targ = ThePlayer.SelectedBlock.GetBlockLocation();
+                Renderer.HighlightBlock(targ);
+            }
         }
 
         static void End3D()

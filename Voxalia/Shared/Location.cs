@@ -301,5 +301,14 @@ namespace Voxalia.Shared
         {
             return new OpenTK.Vector3((float)X, (float)Y, (float)Z);
         }
+
+        /// <summary>
+        /// Gets the location of the block this location is within.
+        /// </summary>
+        /// <returns>The block location</returns>
+        public Location GetBlockLocation()
+        {
+            return new Location(Math.Floor(X), Math.Floor(Y), Math.Floor(Z));
+        }
     }
 }
