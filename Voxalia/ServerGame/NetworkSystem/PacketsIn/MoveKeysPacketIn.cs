@@ -53,13 +53,13 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
                 }
                 Sender.LastMovePacket.ApplyInternal();
                 Sender.Reposition(Sender.LastMovePosition);
-                Sender.SetVelocity(Sender.LastMoveVelocity);
+                Sender.Velocity = Sender.LastMoveVelocity;
                 Sender.TickMovement(Time - Sender.LastMovePacketTime, true);
             }
             ApplyInternal();
             Sender.LastMovePacketTime = Time;
             Sender.LastMovePosition = Sender.Position;
-            Sender.LastMoveVelocity = Sender.GetVelocity();
+            Sender.LastMoveVelocity = Sender.Velocity;
             Sender.Send(new PositionPacketOut(Sender, Time));
             Sender.LastMovePacket = this;
         }

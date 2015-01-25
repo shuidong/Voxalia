@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Voxalia.ServerGame.EntitySystem;
 using Voxalia.Shared;
-using BulletSharp;
 
 namespace Voxalia.ServerGame.WorldSystem
 {
@@ -32,11 +31,6 @@ namespace Voxalia.ServerGame.WorldSystem
         /// The world that owns this chunk.
         /// </summary>
         public World OwningWorld;
-
-        /// <summary>
-        /// The physics world static body of this chunk.
-        /// </summary>
-        public RigidBody Body = null;
 
         /// <summary>
         /// All blocks within the chunk.
@@ -136,79 +130,6 @@ namespace Voxalia.ServerGame.WorldSystem
             }
         }
 
-        /// <summary>
-        /// Updates the chunks physical body.
-        /// </summary>
-        public void UpdateBody()
-        {
-            TriangleMesh mesh = new TriangleMesh(false, false);
-            ChunkVertexHolder cvh = new ChunkVertexHolder();
-            for (int x = 0; x < 30; x++)
-            {
-                for (int y = 0; y < 30; y++)
-                {
-                    for (int z = 0; z < 30; z++)
-                    {
-                        if (((Material)Blocks[x, y, z].Type).OccupiesWholeBlock())
-                        {
-                            // TODO: Simplify. Can this be a loop?
-                            if (z == 29 || !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, 1));
-                            }
-                            if (z == 0 || !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 0, -1));
-                            }
-                            if (x == 29 || !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(1, 0, 0));
-                            }
-                            if (x == 0 || !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(-1, 0, 0));
-                            }
-                            if (y == 29 || !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, 1, 0));
-                            }
-                            if (y == 0 || !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
-                            {
-                                cvh.AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new Vector3(0, -1, 0));
-                            }
-                        }
-                    }
-                }
-            }
-            for (int x = 0; x < cvh.Vecs.Count; x += 4)
-            {
-                mesh.AddTriangle(new BulletSharp.Vector3(cvh.Vecs[x].X, cvh.Vecs[x].Y, cvh.Vecs[x].Z),
-                    new BulletSharp.Vector3(cvh.Vecs[x + 1].X, cvh.Vecs[x + 1].Y, cvh.Vecs[x + 1].Z),
-                    new BulletSharp.Vector3(cvh.Vecs[x + 2].X, cvh.Vecs[x + 2].Y, cvh.Vecs[x + 2].Z));
-                mesh.AddTriangle(new BulletSharp.Vector3(cvh.Vecs[x].X, cvh.Vecs[x].Y, cvh.Vecs[x].Z),
-                    new BulletSharp.Vector3(cvh.Vecs[x + 3].X, cvh.Vecs[x + 3].Y, cvh.Vecs[x + 3].Z),
-                    new BulletSharp.Vector3(cvh.Vecs[x + 2].X, cvh.Vecs[x + 2].Y, cvh.Vecs[x + 2].Z));
-            }
-            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(0, 0, 0));
-            RigidBodyConstructionInfo rigid_body_ci;
-            if (Body != null)
-            {
-                OwningWorld.PhysicsWorld.RemoveRigidBody(Body);
-            }
-            if (mesh.NumTriangles < 2)
-            {
-                Body = null;
-                return;
-            }
-            BvhTriangleMeshShape trianglemesh = new BvhTriangleMeshShape(mesh, false);
-            trianglemesh.BuildOptimizedBvh();
-            rigid_body_ci = new RigidBodyConstructionInfo(0f, body_motion_state, trianglemesh);
-            rigid_body_ci.Friction = 0.5f;
-            Body = new RigidBody(rigid_body_ci);
-            Body.WorldTransform = Matrix.Translation(0, 0, 0);
-            OwningWorld.PhysicsWorld.AddRigidBody(Body);
-        }
-
         public override int GetHashCode()
         {
             return X + Y + Z;
@@ -218,61 +139,5 @@ namespace Voxalia.ServerGame.WorldSystem
         {
             return obj is Chunk && ((Chunk)obj).X == X && ((Chunk)obj).Y == Y && ((Chunk)obj).Z == Z;
         }
-    }
-
-    /// <summary>
-    /// Temporary holder class.
-    /// TODO: Factor out
-    /// </summary>
-    class ChunkVertexHolder
-    {
-        public List<Vector3> Vecs = new List<Vector3>();
-        public void AddSide(float x, float y, float z, Vector3 Normal)
-        {
-            // TODO: Simplify
-            if (Normal.Z == -1)
-            {
-                Vecs.Add(new Vector3(x, y, z));
-                Vecs.Add(new Vector3(x + 1, y, z));
-                Vecs.Add(new Vector3(x + 1, y + 1, z));
-                Vecs.Add(new Vector3(x, y + 1, z));
-            }
-            else if (Normal.Z == 1)
-            {
-                Vecs.Add(new Vector3(x, y, z + 1));
-                Vecs.Add(new Vector3(x, y + 1, z + 1));
-                Vecs.Add(new Vector3(x + 1, y + 1, z + 1));
-                Vecs.Add(new Vector3(x + 1, y, z + 1));
-            }
-            else if (Normal.X == -1)
-            {
-                Vecs.Add(new Vector3(x, y, z));
-                Vecs.Add(new Vector3(x, y + 1, z));
-                Vecs.Add(new Vector3(x, y + 1, z + 1));
-                Vecs.Add(new Vector3(x, y, z + 1));
-            }
-            else if (Normal.X == 1)
-            {
-                Vecs.Add(new Vector3(x + 1, y, z));
-                Vecs.Add(new Vector3(x + 1, y, z + 1));
-                Vecs.Add(new Vector3(x + 1, y + 1, z + 1));
-                Vecs.Add(new Vector3(x + 1, y + 1, z));
-            }
-            else if (Normal.Y == -1)
-            {
-                Vecs.Add(new Vector3(x, y, z));
-                Vecs.Add(new Vector3(x, y, z + 1));
-                Vecs.Add(new Vector3(x + 1, y, z + 1));
-                Vecs.Add(new Vector3(x + 1, y, z));
-            }
-            else if (Normal.Y == 1)
-            {
-                Vecs.Add(new Vector3(x, y + 1, z));
-                Vecs.Add(new Vector3(x + 1, y + 1, z));
-                Vecs.Add(new Vector3(x + 1, y + 1, z + 1));
-                Vecs.Add(new Vector3(x, y + 1, z + 1));
-            }
-        }
-
     }
 }

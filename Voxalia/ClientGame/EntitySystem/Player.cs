@@ -8,7 +8,6 @@ using Voxalia.ClientGame.ClientMainSystem;
 using Voxalia.ClientGame.NetworkSystem;
 using Voxalia.ClientGame.NetworkSystem.PacketsOut;
 using Voxalia.ClientGame.WorldSystem;
-using BulletSharp;
 
 namespace Voxalia.ClientGame.EntitySystem
 {
@@ -67,65 +66,7 @@ namespace Voxalia.ClientGame.EntitySystem
             : base(true)
         {
             Position = new Location(0, 0, 40);
-            halfX = (float)DefaultHalfSize.X;
-            halfY = (float)DefaultHalfSize.Y;
-            halfZ = (float)DefaultHalfSize.Z;
-            SpawnInternal();
         }
-
-        /// <summary>
-        /// Sets the velocity of the player.
-        /// </summary>
-        /// <param name="loc">The velocity</param>
-        public void SetVelocity(Location loc)
-        {
-            Console.WriteLine("SETVEL: " + loc);
-            Body.LinearVelocity = loc.ToBVector();
-        }
-
-        void SpawnInternal()
-        {
-            CollisionShape cshape = new BoxShape(halfX, halfY, halfZ);
-            DefaultMotionState motstate;
-            motstate = new DefaultMotionState(Matrix.Translation(Position.ToBVector()));
-            RigidBodyConstructionInfo coninfo;
-            coninfo = new RigidBodyConstructionInfo(Mass, motstate, cshape);
-            coninfo.AngularDamping = 1;
-            Body = new RigidBody(coninfo);
-            Body.Friction = 1f;
-            ClientMain.PhysicsWorld.AddRigidBody(Body);
-            if (!Gravity.IsNaN())
-            {
-                Body.Gravity = Gravity.ToBVector();
-            }
-            Body.LinearVelocity = LinearVelocity.ToBVector();
-            Body.Activate();
-            //Body.CollisionFlags = CollisionFlags.KinematicObject;
-        }
-
-        Location GetBodyPosition()
-        {
-            Vector3 vec = Body.WorldTransform.Origin;
-            return new Location(vec.X, vec.Y, vec.Z);
-        }
-
-        /// <summary>
-        /// Set the position of the entity.
-        /// </summary>
-        public void SetPosition(Location pos)
-        {
-            Console.WriteLine("SETPOS: " + pos);
-            Body.WorldTransform = Matrix.Translation(pos.ToBVector());
-            Position = pos;
-        }
-
-        float halfX;
-        float halfY;
-        float halfZ;
-        float Mass = 5;
-        RigidBody Body;
-        Location Gravity = Location.NaN;
-        Location LinearVelocity = Location.Zero;
 
         /// <summary>
         /// Ticks the movement of the player.
@@ -133,6 +74,10 @@ namespace Voxalia.ClientGame.EntitySystem
         /// <param name="delta">How much time has passed since the last TickMovement</param>
         public void TickMovement(double delta, bool custom = false)
         {
+            if (delta == 0)
+            {
+                return;
+            }
             while (Direction.X < 0)
             {
                 Direction.X += 360;
@@ -168,48 +113,23 @@ namespace Voxalia.ClientGame.EntitySystem
             }
             if (Upward)
             {
-                Body.ApplyCentralImpulse(Vector3.UnitZ * 50);
+                Velocity.Z = 50;
             }
             if (movement.LengthSquared() > 0)
             {
-                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180);//, Direction.Y * Utilities.PI180);
+                movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
-            Body.ApplyCentralImpulse((movement * delta * 30 * Mass).ToBVector());
-            Body.Activate();
-            /*Location target = Position + movement * delta * 30;
+            Velocity += movement * delta * 30;
+            Location ppos = Position;
+            Location target = Position + Velocity * delta;
             if (target != Position)
             {
                 // TODO: Better handling (Based on impact normal)
-                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), true);
-                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), true);
-                Position = Collision.BoxRayTrace(DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), true);
-            }*/
-            if (custom)
-            {
-                foreach (Entity e in ClientMain.Entities)
-                {
-                    e.Freeze();
-                }
-                Unfreeze();
-                ClientMain.PhysicsWorld.StepSimulation((float)delta);
-                foreach (Entity e in ClientMain.Entities)
-                {
-                    e.Unfreeze();
-                }
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, Position.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, target.Y, Position.Z), true);
+                Position = Collision.BoxRayTrace(-DefaultHalfSize, DefaultHalfSize, Position, new Location(Position.X, Position.Y, target.Z), true);
+                Velocity = (Position - ppos) / delta;
             }
-            Position = GetBodyPosition();
-        }
-
-        ActivationState prefeeze;
-        public override void Freeze()
-        {
-            prefeeze = Body.ActivationState;
-            Body.ForceActivationState(ActivationState.DisableSimulation);
-        }
-
-        public override void Unfreeze()
-        {
-            Body.ForceActivationState(prefeeze);
         }
 
         public override void Tick()

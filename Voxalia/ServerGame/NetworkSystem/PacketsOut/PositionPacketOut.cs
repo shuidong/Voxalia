@@ -18,7 +18,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsOut
             Data = new byte[12 + 8 + 12];
             sender.Position.ToBytes().CopyTo(Data, 0);
             BitConverter.GetBytes(time).CopyTo(Data, 12);
-            sender.GetVelocity().ToBytes().CopyTo(Data, 12 + 8);
+            sender.Velocity.ToBytes().CopyTo(Data, 12 + 8);
         }
     }
 }

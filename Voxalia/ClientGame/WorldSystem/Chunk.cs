@@ -9,7 +9,6 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using Voxalia.ClientGame.GraphicsSystem;
 using Voxalia.ClientGame.ClientMainSystem;
-using BulletSharp;
 
 namespace Voxalia.ClientGame.WorldSystem
 {
@@ -32,11 +31,6 @@ namespace Voxalia.ClientGame.WorldSystem
         /// The Z coordinate of the chunk. Z * 30 = actual coordinate.
         /// </summary>
         public int Z;
-
-        /// <summary>
-        /// The physics world static body of this chunk.
-        /// </summary>
-        public RigidBody Body = null;
 
         /// <summary>
         /// All blocks within the chunk.
@@ -168,7 +162,6 @@ namespace Voxalia.ClientGame.WorldSystem
         /// </summary>
         public void UpdateVBO()
         {
-            TriangleMesh mesh = new TriangleMesh(false, false);
             for (int i = 0; i < VBOs.Count; i++)
             {
                 VBOs[i].Destroy();
@@ -214,35 +207,8 @@ namespace Voxalia.ClientGame.WorldSystem
             }
             for (int i = 0; i < VBOs.Count; i++)
             {
-                for (int x = 0; x < VBOs[i].Vecs.Count; x += 4)
-                {
-                    mesh.AddTriangle(new BulletSharp.Vector3(VBOs[i].Vecs[x].X, VBOs[i].Vecs[x].Y, VBOs[i].Vecs[x].Z),
-                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 1].X, VBOs[i].Vecs[x + 1].Y, VBOs[i].Vecs[x + 1].Z),
-                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 2].X, VBOs[i].Vecs[x + 2].Y, VBOs[i].Vecs[x + 2].Z));
-                    mesh.AddTriangle(new BulletSharp.Vector3(VBOs[i].Vecs[x].X, VBOs[i].Vecs[x].Y, VBOs[i].Vecs[x].Z),
-                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 3].X, VBOs[i].Vecs[x + 3].Y, VBOs[i].Vecs[x + 3].Z),
-                        new BulletSharp.Vector3(VBOs[i].Vecs[x + 2].X, VBOs[i].Vecs[x + 2].Y, VBOs[i].Vecs[x + 2].Z));
-                }
                 VBOs[i].Build();
             }
-            DefaultMotionState body_motion_state = new DefaultMotionState(Matrix.Translation(0, 0, 0));
-            RigidBodyConstructionInfo rigid_body_ci;
-            if (Body != null)
-            {
-                ClientMain.PhysicsWorld.RemoveRigidBody(Body);
-            }
-            if (mesh.NumTriangles < 2)
-            {
-                Body = null;
-                return;
-            }
-            BvhTriangleMeshShape trianglemesh = new BvhTriangleMeshShape(mesh, false);
-            trianglemesh.BuildOptimizedBvh();
-            rigid_body_ci = new RigidBodyConstructionInfo(0f, body_motion_state, trianglemesh);
-            rigid_body_ci.Friction = 0.5f;
-            Body = new RigidBody(rigid_body_ci);
-            Body.WorldTransform = Matrix.Translation(0, 0, 0);
-            ClientMain.PhysicsWorld.AddRigidBody(Body);
         }
     }
 }

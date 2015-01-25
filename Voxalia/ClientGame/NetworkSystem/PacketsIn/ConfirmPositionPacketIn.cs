@@ -33,9 +33,10 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
+            return; // TODO
             if (Time > ClientMain.GlobalTickTime)
             {
-                ClientMain.ThePlayer.SetPosition(position);
+                ClientMain.ThePlayer.Position = position;
             }
             else
             {
@@ -52,8 +53,8 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                         ClientMain.ThePlayer.Upward = ms.Upward;
                         ClientMain.ThePlayer.Downward = ms.Downward;
                         ClientMain.ThePlayer.Direction = ms.Direction;
-                        ClientMain.ThePlayer.SetPosition(position);
-                        ClientMain.ThePlayer.SetVelocity(velocity);
+                        ClientMain.ThePlayer.Position = position;
+                        ClientMain.ThePlayer.Velocity = velocity;
                         double ctime = Time;
                         double Target = Time - ctime;
                         while (Target > 1d / 60d)

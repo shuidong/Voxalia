@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using Voxalia.Shared;
 using Voxalia.ServerGame.EntitySystem;
-using BulletSharp;
 using Voxalia.ServerGame.ServerMainSystem;
 
 namespace Voxalia.ServerGame.WorldSystem
@@ -20,11 +19,6 @@ namespace Voxalia.ServerGame.WorldSystem
         public string Name;
 
         /// <summary>
-        /// The main physics world (BulletSharp).
-        /// </summary>
-        public DynamicsWorld PhysicsWorld;
-
-        /// <summary>
         /// All currently loaded chunks.
         /// </summary>
         public Dictionary<Location, Chunk> LoadedChunks;
@@ -38,21 +32,6 @@ namespace Voxalia.ServerGame.WorldSystem
             SysConsole.Output(OutputType.INIT, "Loading new world (" + name + ")...");
             LoadedChunks = new Dictionary<Location, Chunk>();
             Name = name;
-            SysConsole.Output(OutputType.INIT, "Loading physics engine (BulletSharp)...");
-            // Choose which broadphase to use - Dbvt = ?
-            BroadphaseInterface broadphase = new DbvtBroadphase();
-            // Choose collision configuration - default = ?
-            DefaultCollisionConfiguration collision_configuration = new DefaultCollisionConfiguration();
-            // Set the dispatcher
-            CollisionDispatcher dispatcher = new CollisionDispatcher(collision_configuration);
-            // Register the dispatcher
-            GImpactCollisionAlgorithm.RegisterAlgorithm(dispatcher);
-            // Choose solver - SquentialImpulseConstract = ?
-            SequentialImpulseConstraintSolver solver = new SequentialImpulseConstraintSolver();
-            // Create the world for physics to happen it
-            PhysicsWorld = new DiscreteDynamicsWorld(dispatcher, broadphase, solver, collision_configuration);
-            // Set the world's general default gravity
-            PhysicsWorld.Gravity = new BulletSharp.Vector3(0, 0, -9.8f * 2); // TODO: World config option + set command
         }
 
         /// <summary>
@@ -97,7 +76,6 @@ namespace Voxalia.ServerGame.WorldSystem
                     }
                 }
             }
-            chunk.UpdateBody();
             LoadedChunks.Add(chunkLoc, chunk);
             return chunk;
         }
@@ -107,7 +85,6 @@ namespace Voxalia.ServerGame.WorldSystem
         /// </summary>
         public void Tick()
         {
-            PhysicsWorld.StepSimulation((float)ServerMain.Delta);
             // TODO: optimize. There must be a better way to avoid errors when chunks are loaded mid-tick.
             Dictionary<Location, Chunk> chunks = new Dictionary<Location,Chunk>(LoadedChunks);
             foreach (KeyValuePair<Location, Chunk> chunk in chunks)
@@ -139,14 +116,7 @@ namespace Voxalia.ServerGame.WorldSystem
             {
                 chunk.Tickers.Add(e);
             }
-            if (e.InWorld != this)
-            {
-                e.InWorld = this;
-                if (e is Player)
-                {
-                    ((Player)e).SpawnInternal();
-                }
-            }
+            e.InWorld = this;
         }
 
         /// <summary>
@@ -158,6 +128,17 @@ namespace Voxalia.ServerGame.WorldSystem
             Chunk ch = LoadChunk(GetChunkLocation(e.Position));
             ch.Entities.Remove(e);
             ch.Tickers.Remove(e);
+        }
+
+        /// <summary>
+        /// Gets the block at a world location.
+        /// </summary>
+        /// <param name="loc">The global location</param>
+        /// <returns>The block</returns>
+        public Block GetBlock(Location loc)
+        {
+            Location ch = GetChunkLocation(loc) * 30;
+            return new Block(LoadChunk(ch), (int)(Math.Floor(loc.X) - ch.X), (int)(Math.Floor(loc.Y) - ch.Y), (int)(Math.Floor(loc.Z) - ch.Z));
         }
     }
 }

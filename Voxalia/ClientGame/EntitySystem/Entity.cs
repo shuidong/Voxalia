@@ -25,6 +25,11 @@ namespace Voxalia.ClientGame.EntitySystem
         public Location Direction;
 
         /// <summary>
+        /// The movement velocity of this entity.
+        /// </summary>
+        public Location Velocity;
+
+        /// <summary>
         /// Whether this entity ticks.
         /// </summary>
         public readonly bool TickMe;
