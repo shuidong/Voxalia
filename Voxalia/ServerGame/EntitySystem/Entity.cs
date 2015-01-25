@@ -72,12 +72,12 @@ namespace Voxalia.ServerGame.EntitySystem
         {
             Location chunkloc = World.GetChunkLocation(Position);
             Location chunkloc2 = World.GetChunkLocation(pos);
-            if (pos != Position)
+            if (chunkloc2 != chunkloc)
             {
                 InWorld.Remove(this);
-                Position = pos;
                 InWorld.Spawn(this);
             }
+            Position = pos;
         }
 
         /// <summary>

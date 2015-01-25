@@ -97,7 +97,7 @@ namespace Voxalia.ClientGame.WorldSystem
                     }
                 }
             }
-            return tend + fnormal * 0.01f; // TODO
+            return tend + (bounceback ? fnormal * 0.01f: Location.Zero);
         }
 
         /// <summary>

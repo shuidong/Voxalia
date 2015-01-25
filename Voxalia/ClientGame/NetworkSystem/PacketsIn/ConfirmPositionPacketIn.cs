@@ -33,7 +33,6 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 
         public override void Apply()
         {
-            return; // TODO
             if (Time > ClientMain.GlobalTickTime)
             {
                 ClientMain.ThePlayer.Position = position;

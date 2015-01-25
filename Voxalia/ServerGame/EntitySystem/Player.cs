@@ -121,6 +121,10 @@ namespace Voxalia.ServerGame.EntitySystem
 
         public void TickMovement(double delta, bool custom = false)
         {
+            if (delta == 0)
+            {
+                return;
+            }
             while (Direction.X < 0)
             {
                 Direction.X += 360;
@@ -163,15 +167,17 @@ namespace Voxalia.ServerGame.EntitySystem
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180, Direction.Y * Utilities.PI180);
             }
             Velocity += movement * delta * 30;
+            Location ppos = Position;
             Location target = Position + Velocity * delta;
-            if (target != Position)
+            Location pos = Position;
+            if (target != pos)
             {
-                Location pos = Position;
                 // TODO: Better handling (Based on impact normal)
                 pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(target.X, pos.Y, pos.Z), true);
                 pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(pos.X, target.Y, pos.Z), true);
                 pos = Collision.BoxRayTrace(InWorld, -DefaultHalfSize, DefaultHalfSize, Position, new Location(pos.X, pos.Y, target.Z), true);
                 Reposition(pos);
+                Velocity = (pos - ppos) / delta;
             }
         }
 
