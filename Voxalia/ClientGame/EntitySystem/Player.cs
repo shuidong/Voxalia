@@ -189,6 +189,7 @@ namespace Voxalia.ClientGame.EntitySystem
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
                 || Upward != pUpward || Downward != pDownward
+                || Slow != pSlow
                 || Direction.X != pDirection.X
                 || Direction.Y != pDirection.Y)
                 || ltime >= 0.1)
@@ -200,6 +201,7 @@ namespace Voxalia.ClientGame.EntitySystem
                 pUpward = Upward;
                 pDownward = Downward;
                 pDirection = Direction;
+                pSlow = Slow;
                 ltime = 0;
                 AddMS();
                 if (ClientNetworkBase.Connected)

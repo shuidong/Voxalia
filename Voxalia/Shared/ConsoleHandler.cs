@@ -153,16 +153,15 @@ namespace Voxalia.Shared
             {
                 if (CommandInput.Count > 0)
                 {
-                    commandsinput = CommandInput;
-                    CommandInput = new List<string>();
+                    commandsinput = new List<string>(CommandInput);
+                    CommandInput.Clear();
                 }
             }
             if (commandsinput != null)
             {
                 for (int i = 0; i < commandsinput.Count; i++)
                 {
-                    // TODO
-                    // ServerCommands.ExecuteCommands(Utilities.CleanStringInput(commandsinput[i]), null);
+                    Voxalia.ServerGame.CommandSystem.ServerCommands.ExecuteCommands(Utilities.CleanStringInput(commandsinput[i]));
                 }
             }
         }

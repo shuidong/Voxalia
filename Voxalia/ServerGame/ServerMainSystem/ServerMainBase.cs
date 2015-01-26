@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System.Threading;
 using Voxalia.ServerGame.NetworkSystem;
 using Voxalia.Shared;
+using Frenetic;
+using Frenetic.CommandSystem;
+using Voxalia.ServerGame.CommandSystem;
 
 namespace Voxalia.ServerGame.ServerMainSystem
 {
@@ -21,6 +24,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
         public static void Init()
         {
             SysConsole.Output(OutputType.INIT, "Loading server...");
+            SysConsole.Output(OutputType.INIT, "Loading command engine (Frenetic)...");
+            Outputter op = new ServerOutputter();
+            ServerCommands.Init(op);
+            ServerCVar.Init(op);
+            SysConsole.Output(OutputType.INIT, "Loading console reader...");
+            ConsoleHandler.Init();
             SysConsole.Output(OutputType.INIT, "Generating an empty world...");
             Worlds = new List<World>();
             // TEMPORARY

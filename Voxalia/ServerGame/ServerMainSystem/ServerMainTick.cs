@@ -5,6 +5,7 @@ using System.Text;
 using Voxalia.ServerGame.NetworkSystem;
 using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.Shared;
+using Voxalia.ServerGame.CommandSystem;
 
 namespace Voxalia.ServerGame.ServerMainSystem
 {
@@ -59,6 +60,15 @@ namespace Voxalia.ServerGame.ServerMainSystem
             catch (Exception ex)
             {
                 SysConsole.Output(OutputType.ERROR, "Error / worldtick: " + ex.ToString());
+            }
+            try
+            {
+                ServerCommands.Tick();
+                ConsoleHandler.CheckInput();
+            }
+            catch (Exception ex)
+            {
+                SysConsole.Output(OutputType.ERROR, "Error / command tick: " + ex.ToString());
             }
             try
             {
