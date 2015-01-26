@@ -58,13 +58,14 @@ namespace Voxalia.ServerGame.PlayerCommandSystem
             if (pci.Command == null)
             {
                 // sender.SendMessage("Unknown command :(");
+                sender.SendMessage("^1Unknown command '^5" + pci.CommandName + "^r^1'.");
                 SysConsole.Output(OutputType.INFO, " > Denied: Unknown");
             }
             else
             {
                 if (!sender.HasPermission("commands." + pci.CommandName))
                 {
-                    // sender.SendMessage("No permissions :(");
+                    sender.SendMessage("^1You do not have permission to use this command.");
                     SysConsole.Output(OutputType.INFO, " > Denied: No permissions");
                 }
                 SysConsole.Output(OutputType.INFO, " > Accepted: running");

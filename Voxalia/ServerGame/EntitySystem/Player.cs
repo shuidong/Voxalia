@@ -6,8 +6,11 @@ using Voxalia.ServerGame.NetworkSystem;
 using Voxalia.ServerGame.NetworkSystem.PacketsIn;
 using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.ServerGame.ServerMainSystem;
+using Voxalia.ServerGame.CommandSystem;
 using Voxalia.Shared;
 using Voxalia.ServerGame.WorldSystem;
+using Frenetic.CommandSystem;
+using Frenetic;
 
 namespace Voxalia.ServerGame.EntitySystem
 {
@@ -147,6 +150,39 @@ namespace Voxalia.ServerGame.EntitySystem
 
         public Location Maxes = DefaultHalfSize;
 
+
+        /// <summary>
+        /// Used by the /remote command.
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="type">The message type</param>
+        public void Frenetic_SendMessage(string message, MessageType type)
+        {
+            string basecolor;
+            switch (type)
+            {
+                case MessageType.BAD:
+                    basecolor = TextStyle.Color_Outbad;
+                    break;
+                case MessageType.GOOD:
+                    basecolor = TextStyle.Color_Outgood;
+                    break;
+                case MessageType.INFO:
+                    basecolor = TextStyle.Color_Simple;
+                    break;
+                default:
+                    basecolor = TextStyle.Color_Warning;
+                    break;
+            }
+            SendMessage("[Remote] " + basecolor +
+            ServerCommands.CommandSystem.TagSystem.ParseTags(message, basecolor, null, DebugMode.MINIMAL));
+        }
+
+        /// <summary>
+        /// Ticks player movement.
+        /// </summary>
+        /// <param name="delta">The tick delta</param>
+        /// <param name="custom">Whether tihis is a custom tick call (IE, anything outside the normal tick)</param>
         public void TickMovement(double delta, bool custom = false)
         {
             if (delta == 0)
@@ -423,6 +459,11 @@ namespace Voxalia.ServerGame.EntitySystem
             ServerMain.Announce("Player " + Username + " disconnected: " + message);
             Send(new KickPacketOut(message));
             Network.InternalSocket.Close(2);
+        }
+
+        public void SendMessage(string message)
+        {
+            Send(new MessagePacketOut(message));
         }
 
         /// <summary>

@@ -22,7 +22,7 @@ namespace Voxalia.ServerGame.PlayerCommandSystem.GeneralCommands
             {
                 rawargs.Append(info.Arguments[i] + " ");
             }
-            ServerCommands.ExecuteCommands(rawargs.ToString()/*, sender.outputfunction */);
+            ServerCommands.CommandSystem.ExecuteCommands(rawargs.ToString(), info.Sender.Frenetic_SendMessage);
         }
     }
 }

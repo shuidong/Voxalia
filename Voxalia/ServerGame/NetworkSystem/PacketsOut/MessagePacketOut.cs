@@ -19,7 +19,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsOut
         public MessagePacketOut(string message)
         {
             Message = message;
-            ID = 2;
+            ID = 3;
             Data = Utilities.encoding.GetBytes(message);
         }
     }

@@ -96,6 +96,7 @@
     <Compile Include="ClientGame\NetworkSystem\ClientNetworkBase.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ChunkPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ConfirmPositionPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\MessagePacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\CommandPacketOut.cs" />

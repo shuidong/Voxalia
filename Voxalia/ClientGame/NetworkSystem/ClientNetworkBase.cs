@@ -94,6 +94,9 @@ namespace Voxalia.ClientGame.NetworkSystem
                             case 2:
                                 apacket = new ConfirmPositionPacketIn();
                                 break;
+                            case 3:
+                                apacket = new MessagePacketIn();
+                                break;
                             case 255:
                                 apacket = new DisconnectPacketIn();
                                 break;

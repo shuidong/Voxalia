@@ -79,19 +79,5 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             Position = pos;
         }
-
-        /// <summary>
-        /// Freezes the entity.
-        /// </summary>
-        public virtual void Freeze()
-        {
-        }
-
-        /// <summary>
-        /// Unfreezes the entity.
-        /// </summary>
-        public virtual void Unfreeze()
-        {
-        }
     }
 }
