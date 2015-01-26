@@ -166,10 +166,14 @@ namespace Voxalia.ClientGame.EntitySystem
             ClientMain.CameraTarget = Position + forward + new Location(0, 0, 2.75f);
             ltime += ClientMain.Delta;
             Location seltarg = ClientMain.CameraEye + forward * 10;
-            SelectedBlock = Collision.BoxRayTrace(new Location(-0.1), new Location(0.1), ClientMain.CameraEye, seltarg, -2);
+            SelectedBlock = Collision.BoxRayTrace(new Location(-0.001), new Location(0.001), ClientMain.CameraEye, seltarg, -1);
             if (SelectedBlock == seltarg)
             {
                 SelectedBlock = Location.NaN;
+            }
+            else
+            {
+                SysConsole.Output(OutputType.INFO, "Select " + SelectedBlock);
             }
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
