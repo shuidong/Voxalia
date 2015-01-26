@@ -10,6 +10,7 @@ using Voxalia.Shared;
 using Frenetic;
 using Frenetic.CommandSystem;
 using Voxalia.ServerGame.CommandSystem;
+using Voxalia.ServerGame.PlayerCommandSystem;
 
 namespace Voxalia.ServerGame.ServerMainSystem
 {
@@ -37,6 +38,8 @@ namespace Voxalia.ServerGame.ServerMainSystem
             Worlds.Add(world);
             SysConsole.Output(OutputType.INIT, "Loading networking engine...");
             NetworkBase.Init(true);
+            SysConsole.Output(OutputType.INIT, "Loading player command engine...");
+            PlayerCommandEngine.Init();
             SysConsole.Output(OutputType.INIT, "Preparing to tick...");
             // Tick
             double TARGETFPS = 20d; // TODO: CVar?

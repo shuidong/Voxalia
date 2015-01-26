@@ -6,6 +6,7 @@ using Frenetic.CommandSystem;
 using Voxalia.ClientGame.UISystem;
 using Frenetic;
 using Voxalia.ClientGame.NetworkSystem;
+using Voxalia.ClientGame.NetworkSystem.PacketsOut;
 
 namespace Voxalia.ClientGame.CommandSystem
 {
@@ -30,8 +31,7 @@ namespace Voxalia.ClientGame.CommandSystem
 
         public override void UnknownCommand(string basecommand, string[] arguments) // TODO: Base DebugMode?
         {
-            /*
-            if (NetworkBase.Active)
+            if (ClientNetworkBase.Connected)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.Append(basecommand);
@@ -40,9 +40,9 @@ namespace Voxalia.ClientGame.CommandSystem
                     sb.Append("\n").Append(ClientCommands.CommandSystem.TagSystem.ParseTags(arguments[i], TextStyle.Color_Simple, null, DebugMode.MINIMAL));
                 }
                 CommandPacketOut packet = new CommandPacketOut(sb.ToString());
-                NetworkBase.SendPacket(packet);
+                ClientNetworkBase.SendPacket(packet);
             }
-            else*/
+            else
             {
                 WriteLine(TextStyle.Color_Error + "Unknown command '" +
                     TextStyle.Color_Standout + basecommand + TextStyle.Color_Error + "'.");

@@ -98,6 +98,7 @@
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ConfirmPositionPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsOut\CommandPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\MoveKeysPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
     <Compile Include="ClientGame\UISystem\KeyHandler.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="ServerGame\NetworkSystem\AbstractPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\Connection.cs" />
     <Compile Include="ServerGame\NetworkSystem\NetworkBase.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsIn\CommandPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\MoveKeysPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
@@ -128,6 +130,10 @@
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\MessagePacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PositionPacketOut.cs" />
+    <Compile Include="ServerGame\PlayerCommandSystem\AbstractPlayerCommand.cs" />
+    <Compile Include="ServerGame\PlayerCommandSystem\GeneralCommands\RemoteCommand.cs" />
+    <Compile Include="ServerGame\PlayerCommandSystem\PlayerCommandEngine.cs" />
+    <Compile Include="ServerGame\PlayerCommandSystem\PlayerCommandInfo.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainBase.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainTick.cs" />
     <Compile Include="ServerGame\ServerMainSystem\ServerMainWorlds.cs" />

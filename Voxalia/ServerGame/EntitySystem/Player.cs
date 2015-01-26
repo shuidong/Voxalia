@@ -129,6 +129,16 @@ namespace Voxalia.ServerGame.EntitySystem
             Position = new Location(99999f, 99999f, 99999f);
         }
 
+        /// <summary>
+        /// Returns whether a client has the given permission value.
+        /// </summary>
+        /// <param name="permission">The permission key</param>
+        /// <returns>Whether the player has it</returns>
+        public bool HasPermission(string permission)
+        {
+            return true;//TODO
+        }
+
         public MoveKeysPacketIn LastMovePacket = null;
         public double LastMovePacketTime = 0;
         public Location LastMovePosition = Location.Zero;
@@ -310,6 +320,9 @@ namespace Voxalia.ServerGame.EntitySystem
                                 break;
                             case 2:
                                 packet = new MoveKeysPacketIn(this, false);
+                                break;
+                            case 3:
+                                packet = new CommandPacketIn(this, false);
                                 break;
                             case 255:
                                 packet = new DisconnectPacketIn(this, false);
