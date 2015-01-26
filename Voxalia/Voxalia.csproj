@@ -77,6 +77,8 @@
     <Compile Include="ClientGame\CommandSystem\ClientCVar.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\CaptureCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\BackwardCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\WalkCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\DownwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\UpwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\RightwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\LeftwardCommand.cs" />

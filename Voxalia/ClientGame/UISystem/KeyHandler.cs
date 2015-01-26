@@ -41,6 +41,8 @@ namespace Voxalia.ClientGame.UISystem
             BindKey(Key.F12, "screenshot");
             BindKey(Key.F35, "+attack");
             BindKey(Key.F34, "+secondary");
+            BindKey(Key.Q, "drop");
+            BindKey(Key.E, "use");
             BindKey(Key.Escape, "quit");
             BindKey(Key.LControl, "capture");
             namestokeys = new Dictionary<string, Key>();

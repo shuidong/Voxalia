@@ -103,6 +103,7 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             Sender.Rightward = (MS & 8) != 0;
             Sender.Upward = (MS & 16) != 0;
             Sender.Downward = (MS & 32) != 0;
+            Sender.Slow = (MS & 64) != 0;
             Sender.Direction = Direction;
         }
     }

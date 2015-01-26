@@ -58,6 +58,12 @@ namespace Voxalia.ClientGame.EntitySystem
         bool pDownward = false;
 
         /// <summary>
+        /// Whether the player is moving slowly (walking).
+        /// </summary>
+        public bool Slow = false;
+        bool pSlow = false;
+
+        /// <summary>
         /// Whether the player has jumped since the last time they pressed space.
         /// </summary>
         public bool Jumped = false;
@@ -72,6 +78,8 @@ namespace Voxalia.ClientGame.EntitySystem
         {
             Position = new Location(0, 0, 40);
         }
+
+        public Location Maxes = DefaultHalfSize;
 
         /// <summary>
         /// Ticks the movement of the player.
@@ -116,6 +124,14 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement.X = -1;
             }
+            if (Downward)
+            {
+                Maxes.Z = 0.1;
+            }
+            else
+            {
+                Maxes.Z = 1.5;
+            }
             bool on_ground = Collision.Box(Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01;
             if (Upward)
             {
@@ -133,10 +149,9 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180);
             }
-            bool slow = false;
             float MoveSpeed = 15;
-            Velocity.X += ((movement.X * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.X) * delta * 8;
-            Velocity.Y += ((movement.Y * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.Y) * delta * 8;
+            Velocity.X += ((movement.X * MoveSpeed * (Slow || Downward ? 0.5 : 1)) - Velocity.X) * delta * 8;
+            Velocity.Y += ((movement.Y * MoveSpeed * (Slow || Downward ? 0.5 : 1)) - Velocity.Y) * delta * 8;
             Velocity.Z += delta * -9.8 / 0.5666; // 1 unit = 0.5666 meters
             Location ppos = Position;
             Location target = Position + Velocity * delta;
@@ -161,9 +176,9 @@ namespace Voxalia.ClientGame.EntitySystem
             Direction.X += MouseHandler.MouseDelta.X;
             Direction.Y += MouseHandler.MouseDelta.Y;
             TickMovement(ClientMain.Delta);
-            ClientMain.CameraEye = Position + new Location(0, 0, 2.75f);
+            ClientMain.CameraEye = Position + new Location(0, 0, Maxes.Z);
             Location forward = Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
-            ClientMain.CameraTarget = Position + forward + new Location(0, 0, 2.75f);
+            ClientMain.CameraTarget = ClientMain.CameraEye + forward;
             ltime += ClientMain.Delta;
             Location seltarg = ClientMain.CameraEye + forward * 10;
             SelectedBlock = Collision.BoxRayTrace(new Location(-0.001), new Location(0.001), ClientMain.CameraEye, seltarg, -1);
@@ -218,6 +233,7 @@ namespace Voxalia.ClientGame.EntitySystem
                                              Downward = Downward,
                                              Direction = Direction,
                                              Jumped = Jumped,
+                                             Slow = Slow,
                                              Time = ClientMain.GlobalTickTime
             });
         }
@@ -239,5 +255,6 @@ namespace Voxalia.ClientGame.EntitySystem
         public Location Direction;
         public double Time;
         public bool Jumped;
+        public bool Slow;
     }
 }

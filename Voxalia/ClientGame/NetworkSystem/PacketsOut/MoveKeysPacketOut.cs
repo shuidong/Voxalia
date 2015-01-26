@@ -40,6 +40,10 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsOut
             {
                 datum |= 32;
             }
+            if (ms.Slow)
+            {
+                datum |= 64;
+            }
             BitConverter.GetBytes(datum).CopyTo(Data, 0);
             BitConverter.GetBytes((float)ms.Direction.X).CopyTo(Data, 2);
             BitConverter.GetBytes((float)ms.Direction.Y).CopyTo(Data, 2 + 4);

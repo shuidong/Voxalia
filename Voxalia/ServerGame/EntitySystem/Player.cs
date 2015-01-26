@@ -54,6 +54,11 @@ namespace Voxalia.ServerGame.EntitySystem
         public bool Downward = false;
 
         /// <summary>
+        /// Whether the player is moving slowly (walking).
+        /// </summary>
+        public bool Slow = false;
+
+        /// <summary>
         /// The network connection for this player.
         /// </summary>
         public Connection Network;
@@ -130,6 +135,8 @@ namespace Voxalia.ServerGame.EntitySystem
         public Location LastMoveVelocity = Location.Zero;
         public bool LastJumped = false;
 
+        public Location Maxes = DefaultHalfSize;
+
         public void TickMovement(double delta, bool custom = false)
         {
             if (delta == 0)
@@ -169,6 +176,14 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 movement.X = -1;
             }
+            if (Downward)
+            {
+                Maxes.Z = 0.1;
+            }
+            else
+            {
+                Maxes.Z = 1.5;
+            }
             bool on_ground = Collision.Box(InWorld, Position - (DefaultHalfSize + new Location(0, 0, 0.1)), Position + DefaultHalfSize) && Velocity.Z < 0.01;
             if (Upward)
             {
@@ -186,10 +201,9 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 movement = Utilities.RotateVector(movement, Direction.X * Utilities.PI180);
             }
-            bool slow = false;
             float MoveSpeed = 15;
-            Velocity.X += ((movement.X * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.X) * delta * 8;
-            Velocity.Y += ((movement.Y * MoveSpeed * (slow || Downward ? 0.5 : 1)) - Velocity.Y) * delta * 8;
+            Velocity.X += ((movement.X * MoveSpeed * (Slow || Downward ? 0.5 : 1)) - Velocity.X) * delta * 8;
+            Velocity.Y += ((movement.Y * MoveSpeed * (Slow || Downward ? 0.5 : 1)) - Velocity.Y) * delta * 8;
             Velocity.Z += delta * -9.8 / 0.5666; // 1 unit = 0.5666 meters
             Location ppos = Position;
             Location target = Position + Velocity * delta;
@@ -232,8 +246,8 @@ namespace Voxalia.ServerGame.EntitySystem
             TickMovement(ServerMain.Delta);
             // Manage Selection
             Location forward = Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
-            Location eye = Position + new Location(0, 0, 2.75f);
-            Location seltarg = Position + new Location(0, 0, 2.75f) + forward * 10;
+            Location eye = Position + new Location(0, 0, Maxes.Z);
+            Location seltarg = eye + forward * 10;
             SelectedBlock = Collision.BoxRayTrace(InWorld, new Location(-0.001), new Location(0.001), eye, seltarg, -1);
             if (SelectedBlock == seltarg)
             {
