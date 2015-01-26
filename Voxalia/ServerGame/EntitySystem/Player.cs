@@ -212,6 +212,11 @@ namespace Voxalia.ServerGame.EntitySystem
 
         List<Location> ChunksAware = new List<Location>();
 
+        /// <summary>
+        /// What block the player has selected.
+        /// </summary>
+        public Location SelectedBlock;
+
         public override void Tick()
         {
             if (!IsValid)
@@ -225,6 +230,15 @@ namespace Voxalia.ServerGame.EntitySystem
             }
             PacketsToApply.RemoveRange(0, pc);
             TickMovement(ServerMain.Delta);
+            // Manage Selection
+            Location forward = Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
+            Location eye = Position + new Location(0, 0, 2.75f);
+            Location seltarg = Position + new Location(0, 0, 2.75f) + forward * 10;
+            SelectedBlock = Collision.BoxRayTrace(InWorld, new Location(-0.001), new Location(0.001), eye, seltarg, -1);
+            if (SelectedBlock == seltarg)
+            {
+                SelectedBlock = Location.NaN;
+            }
             // TODO: Better tracking of what chunks to send
             List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));
             foreach (Location loc in locs)

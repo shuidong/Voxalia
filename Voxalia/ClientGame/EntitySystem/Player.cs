@@ -171,10 +171,6 @@ namespace Voxalia.ClientGame.EntitySystem
             {
                 SelectedBlock = Location.NaN;
             }
-            else
-            {
-                SysConsole.Output(OutputType.INFO, "Select " + SelectedBlock);
-            }
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
                 || Upward != pUpward || Downward != pDownward
