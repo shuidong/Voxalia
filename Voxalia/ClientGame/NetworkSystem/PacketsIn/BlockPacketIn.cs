@@ -10,24 +10,34 @@ using Voxalia.ClientGame.UISystem;
 namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 {
     /// <summary>
-    /// Represents a message from the server.
+    /// Represents a single block change.
     /// </summary>
-    public class MessagePacketIn: AbstractPacketIn
+    public class BlockPacketIn: AbstractPacketIn
     {
         /// <summary>
-        /// The message sent from the server.
+        /// The location of the block to change.
         /// </summary>
-        public string Message;
+        public Location Position;
+
+        /// <summary>
+        /// The new block material.
+        /// </summary>
+        public Material Mat;
 
         public override bool ReadBytes(byte[] data)
         {
-            Message = FileHandler.encoding.GetString(data);
+            if (data.Length != 12 + 2)
+            {
+                return false;
+            }
+            Position = Location.FromBytes(data, 0);
+            Mat = (Material)BitConverter.ToUInt16(data, 12);
             return true;
         }
 
         public override void Apply()
         {
-            UIConsole.WriteLine(Message);
+            ClientMain.SetBlock(Position, Mat);
         }
     }
 }

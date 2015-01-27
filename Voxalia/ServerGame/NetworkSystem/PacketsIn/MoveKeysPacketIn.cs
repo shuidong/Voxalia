@@ -104,6 +104,9 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             Sender.Upward = (MS & 16) != 0;
             Sender.Downward = (MS & 32) != 0;
             Sender.Slow = (MS & 64) != 0;
+            Sender.Attack = (MS & 128) != 0;
+            Sender.Secondary = (MS & 256) != 0;
+            Sender.Use = (MS & 512) != 0;
             Sender.Direction = Direction;
         }
     }

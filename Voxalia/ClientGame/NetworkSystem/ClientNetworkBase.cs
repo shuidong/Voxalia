@@ -97,6 +97,7 @@ namespace Voxalia.ClientGame.NetworkSystem
                             case 3:
                                 apacket = new MessagePacketIn();
                                 break;
+
                             case 255:
                                 apacket = new DisconnectPacketIn();
                                 break;
@@ -155,6 +156,9 @@ namespace Voxalia.ClientGame.NetworkSystem
                                 break;
                             case 1:
                                 apacket = new PingPacketIn();
+                                break;
+                            case 4:
+                                apacket = new BlockPacketIn();
                                 break;
                             default:
                                 UIConsole.WriteLine("Invalid secondary packet from server, ID " + ID);

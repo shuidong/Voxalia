@@ -62,6 +62,21 @@ namespace Voxalia.ServerGame.EntitySystem
         public bool Slow = false;
 
         /// <summary>
+        /// Whether the player is attacking.
+        /// </summary>
+        public bool Attack = false;
+
+        /// <summary>
+        /// Whether the player is 'using' secondarily.
+        /// </summary>
+        public bool Secondary = false;
+
+        /// <summary>
+        /// Whether the player is 'using'.
+        /// </summary>
+        public bool Use = false;
+
+        /// <summary>
         /// The network connection for this player.
         /// </summary>
         public Connection Network;
@@ -270,7 +285,10 @@ namespace Voxalia.ServerGame.EntitySystem
 
         public Chunk CurrentChunk = null;
 
-        List<Location> ChunksAware = new List<Location>();
+        /// <summary>
+        /// All chunk locations this player is aware of.
+        /// </summary>
+        public List<Location> ChunksAware = new List<Location>();
 
         /// <summary>
         /// What block the player has selected.
@@ -298,6 +316,16 @@ namespace Voxalia.ServerGame.EntitySystem
             if (SelectedBlock == seltarg)
             {
                 SelectedBlock = Location.NaN;
+            }
+            if (Attack && !SelectedBlock.IsNaN())
+            {
+                Location sel_block = SelectedBlock.GetBlockLocation();
+                Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(SelectedBlock.GetBlockLocation()));
+                if (ch.Blocks[(int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30)].Type != 0)
+                {
+                    ch.SetBlock((int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30), (ushort)Material.AIR);
+                    InWorld.BroadcastBlock(sel_block);
+                }
             }
             // TODO: Better tracking of what chunks to send
             List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));

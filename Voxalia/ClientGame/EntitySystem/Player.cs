@@ -64,6 +64,24 @@ namespace Voxalia.ClientGame.EntitySystem
         bool pSlow = false;
 
         /// <summary>
+        /// Whether the player is attacking.
+        /// </summary>
+        public bool Attack = false;
+        bool pAttack = false;
+
+        /// <summary>
+        /// Whether the player is pressing the secondary usage key.
+        /// </summary>
+        public bool Secondary = false;
+        bool pSecondary = false;
+
+        /// <summary>
+        /// Whether the player is pressing the primary usage key.
+        /// </summary>
+        public bool Use = false;
+        bool pUse = false;
+
+        /// <summary>
         /// Whether the player has jumped since the last time they pressed space.
         /// </summary>
         public bool Jumped = false;
@@ -189,7 +207,8 @@ namespace Voxalia.ClientGame.EntitySystem
             if ((Forward != pForward || Backward != pBackward
                 || Leftward != pLeftward || Rightward != pRightward
                 || Upward != pUpward || Downward != pDownward
-                || Slow != pSlow
+                || Slow != pSlow || Use != pUse
+                || Attack != pAttack || Secondary != pSecondary
                 || Direction.X != pDirection.X
                 || Direction.Y != pDirection.Y)
                 || ltime >= 0.1)
@@ -202,6 +221,9 @@ namespace Voxalia.ClientGame.EntitySystem
                 pDownward = Downward;
                 pDirection = Direction;
                 pSlow = Slow;
+                pUse = Use;
+                pAttack = Attack;
+                pSecondary = Secondary;
                 ltime = 0;
                 AddMS();
                 if (ClientNetworkBase.Connected)
@@ -236,6 +258,9 @@ namespace Voxalia.ClientGame.EntitySystem
                                              Direction = Direction,
                                              Jumped = Jumped,
                                              Slow = Slow,
+                                             Attack = Attack,
+                                             Secondary = Secondary,
+                                             Use = Use,
                                              Time = ClientMain.GlobalTickTime
             });
         }
@@ -258,5 +283,8 @@ namespace Voxalia.ClientGame.EntitySystem
         public double Time;
         public bool Jumped;
         public bool Slow;
+        public bool Attack;
+        public bool Secondary;
+        public bool Use = false;
     }
 }

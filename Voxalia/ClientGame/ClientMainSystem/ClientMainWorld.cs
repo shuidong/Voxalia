@@ -84,7 +84,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <summary>
         /// Gets or spawns the chunk for the given location.
         /// </summary>
-        /// <param name="pos">The location</param>
+        /// <param name="pos">The chunk location</param>
         /// <returns>The chunk</returns>
         public static Chunk GetChunk(Location pos)
         {
@@ -128,8 +128,22 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// <returns>The block</returns>
         public static Block GetBlock(Location loc)
         {
-            Location ch = GetChunkLocation(loc) * 30;
-            return new Block(GetChunk(ch), (int)(Math.Floor(loc.X) - ch.X), (int)(Math.Floor(loc.Y) - ch.Y), (int)(Math.Floor(loc.Z) - ch.Z));
+            Location ch = GetChunkLocation(loc);
+            return new Block(GetChunk(ch), (int)(Math.Floor(loc.X) - ch.X * 30), (int)(Math.Floor(loc.Y) - ch.Y * 30), (int)(Math.Floor(loc.Z) - ch.Z * 30));
+        }
+
+        /// <summary>
+        /// Sets a block to a specified material.
+        /// </summary>
+        /// <param name="loc">The global location</param>
+        /// <param name="mat">The material</param>
+        public static void SetBlock(Location loc, Material mat)
+        {
+            loc = loc.GetBlockLocation();
+            Location chunkloc = GetChunkLocation(loc);
+            Chunk ch = GetChunk(chunkloc);
+            ch.SetBlock((int)(Math.Floor(loc.X) - ch.X * 30), (int)(Math.Floor(loc.Y) - ch.Y * 30), (int)(Math.Floor(loc.Z) - ch.Z * 30), (ushort)mat);
+            ch.UpdateVBO();
         }
     }
 }

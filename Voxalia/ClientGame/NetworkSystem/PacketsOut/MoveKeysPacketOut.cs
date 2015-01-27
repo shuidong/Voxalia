@@ -44,6 +44,18 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsOut
             {
                 datum |= 64;
             }
+            if (ms.Attack)
+            {
+                datum |= 128;
+            }
+            if (ms.Secondary)
+            {
+                datum |= 256;
+            }
+            if (ms.Use)
+            {
+                datum |= 512;
+            }
             BitConverter.GetBytes(datum).CopyTo(Data, 0);
             BitConverter.GetBytes((float)ms.Direction.X).CopyTo(Data, 2);
             BitConverter.GetBytes((float)ms.Direction.Y).CopyTo(Data, 2 + 4);

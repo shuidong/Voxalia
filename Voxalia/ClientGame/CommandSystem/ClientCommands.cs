@@ -37,21 +37,24 @@ namespace Voxalia.ClientGame.CommandSystem
             CommandSystem.Output = Output;
             CommandSystem.Init();
 
-            // Common Commands
-            CommandSystem.RegisterCommand(new QuitCommand());
-
-            // Network Commands
-            CommandSystem.RegisterCommand(new ConnectCommand());
-
             // UI Commands
+            CommandSystem.RegisterCommand(new AttackCommand());
             CommandSystem.RegisterCommand(new BackwardCommand());
             CommandSystem.RegisterCommand(new CaptureCommand());
             CommandSystem.RegisterCommand(new DownwardCommand());
             CommandSystem.RegisterCommand(new ForwardCommand());
             CommandSystem.RegisterCommand(new LeftwardCommand());
             CommandSystem.RegisterCommand(new RightwardCommand());
+            CommandSystem.RegisterCommand(new SecondaryCommand());
             CommandSystem.RegisterCommand(new UpwardCommand());
+            CommandSystem.RegisterCommand(new UseCommand());
             CommandSystem.RegisterCommand(new WalkCommand());
+
+            // Common Commands
+            CommandSystem.RegisterCommand(new QuitCommand());
+
+            // Network Commands
+            CommandSystem.RegisterCommand(new ConnectCommand());
         }
 
         /// <summary>

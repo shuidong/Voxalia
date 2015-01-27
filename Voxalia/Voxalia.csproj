@@ -77,6 +77,9 @@
     <Compile Include="ClientGame\CommandSystem\ClientCVar.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\CaptureCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\BackwardCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\AttackCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\UseCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\SecondaryCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\WalkCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\DownwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\UpwardCommand.cs" />
@@ -96,6 +99,7 @@
     <Compile Include="ClientGame\NetworkSystem\ClientNetworkBase.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ChunkPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ConfirmPositionPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\BlockPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\MessagePacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
@@ -127,6 +131,7 @@
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\MoveKeysPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\ChunkPacketOut.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsOut\BlockPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\KickPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\MessagePacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />

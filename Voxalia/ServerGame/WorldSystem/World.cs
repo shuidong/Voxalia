@@ -5,6 +5,7 @@ using System.Text;
 using Voxalia.Shared;
 using Voxalia.ServerGame.EntitySystem;
 using Voxalia.ServerGame.ServerMainSystem;
+using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 
 namespace Voxalia.ServerGame.WorldSystem
 {
@@ -23,6 +24,8 @@ namespace Voxalia.ServerGame.WorldSystem
         /// </summary>
         public Dictionary<Location, Chunk> LoadedChunks;
 
+        public List<Player> Players;
+
         /// <summary>
         /// Constructs a world.
         /// </summary>
@@ -31,6 +34,7 @@ namespace Voxalia.ServerGame.WorldSystem
         {
             SysConsole.Output(OutputType.INIT, "Loading new world (" + name + ")...");
             LoadedChunks = new Dictionary<Location, Chunk>();
+            Players = new List<Player>();
             Name = name;
         }
 
@@ -117,6 +121,10 @@ namespace Voxalia.ServerGame.WorldSystem
                 chunk.Tickers.Add(e);
             }
             e.InWorld = this;
+            if (e is Player)
+            {
+                Players.Add((Player)e);
+            }
         }
 
         /// <summary>
@@ -128,6 +136,10 @@ namespace Voxalia.ServerGame.WorldSystem
             Chunk ch = LoadChunk(GetChunkLocation(e.Position));
             ch.Entities.Remove(e);
             ch.Tickers.Remove(e);
+            if (e is Player)
+            {
+                Players.Remove((Player)e);
+            }
         }
 
         /// <summary>
@@ -137,8 +149,37 @@ namespace Voxalia.ServerGame.WorldSystem
         /// <returns>The block</returns>
         public Block GetBlock(Location loc)
         {
-            Location ch = GetChunkLocation(loc) * 30;
-            return new Block(LoadChunk(ch), (int)(Math.Floor(loc.X) - ch.X), (int)(Math.Floor(loc.Y) - ch.Y), (int)(Math.Floor(loc.Z) - ch.Z));
+            Location ch = GetChunkLocation(loc);
+            return new Block(LoadChunk(ch), (int)(Math.Floor(loc.X) - ch.X * 30), (int)(Math.Floor(loc.Y) - ch.Y * 30), (int)(Math.Floor(loc.Z) - ch.Z * 30));
+        }
+
+        /// <summary>
+        /// Gets the block at a world location.
+        /// </summary>
+        /// <param name="loc">The global location</param>
+        /// <returns>The block</returns>
+        public Material GetBlockMaterial(Location loc)
+        {
+            Location ch = GetChunkLocation(loc);
+            return (Material)LoadChunk(ch).Blocks[(int)(Math.Floor(loc.X) - ch.X * 30), (int)(Math.Floor(loc.Y) - ch.Y * 30), (int)(Math.Floor(loc.Z) - ch.Z * 30)].Type;
+        }
+
+        /// <summary>
+        /// Broadcasts the details of a single block to all players on the server.
+        /// </summary>
+        /// <param name="loc">The block location</param>
+        public void BroadcastBlock(Location loc)
+        {
+            loc = loc.GetBlockLocation();
+            Location chunkloc = GetChunkLocation(loc);
+            BlockPacketOut packet = new BlockPacketOut(loc, GetBlockMaterial(loc));
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].ChunksAware.Contains(chunkloc))
+                {
+                    Players[i].SendToSecondary(packet);
+                }
+            }
         }
     }
 }
