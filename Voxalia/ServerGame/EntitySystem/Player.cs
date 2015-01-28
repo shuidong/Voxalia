@@ -145,6 +145,7 @@ namespace Voxalia.ServerGame.EntitySystem
         {
             Network = conn;
             Position = new Location(99999f, 99999f, 99999f);
+            Scale = new Location(10);
         }
 
         /// <summary>
@@ -351,7 +352,15 @@ namespace Voxalia.ServerGame.EntitySystem
                 sendtimer = 0.05f;
                 if (ToSend.Count > 0)
                 {
-                    SendToSecondary(new ChunkPacketOut(InWorld.LoadChunk(ToSend[0])));
+                    Chunk ch = InWorld.LoadChunk(ToSend[0]);
+                    SendToSecondary(new ChunkPacketOut(ch));
+                    for (int i = 0; i < ch.Entities.Count; i++)
+                    {
+                        if (ch.Entities[i] != this)
+                        {
+                            Send(new NewEntityPacketOut(ch.Entities[i]));
+                        }
+                    }
                     ToSend.RemoveAt(0);
                 }
             }

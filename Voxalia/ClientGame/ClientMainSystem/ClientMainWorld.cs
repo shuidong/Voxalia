@@ -39,6 +39,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
             Chunks = new Dictionary<Location, Chunk>();
             Entities = new List<Entity>();
             Tickers = new List<Entity>();
+            ThePlayer.ID = ulong.MaxValue;
             Entities.Add(ThePlayer);
             Tickers.Add(ThePlayer);
         }
@@ -109,6 +110,20 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 Tickers.Add(ent);
             }
+        }
+
+        /// <summary>
+        /// Remove an entity from the world.
+        /// </summary>
+        /// <param name="ent">The entity to remove</param>
+        public static void RemoveEntity(Entity ent)
+        {
+            Entities.Remove(ent);
+            if (ent.TickMe)
+            {
+                Tickers.Remove(ent);
+            }
+
         }
 
         /// <summary>

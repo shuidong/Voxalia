@@ -24,6 +24,9 @@ namespace Voxalia.ServerGame.WorldSystem
         /// </summary>
         public Dictionary<Location, Chunk> LoadedChunks;
 
+        /// <summary>
+        /// All players spawned in the world.
+        /// </summary>
         public List<Player> Players;
 
         /// <summary>
@@ -126,6 +129,29 @@ namespace Voxalia.ServerGame.WorldSystem
                 Players.Add((Player)e);
             }
         }
+
+        /// <summary>
+        /// Spawns an entity and broadcasts its existence to all players and assigns it a new ID.
+        /// </summary>
+        /// <param name="e">The entity</param>
+        public void SpawnNewEntity(Entity e)
+        {
+            e.ID = cID++;
+            Spawn(e);
+            Location chloc = GetChunkLocation(e.Position);
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (e != Players[i] && Players[i].ChunksAware.Contains(chloc))
+                {
+                    Players[i].Send(new NewEntityPacketOut(e));
+                }
+            }
+        }
+
+        /// <summary>
+        /// The current unique ID the entity list is on.
+        /// </summary>
+        public ulong cID = 0;
 
         /// <summary>
         /// Despawns an entity.

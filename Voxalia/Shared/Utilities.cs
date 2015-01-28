@@ -36,6 +36,24 @@ namespace Voxalia.Shared
         }
 
         /// <summary>
+        /// Converts a string to a double. Returns 0 if the string is not a valid double.
+        /// </summary>
+        /// <param name="input">The string to convert</param>
+        /// <returns>The converted double</returns>
+        public static double StringToDouble(string input)
+        {
+            double output;
+            if (double.TryParse(input, out output))
+            {
+                return output;
+            }
+            else
+            {
+                return 0f;
+            }
+        }
+
+        /// <summary>
         /// Converts a string to a ushort Returns 0 if the string is not a valid ushort.
         /// </summary>
         /// <param name="input">The string to convert</param>
@@ -44,6 +62,24 @@ namespace Voxalia.Shared
         {
             ushort output;
             if (ushort.TryParse(input, out output))
+            {
+                return output;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Converts a string to a int Returns 0 if the string is not a valid int.
+        /// </summary>
+        /// <param name="input">The string to convert</param>
+        /// <returns>The converted int</returns>
+        public static int StringToInt(string input)
+        {
+            int output;
+            if (int.TryParse(input, out output))
             {
                 return output;
             }

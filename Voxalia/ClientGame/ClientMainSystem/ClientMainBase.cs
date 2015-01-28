@@ -79,6 +79,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
             GLFont.Init();
             SysConsole.Output(OutputType.INIT, "Loading font-set engine...");
             FontSet.Init();
+            SysConsole.Output(OutputType.INIT, "Loading 3D model engine...");
+            Model.Init();
             SysConsole.Output(OutputType.INIT, "Adjusting OpenGL settings...");
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);

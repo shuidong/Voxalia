@@ -97,7 +97,15 @@ namespace Voxalia.ClientGame.NetworkSystem
                             case 3:
                                 apacket = new MessagePacketIn();
                                 break;
-
+                            case 4:
+                                apacket = new NewEntityPacketIn();
+                                break;
+                            case 5:
+                                apacket = new DespawnEntityPacketIn();
+                                break;
+                            case 6:
+                                apacket = new EntityPositionPacketIn();
+                                break;
                             case 255:
                                 apacket = new DisconnectPacketIn();
                                 break;

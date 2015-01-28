@@ -89,8 +89,11 @@
     <Compile Include="ClientGame\EntitySystem\Dot.cs" />
     <Compile Include="ClientGame\EntitySystem\Entity.cs" />
     <Compile Include="ClientGame\EntitySystem\Player.cs" />
+    <Compile Include="ClientGame\EntitySystem\ServerEntity.cs" />
     <Compile Include="ClientGame\GraphicsSystem\FontSet.cs" />
     <Compile Include="ClientGame\GraphicsSystem\GLFont.cs" />
+    <Compile Include="ClientGame\GraphicsSystem\Model.cs" />
+    <Compile Include="ClientGame\GraphicsSystem\Plane.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Renderer.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Shader.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Texture.cs" />
@@ -100,8 +103,11 @@
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ChunkPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\ConfirmPositionPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\BlockPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\DespawnEntityPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\EntityPositionPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\MessagePacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsIn\NewEntityPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\CommandPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\MoveKeysPacketOut.cs" />
@@ -132,8 +138,11 @@
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\ChunkPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\BlockPacketOut.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsOut\DespawnPacketOut.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsOut\EntityPositionPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\KickPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\MessagePacketOut.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsOut\NewEntityPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\PositionPacketOut.cs" />
     <Compile Include="ServerGame\PlayerCommandSystem\AbstractPlayerCommand.cs" />

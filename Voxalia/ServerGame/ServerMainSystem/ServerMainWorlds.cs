@@ -34,7 +34,7 @@ namespace Voxalia.ServerGame.ServerMainSystem
         {
             // TODO: Load player details
             Players.Add(player);
-            Worlds[0].Spawn(player);
+            Worlds[0].SpawnNewEntity(player);
             player.PingMarker = 0;
             player.Send(new PingPacketOut(0));
             player.SendToSecondary(new PingPacketOut(0));
