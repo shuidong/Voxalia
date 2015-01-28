@@ -34,18 +34,18 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
             return true;
         }
 
-        //static bool flip = false;
+        static bool flip = false;
         public override void Apply()
         {
-            /*
-            ClientMain.SpawnEntity(new Dot() { Position = position });
+            
+            //ClientMain.SpawnEntity(new Dot() { Position = position });
             if (flip)
             {
-                return;
+            //    return;
             }
             flip = true;
-            SysConsole.Output(OutputType.INFO, "Receive packet: " + position + ", " + velocity);
-            */
+            //SysConsole.Output(OutputType.INFO, "Receive packet: " + position + ", " + velocity);
+            
             if (Time > ClientMain.GlobalTickTime)
             {
                 ClientMain.ThePlayer.Position = position;
@@ -57,7 +57,7 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                     MoveState ms = ClientMain.ThePlayer.MoveStates[i];
                     if (ms.Time < Time)
                     {
-                        ClientMain.ThePlayer.AddMS();
+                        MoveState temp = ClientMain.ThePlayer.GetMS();
                         ClientMain.ThePlayer.Forward = ms.Forward;
                         ClientMain.ThePlayer.Backward = ms.Backward;
                         ClientMain.ThePlayer.Leftward = ms.Leftward;
@@ -70,13 +70,6 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                         ClientMain.ThePlayer.Jumped = Jumped;
                         double ctime = Time;
                         double Target = Time - ctime;
-                        while (Target > 1d / 60d)
-                        {
-                            ClientMain.ThePlayer.TickMovement(1d / 60d, true);
-                            Target -= 1d / 60d;
-                        }
-                        ClientMain.ThePlayer.TickMovement(Target, true);
-                        ctime = Time;
                         for (int x = i + 1; x < ClientMain.ThePlayer.MoveStates.Count; x++)
                         {
                             ms = ClientMain.ThePlayer.MoveStates[x];
@@ -96,7 +89,14 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
                             ClientMain.ThePlayer.Downward = ms.Downward;
                             ClientMain.ThePlayer.Direction = ms.Direction;
                         }
-                        ClientMain.ThePlayer.AddMS();
+                        ms = temp;
+                        ClientMain.ThePlayer.Forward = ms.Forward;
+                        ClientMain.ThePlayer.Backward = ms.Backward;
+                        ClientMain.ThePlayer.Leftward = ms.Leftward;
+                        ClientMain.ThePlayer.Rightward = ms.Rightward;
+                        ClientMain.ThePlayer.Upward = ms.Upward;
+                        ClientMain.ThePlayer.Downward = ms.Downward;
+                        ClientMain.ThePlayer.Direction = ms.Direction;
                         break;
                     }
                 }

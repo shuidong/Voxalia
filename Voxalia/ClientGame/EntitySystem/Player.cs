@@ -249,20 +249,32 @@ namespace Voxalia.ClientGame.EntitySystem
         /// </summary>
         public void AddMS()
         {
-            MoveStates.Add(new MoveState() { Position = Position, Forward = Forward,
-                                             Backward = Backward,
-                                             Leftward = Leftward,
-                                             Rightward = Rightward,
-                                             Upward = Upward,
-                                             Downward = Downward,
-                                             Direction = Direction,
-                                             Jumped = Jumped,
-                                             Slow = Slow,
-                                             Attack = Attack,
-                                             Secondary = Secondary,
-                                             Use = Use,
-                                             Time = ClientMain.GlobalTickTime
-            });
+            MoveStates.Add(GetMS());
+        }
+
+        /// <summary>
+        /// Creates a movestate of the current key presses.
+        /// </summary>
+        /// <returns>A valid movestate</returns>
+        public MoveState GetMS()
+        {
+            return new MoveState()
+            {
+                Position = Position,
+                Forward = Forward,
+                Backward = Backward,
+                Leftward = Leftward,
+                Rightward = Rightward,
+                Upward = Upward,
+                Downward = Downward,
+                Direction = Direction,
+                Jumped = Jumped,
+                Slow = Slow,
+                Attack = Attack,
+                Secondary = Secondary,
+                Use = Use,
+                Time = ClientMain.GlobalTickTime
+            };
         }
 
         public override void Render3D()

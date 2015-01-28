@@ -90,6 +90,8 @@ namespace Voxalia.ServerGame.NetworkSystem.PacketsIn
             Sender.LastJumped = Sender.Jumped;
             Sender.Send(new PositionPacketOut(Sender, Time));
             Sender.LastMovePacket = this;
+            // TODO: is this needed?
+            Sender.TickMovement(ServerMain.GlobalTickTime - Time, true);
         }
 
         /// <summary>
