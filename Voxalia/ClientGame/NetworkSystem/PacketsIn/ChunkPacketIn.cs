@@ -27,11 +27,17 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
             return true;
         }
 
+        /// <summary>
+        /// Whether a chunk has ever been received.
+        /// </summary>
+        public static bool ChunkReceived = false;
+
         public override void Apply()
         {
             Chunk chunk = ClientMain.GetChunk(loc);
             chunk.FromBytes(chunkdetail);
             chunk.UpdateVBO();
+            ChunkReceived = true;
         }
     }
 }

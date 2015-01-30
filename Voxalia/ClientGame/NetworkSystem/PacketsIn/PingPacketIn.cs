@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Voxalia.ClientGame.NetworkSystem.PacketsOut;
 using Voxalia.ClientGame.ClientMainSystem;
+using Voxalia.Shared;
 
 namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
 {
@@ -42,25 +43,26 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
             else
             {
                 ClientNetworkBase.SendPacket(new PingPacketOut(marker));
+                //SysConsole.Output(OutputType.INFO, (ClientMain.GlobalTickTime - Time).ToString());
                 if (Math.Abs(ClientMain.GlobalTickTime - Time) > 1)
                 {
                     ClientMain.GlobalTickTime = Time;
                 }
                 else if (ClientMain.GlobalTickTime - Time > 0.1)
                 {
-                    ClientMain.GlobalTickTime -= 0.1;
+                    ClientMain.GlobalTickTime -= 0.05;
                 }
                 else if (ClientMain.GlobalTickTime - Time < -0.1)
                 {
-                    ClientMain.GlobalTickTime += 0.1;
+                    ClientMain.GlobalTickTime += 0.05;
                 }
                 else if (ClientMain.GlobalTickTime - Time > 0.01)
                 {
-                    ClientMain.GlobalTickTime -= 0.01;
+                    ClientMain.GlobalTickTime -= 0.005;
                 }
                 else if (ClientMain.GlobalTickTime - Time < -0.01)
                 {
-                    ClientMain.GlobalTickTime += 0.01;
+                    ClientMain.GlobalTickTime += 0.005;
                 }
             }
         }

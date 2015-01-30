@@ -230,9 +230,9 @@ namespace Voxalia.ClientGame.EntitySystem
                 {
                     ClientNetworkBase.SendPacket(new MoveKeysPacketOut(MoveStates[MoveStates.Count - 1]));
                 }
-                if (MoveStates.Count > 500)
+                if (MoveStates.Count > 250)
                 {
-                    MoveStates.RemoveRange(0, 100);
+                    MoveStates.RemoveRange(0, 50);
                 }
             }
         }
@@ -273,6 +273,7 @@ namespace Voxalia.ClientGame.EntitySystem
                 Attack = Attack,
                 Secondary = Secondary,
                 Use = Use,
+                Velocity = Velocity,
                 Time = ClientMain.GlobalTickTime
             };
         }
@@ -298,5 +299,6 @@ namespace Voxalia.ClientGame.EntitySystem
         public bool Attack;
         public bool Secondary;
         public bool Use = false;
+        public Location Velocity;
     }
 }
