@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using Voxalia.Shared;
 using Voxalia.ServerGame.EntitySystem;
 using Voxalia.ServerGame.ServerMainSystem;
+using Voxalia.ServerGame.NetworkSystem.PacketsIn;
 
 namespace Voxalia.ServerGame.NetworkSystem
 {
@@ -153,7 +154,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                                     }
                                     else
                                     {
-                                        Player player = new Player(this);
+                                        player = new Player(this);
                                         player.Username = username;
                                         player.ConnectedHost = host;
                                         player.ConnectedPort = port;
@@ -166,6 +167,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                                         ServerMain.WaitingPlayers.Add(player);
                                         SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
                                             + ") accepted: Username=" + username + ", connected to " + host + ":" + port);
+                                        IsChunkNetwork = false;
                                     }
                                 }
                                 else if (split.Length == 2)
@@ -177,7 +179,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                                     received -= pos + 1;
                                     recd = temp;
                                     Step = 1;
-                                    Player player = null;
+                                    player = null;
                                     for (int i = 0; i < ServerMain.WaitingPlayers.Count; i++)
                                     {
                                         if (ServerMain.WaitingPlayers[i].ConnectionKey == key)
@@ -199,6 +201,7 @@ namespace Voxalia.ServerGame.NetworkSystem
                                         ServerMain.WaitingPlayers.Remove(player);
                                         player.ChunkNetwork = this;
                                         ServerMain.SpawnPlayer(player);
+                                        IsChunkNetwork = true;
                                         SysConsole.Output(OutputType.INFO, "Connection (" + InternalSocket.RemoteEndPoint.ToString()
                                             + ") accepted: Username=" + player.Username + ", now joining!");
                                     }
@@ -221,7 +224,92 @@ namespace Voxalia.ServerGame.NetworkSystem
                         }
                     }
                 }
+                else if (Step == 1)
+                {
+                    if (received > 4)
+                    {
+                        while (true)
+                        {
+                            int len = BitConverter.ToInt32(recd, 0);
+                            byte type = recd[4];
+                            if (received - 5 >= len)
+                            {
+                                byte[] data = new byte[len];
+                                if (len > 0)
+                                {
+                                    Array.Copy(recd, 5, data, 0, len);
+                                }
+                                received -= 5 + len;
+                                byte[] newdata = new byte[Max];
+                                if (received > 0)
+                                {
+                                    Array.Copy(recd, 5 + len, newdata, 0, received);
+                                }
+                                recd = newdata;
+                                AbstractPacketIn packet;
+                                switch (type)
+                                {
+                                    case 1:
+                                        packet = new PingPacketIn(player, IsChunkNetwork);
+                                        break;
+                                    case 2:
+                                        packet = new MoveKeysPacketIn(player, IsChunkNetwork);
+                                        break;
+                                    case 3:
+                                        packet = new CommandPacketIn(player, IsChunkNetwork);
+                                        break;
+                                    case 255:
+                                        packet = new DisconnectPacketIn(player, IsChunkNetwork);
+                                        return;
+                                    default:
+                                        player.Kick("Invalid packet " + (int)type);
+                                        return;
+                                }
+                                try
+                                {
+                                    if (packet.ReadBytes(data))
+                                    {
+                                        if (packet is PingPacketIn)
+                                        {
+                                            packet.Apply();
+                                        }
+                                        else
+                                        {
+                                            lock (player.Packets)
+                                            {
+                                                player.Packets.Add(packet);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        player.Kick("Impure packet " + (int)type);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SysConsole.Output(OutputType.ERROR, "Networking / player / receive packet: " + ex.ToString());
+                                    player.Kick("Invalid packet " + (int)type);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        /// <summary>
+        /// The player this connection is for.
+        /// </summary>
+        Player player = null;
+
+        /// <summary>
+        /// Whether this packet came from the chunk network.
+        /// </summary>
+        bool IsChunkNetwork = false;
     }
 }

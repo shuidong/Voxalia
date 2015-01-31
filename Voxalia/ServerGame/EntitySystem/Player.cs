@@ -78,11 +78,13 @@ namespace Voxalia.ServerGame.EntitySystem
 
         /// <summary>
         /// The network connection for this player.
+        /// Owned by Networking system.
         /// </summary>
         public Connection Network;
 
         /// <summary>
         /// The secondard network connection for this player.
+        /// Owned by Networking system.
         /// </summary>
         public Connection ChunkNetwork;
 
@@ -108,13 +110,15 @@ namespace Voxalia.ServerGame.EntitySystem
 
         /// <summary>
         /// The last ping marker for this client.
+        /// Owned by Networking system.
         /// </summary>
-        public byte PingMarker;
+        public volatile byte PingMarker;
 
         /// <summary>
         /// The last ping marker on this client's secondary connection.
+        /// Owned by Networking system.
         /// </summary>
-        public byte SecondayPingMarker;
+        public volatile byte SecondayPingMarker;
 
         /// <summary>
         /// The last time the client pinged the server.
@@ -365,122 +369,29 @@ namespace Voxalia.ServerGame.EntitySystem
                 }
             }
             // Handle networking
-            if (Network.received > 4)
+            lock (Packets)
             {
-                while (true)
+                for (int i = 0; i < Packets.Count; i++)
                 {
-                    int len = BitConverter.ToInt32(Network.recd, 0);
-                    byte type = Network.recd[4];
-                    if (Network.received - 5 >= len)
+                    try
                     {
-                        byte[] data = new byte[len];
-                        if (len > 0)
-                        {
-                            Array.Copy(Network.recd, 5, data, 0, len);
-                        }
-                        Network.received -= 5 + len;
-                        byte[] newdata = new byte[Network.Max];
-                        if (Network.received > 0)
-                        {
-                            Array.Copy(Network.recd, 5 + len, newdata, 0, Network.received);
-                        }
-                        Network.recd = newdata;
-                        AbstractPacketIn packet;
-                        switch (type)
-                        {
-                            case 1:
-                                packet = new PingPacketIn(this, false);
-                                break;
-                            case 2:
-                                packet = new MoveKeysPacketIn(this, false);
-                                break;
-                            case 3:
-                                packet = new CommandPacketIn(this, false);
-                                break;
-                            case 255:
-                                packet = new DisconnectPacketIn(this, false);
-                                return;
-                            default:
-                                Kick("Invalid packet " + (int)type);
-                                return;
-                        }
-                        try
-                        {
-                            if (packet.ReadBytes(data))
-                            {
-                                packet.Apply();
-                            }
-                            else
-                            {
-                                Kick("Impure packet " + (int)type);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SysConsole.Output(OutputType.ERROR, "Networking / player / receive packet: " + ex.ToString());
-                            Kick("Invalid packet " + (int)type);
-                        }
+                        Packets[i].Apply();
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        break;
+                        SysConsole.Output(OutputType.ERROR, "Networking / player / receive "
+                            + (Packets[i].IsChunkConnection ? "C-" : "") + "packet: " + ex.ToString());
+                        Kick("Invalid packet " + Packets[i].GetType().Name); // TODO: Less internal-ish packet ID handling?
                     }
                 }
-            }
-            if (ChunkNetwork.received > 4)
-            {
-                while (true)
-                {
-                    int len = BitConverter.ToInt32(ChunkNetwork.recd, 0);
-                    byte type = ChunkNetwork.recd[4];
-                    if (ChunkNetwork.received - 5 >= len)
-                    {
-                        byte[] data = new byte[len];
-                        if (len > 0)
-                        {
-                            Array.Copy(ChunkNetwork.recd, 5, data, 0, len);
-                        }
-                        ChunkNetwork.received -= 5 + len;
-                        byte[] newdata = new byte[ChunkNetwork.Max];
-                        if (ChunkNetwork.received > 0)
-                        {
-                            Array.Copy(ChunkNetwork.recd, 5 + len, newdata, 0, ChunkNetwork.received);
-                        }
-                        ChunkNetwork.recd = newdata;
-                        AbstractPacketIn packet;
-                        switch (type)
-                        {
-                            case 1:
-                                packet = new PingPacketIn(this, true);
-                                break;
-                            default:
-                                Kick("Invalid packet " + (int)type);
-                                return;
-                        }
-                        try
-                        {
-                            if (packet.ReadBytes(data))
-                            {
-                                packet.Apply();
-                            }
-                            else
-                            {
-                                Kick("Impure packet " + (int)type);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            SysConsole.Output(OutputType.ERROR, "Networking / player / receive c-packet: " + ex.ToString());
-                            Kick("Invalid packet " + (int)type);
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
+                Packets.Clear();
             }
         }
+
+        /// <summary>
+        /// All packets waiting from the connection queue.
+        /// </summary>
+        public List<AbstractPacketIn> Packets = new List<AbstractPacketIn>();
 
         bool tdisco = false;
 
