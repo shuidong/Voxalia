@@ -21,14 +21,8 @@ namespace Voxalia.ServerGame.CommandSystem
         // System CVars
         public static CVar s_filepath;
 
-        // Network CVars
-        public static CVar n_first;
-
-        // Renderer CVars
-        public static CVar r_fullscreen, r_width, r_height, r_antialiasing;
-
-        // UI CVars
-        public static CVar u_mouse_sensitivity;
+        // Game CVars
+        public static CVar g_fps;
 
         /// <summary>
         /// Prepares the CVar system, generating default CVars.
@@ -39,15 +33,8 @@ namespace Voxalia.ServerGame.CommandSystem
 
             // System CVars
             s_filepath = Register("s_filepath", FileHandler.BaseDirectory, CVarFlag.Textual | CVarFlag.ReadOnly); // The current system environment filepath (The directory of /data).
-            // Network CVars
-            n_first = Register("n_first", "ipv4", CVarFlag.Textual); // Whether to prefer IPv4 or IPv6.
-            // Renderer CVars
-            r_fullscreen = Register("r_fullscreen", "false", CVarFlag.Boolean | CVarFlag.Delayed); // Whether to use fullscreen mode.
-            r_width = Register("r_width", "800", CVarFlag.Numeric | CVarFlag.Delayed); // What width the window should be.
-            r_height = Register("r_height", "600", CVarFlag.Numeric | CVarFlag.Delayed); // What height the window should be.
-            r_antialiasing = Register("r_antialiasing", "2", CVarFlag.Numeric | CVarFlag.Delayed); // What AA mode to use (0 = none).
-            // UI CVars
-            u_mouse_sensitivity = Register("u_mouse_sensitivity", "1", CVarFlag.Numeric); // How sensitive the mouse is.
+            // Game CVars
+            g_fps = Register("g_fps", "40", CVarFlag.Numeric); // What tickrate to use for the general game tick.
         }
 
         static CVar Register(string name, string value, CVarFlag flags)

@@ -31,18 +31,18 @@ namespace Voxalia.ServerGame.ServerMainSystem
             ServerCVar.Init(op);
             SysConsole.Output(OutputType.INIT, "Loading console reader...");
             ConsoleHandler.Init();
-            SysConsole.Output(OutputType.INIT, "Generating an empty world...");
+            SysConsole.Output(OutputType.INIT, "Preparing world system...");
             Worlds = new List<World>();
-            // TEMPORARY
-            World world = new World("world");
-            Worlds.Add(world);
             SysConsole.Output(OutputType.INIT, "Loading networking engine...");
             NetworkBase.Init(true);
             SysConsole.Output(OutputType.INIT, "Loading player command engine...");
             PlayerCommandEngine.Init();
+            SysConsole.Output(OutputType.INIT, "Preparing default worlds...");
+            // TEMPORARY; TODO: Read settings / command line / anything
+            CreateWorld("world");
             SysConsole.Output(OutputType.INIT, "Preparing to tick...");
             // Tick
-            double TARGETFPS = 20d; // TODO: CVar?
+            double TARGETFPS = 40d;
             Stopwatch Counter = new Stopwatch();
             Stopwatch DeltaCounter = new Stopwatch();
             DeltaCounter.Start();
@@ -60,12 +60,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
                 // Delta time = Elapsed ticks * (ticks/second)
                 CurrentDelta = ((double)DeltaCounter.ElapsedTicks) / ((double)Stopwatch.Frequency);
                 // How much time should pass between each tick ideally
-                /*TARGETFPS = ServerCVar.g_fps.ValueD;
+                TARGETFPS = ServerCVar.g_fps.ValueD;
                 if (TARGETFPS < 1 || TARGETFPS > 100)
                 {
-                    ServerCVar.g_fps.Set("20");
-                    TARGETFPS = 20;
-                }*/
+                    ServerCVar.g_fps.Set("40");
+                    TARGETFPS = 40;
+                }
                 TargetDelta = (1d / TARGETFPS);
                 // How much delta has been built up
                 TotalDelta += CurrentDelta;

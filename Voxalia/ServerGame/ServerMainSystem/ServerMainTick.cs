@@ -52,14 +52,10 @@ namespace Voxalia.ServerGame.ServerMainSystem
                     secondTracker -= 1.0;
                     OncePerSecondTick();
                 }
-                for (int i = 0; i < Worlds.Count; i++)
-                {
-                    Worlds[i].Tick();
-                }
             }
             catch (Exception ex)
             {
-                SysConsole.Output(OutputType.ERROR, "Error / worldtick: " + ex.ToString());
+                SysConsole.Output(OutputType.ERROR, "Error / oncepersecondtick: " + ex.ToString());
             }
             try
             {
@@ -105,9 +101,12 @@ namespace Voxalia.ServerGame.ServerMainSystem
         {
             SysConsole.Output(OutputType.INFO, "[Announce] " + message);
             MessagePacketOut packet = new MessagePacketOut(message);
-            for (int i = 0; i < Players.Count; i++)
+            lock (Players)
             {
-                Players[i].Send(packet);
+                for (int i = 0; i < Players.Count; i++)
+                {
+                    Players[i].Send(packet);
+                }
             }
         }
     }

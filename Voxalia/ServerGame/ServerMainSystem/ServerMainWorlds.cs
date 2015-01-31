@@ -6,6 +6,7 @@ using Voxalia.ServerGame.WorldSystem;
 using Voxalia.ServerGame.EntitySystem;
 using Voxalia.ServerGame.NetworkSystem.PacketsOut;
 using Voxalia.Shared;
+using System.Threading;
 
 namespace Voxalia.ServerGame.ServerMainSystem
 {
@@ -33,12 +34,18 @@ namespace Voxalia.ServerGame.ServerMainSystem
         public static void SpawnPlayer(Player player)
         {
             // TODO: Load player details
-            Players.Add(player);
-            Worlds[0].SpawnNewEntity(player);
             player.PingMarker = 0;
             player.Send(new PingPacketOut(0));
             player.SendToSecondary(new PingPacketOut(0));
-            player.Reposition(new Location(1, 1, 50));
+            lock (Players)
+            {
+                Players.Add(player);
+            }
+            lock (Worlds[0])
+            {
+                Worlds[0].SpawnNewEntity(player);
+                player.Reposition(new Location(1, 1, 50));
+            }
         }
 
         /// <summary>
@@ -47,8 +54,27 @@ namespace Voxalia.ServerGame.ServerMainSystem
         /// <param name="player">The player to remove</param>
         public static void DespawnPlayer(Player player)
         {
-            Players.Remove(player);
-            player.InWorld.Remove(player);
+            lock (Players)
+            {
+                Players.Remove(player);
+            }
+            lock (player.InWorld)
+            {
+                player.InWorld.Remove(player);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new world with the given name.
+        /// </summary>
+        /// <param name="name">The world's name</param>
+        public static void CreateWorld(string name)
+        {
+            World world = new World(name);
+            Worlds.Add(world);
+            Thread thread = new Thread(new ThreadStart(world.Run));
+            thread.Name = "Voxalia-TickWorld-" + world.Name;
+            thread.Start();
         }
     }
 }

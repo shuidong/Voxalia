@@ -302,6 +302,10 @@ namespace Voxalia.ServerGame.EntitySystem
 
         public override void Tick()
         {
+            if (tdisco)
+            {
+                return;
+            }
             if (!IsValid)
             {
                 return;
@@ -312,7 +316,7 @@ namespace Voxalia.ServerGame.EntitySystem
                 PacketsToApply[i].Apply();
             }
             PacketsToApply.RemoveRange(0, pc);
-            TickMovement(ServerMain.Delta);
+            TickMovement(InWorld.Delta);
             // Manage Selection
             Location forward = Utilities.ForwardVector_Deg(Direction.X, Direction.Y);
             Location eye = Position + new Location(0, 0, Maxes.Z);
@@ -350,7 +354,7 @@ namespace Voxalia.ServerGame.EntitySystem
                     ChunksAware.RemoveAt(i--);
                 }
             }
-            sendtimer += ServerMain.Delta;
+            sendtimer += InWorld.Delta;
             if (sendtimer >= 0.05f)
             {
                 sendtimer = 0.05f;
@@ -391,9 +395,9 @@ namespace Voxalia.ServerGame.EntitySystem
         /// <summary>
         /// All packets waiting from the connection queue.
         /// </summary>
-        public List<AbstractPacketIn> Packets = new List<AbstractPacketIn>();
+        public volatile List<AbstractPacketIn> Packets = new List<AbstractPacketIn>();
 
-        bool tdisco = false;
+        volatile bool tdisco = false;
 
         /// <summary>
         /// Kicks the player with a given message.
