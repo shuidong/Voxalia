@@ -54,6 +54,13 @@ namespace Voxalia.ClientGame.GraphicsSystem
             D = -(Normal.Dot(vec1));
         }
 
+        public Plane(Location _normal, float _d)
+        {
+            double fact = 1 / Normal.Length();
+            Normal *= fact;
+            D = _d * fact;
+        }
+
         /// <summary>
         /// Finds where a line hits the plane, if anywhere.
         /// </summary>

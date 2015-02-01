@@ -15,6 +15,10 @@ namespace Voxalia.ClientGame.ClientMainSystem
 {
     public partial class ClientMain
     {
+        static int gFPS = 0;
+        static int gFPSc = 0;
+        static double gFPSCounter = 0;
+
         /// <summary>
         /// The primary render entry point from the OpenGL window.
         /// </summary>
@@ -23,6 +27,14 @@ namespace Voxalia.ClientGame.ClientMainSystem
         static void Window_RenderFrame(object sender, FrameEventArgs e)
         {
             // Initial Setup
+            gFPSCounter += e.Time;
+            if (gFPSCounter >= 1)
+            {
+                gFPS = gFPSc;
+                gFPSc = 0;
+                gFPSCounter = 0;
+            }
+            gFPSc++;
             GL.ClearColor(Color4.White);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             // General rendering
@@ -78,23 +90,34 @@ namespace Voxalia.ClientGame.ClientMainSystem
         /// </summary>
         public static float CameraZFar = 10000f;
 
+        static Matrix4 proj;
+        static Matrix4 view;
+        static Matrix4 combined;
+
         static void Setup3D()
         {
             GL.Color4(Color4.White);
             Shader.ColorMultShader.Bind();
             GL.MatrixMode(MatrixMode.Projection);
             GL.Enable(EnableCap.DepthTest);
-            Matrix4 proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraFOV), Window.Width / Window.Height, CameraZNear, CameraZFar);
-            Matrix4 view = Matrix4.LookAt(CameraEye.ToOVector(), CameraTarget.ToOVector(), CameraUp.ToOVector());
-            GL.MultMatrix(ref proj);
-            GL.MultMatrix(ref view);
+            proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraFOV), Window.Width / Window.Height, CameraZNear, CameraZFar);
+            view = Matrix4.LookAt(CameraEye.ToOVector(), CameraTarget.ToOVector(), CameraUp.ToOVector());
+            combined = view * proj;
+            //GL.MultMatrix(ref proj);
+            //GL.MultMatrix(ref view);
+            GL.MultMatrix(ref combined);
         }
 
         static void Run3D()
         {
+            //Frustum frustum = new Frustum(combined);
             foreach (KeyValuePair<Location, Chunk> chunkdata in Chunks)
             {
-                chunkdata.Value.Render();
+                //Location min = new Location(chunkdata.Value.X * 30, chunkdata.Value.Y * 30, chunkdata.Value.Z * 30);
+                //if (frustum.ContainsBox(min, min + new Location(30, 30, 30)))
+                {
+                    chunkdata.Value.Render();
+                }
             }
             foreach (Entity ent in Entities)
             {
@@ -124,7 +147,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         static void Run2D()
         {
             // Draw some debug output
-            FontSet.Standard.DrawColoredText("^0(Debug)Position: " + ThePlayer.Position.ToString(), new Location(0, 0, 0));
+            FontSet.Standard.DrawColoredText("^0(Debug)Position: " + ThePlayer.Position.ToString() + "\n" + gFPS, new Location(0, 0, 0));
             // Draw the quickbar
             int center = Window.Width / 2;
             Renderer.RenderItem(GetItemForSlot(QuickBarPos - 2), new Location(center - (32 + 32 + 32 + 3), Window.Height - (32 + 16), 0), 32);

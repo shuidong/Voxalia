@@ -93,6 +93,7 @@
     <Compile Include="ClientGame\EntitySystem\Player.cs" />
     <Compile Include="ClientGame\EntitySystem\ServerEntity.cs" />
     <Compile Include="ClientGame\GraphicsSystem\FontSet.cs" />
+    <Compile Include="ClientGame\GraphicsSystem\Frustum.cs" />
     <Compile Include="ClientGame\GraphicsSystem\GLFont.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Model.cs" />
     <Compile Include="ClientGame\GraphicsSystem\Plane.cs" />
