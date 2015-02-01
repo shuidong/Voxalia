@@ -32,11 +32,26 @@ namespace Voxalia.ClientGame.NetworkSystem.PacketsIn
         /// </summary>
         public static bool ChunkReceived = false;
 
+        /// <summary>
+        /// A list of normals to update chunks on.
+        /// </summary>
+        public static Location[] Normals = new Location[] { new Location(-1, 0, 0),
+            new Location(1, 0, 0),
+            new Location(0, 1, 0),
+            new Location(0, -1, 0),
+            new Location(0, 0, 1),
+            new Location(0, 0, -1)
+        };
+
         public override void Apply()
         {
             Chunk chunk = ClientMain.GetChunk(loc);
             chunk.FromBytes(chunkdetail);
             chunk.UpdateVBO();
+            for (int i = 0; i < Normals.Length; i++)
+            {
+                ClientMain.GetChunk(loc + Normals[i]).UpdateVBO();
+            }
             ChunkReceived = true;
         }
     }

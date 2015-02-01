@@ -8,6 +8,7 @@ using Voxalia.Shared;
 using OpenTK;
 using OpenTK.Graphics;
 using Voxalia.ClientGame.GraphicsSystem;
+using Voxalia.ClientGame.NetworkSystem.PacketsIn;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -212,6 +213,10 @@ namespace Voxalia.ClientGame.ClientMainSystem
             Chunk ch = GetChunk(chunkloc);
             ch.SetBlock((int)(Math.Floor(loc.X) - ch.X * 30), (int)(Math.Floor(loc.Y) - ch.Y * 30), (int)(Math.Floor(loc.Z) - ch.Z * 30), (ushort)mat);
             ch.UpdateVBO();
+            for (int i = 0; i < ChunkPacketIn.Normals.Length; i++)
+            {
+                GetChunk(chunkloc + ChunkPacketIn.Normals[i]).UpdateVBO();
+            }
         }
     }
 }

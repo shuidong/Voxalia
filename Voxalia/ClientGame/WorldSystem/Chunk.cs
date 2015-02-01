@@ -177,27 +177,39 @@ namespace Voxalia.ClientGame.WorldSystem
                         if (tex != null)
                         {
                             // TODO: Simplify. Can this be a loop?
-                            if (z == 29 || !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
+                            if ((z != 29 && !((Material)Blocks[x, y, z + 1].Type).OccupiesWholeBlock())
+                                || (z == 29 && !((Material)ClientMain.GetChunk(new Location(X, Y, Z + 1)).
+                                Blocks[x, y, 0].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.TOP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 0, 1));
                             }
-                            if (z == 0 || !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
+                            if ((z != 0 && !((Material)Blocks[x, y, z - 1].Type).OccupiesWholeBlock())
+                                || (z == 0 && !((Material)ClientMain.GetChunk(new Location(X, Y, Z - 1)).
+                                Blocks[x, y, 29].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.BOTTOM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 0, -1));
                             }
-                            if (x == 29 || !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
+                            if ((x != 29 && !((Material)Blocks[x + 1, y, z].Type).OccupiesWholeBlock())
+                                || (x == 29 && !((Material)ClientMain.GetChunk(new Location(X + 1, Y, Z)).
+                                Blocks[0, y, z].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.XP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(1, 0, 0));
                             }
-                            if (x == 0 || !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
+                            if ((x != 0 && !((Material)Blocks[x - 1, y, z].Type).OccupiesWholeBlock())
+                                || (x == 0 && !((Material)ClientMain.GetChunk(new Location(X - 1, Y, Z)).
+                                Blocks[29, y, z].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.XM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(-1, 0, 0));
                             }
-                            if (y == 29 || !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
+                            if ((y != 29 && !((Material)Blocks[x, y + 1, z].Type).OccupiesWholeBlock())
+                                || (y == 29 && !((Material)ClientMain.GetChunk(new Location(X, Y + 1, Z)).
+                                Blocks[x, 0, z].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.YP]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, 1, 0));
                             }
-                            if (y == 0 || !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
+                            if ((y != 0 && !((Material)Blocks[x, y - 1, z].Type).OccupiesWholeBlock())
+                                || (y == 0 && !((Material)ClientMain.GetChunk(new Location(X, Y - 1, Z)).
+                                Blocks[x, 29, z].Type).OccupiesWholeBlock()))
                             {
                                 GetVBO(tex.Textures[(int)Sides.YM]).AddSide(X * 30 + x, Y * 30 + y, Z * 30 + z, new OpenTK.Vector3(0, -1, 0));
                             }
