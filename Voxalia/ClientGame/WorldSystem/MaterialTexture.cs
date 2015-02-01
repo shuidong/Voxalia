@@ -15,24 +15,35 @@ namespace Voxalia.ClientGame.WorldSystem
     {
         public static Dictionary<ushort, MaterialSideData> Textures;
 
+        static MaterialSideData[] TexturesDefault = new MaterialSideData[(int)Material.MAX];
+
         /// <summary>
         /// Prepares the system, registering built-in material textures.
         /// </summary>
         public static void Init()
         {
             Textures = new Dictionary<ushort, MaterialSideData>();
+            TexturesDefault[0] = null;
             Textures.Add(0, null);
-            Textures.Add(1, new MaterialSideData(Texture.GetTexture("blocks/solid/stone")));
-            Textures.Add(2, new MaterialSideData(Texture.GetTexture("blocks/solid/dirt")));
+            TexturesDefault[1] = new MaterialSideData(Texture.GetTexture("blocks/solid/stone"));
+            Textures.Add(1, TexturesDefault[1]);
+            TexturesDefault[2] = new MaterialSideData(Texture.GetTexture("blocks/solid/dirt"));
+            Textures.Add(2, TexturesDefault[2]);
             MaterialSideData grass = new MaterialSideData(Texture.GetTexture("blocks/solid/grass_side"));
             grass.Textures[(int)Sides.TOP] = Texture.GetTexture("blocks/solid/grass");
             grass.Textures[(int)Sides.BOTTOM] = Texture.GetTexture("blocks/solid/dirt");
+            TexturesDefault[3] = grass;
             Textures.Add(3, grass);
-            Textures.Add(4, new MaterialSideData(Texture.GetTexture("blocks/solid/wood")));
+            TexturesDefault[4] = new MaterialSideData(Texture.GetTexture("blocks/solid/wood"));
+            Textures.Add(4, TexturesDefault[4]);
         }
 
         public static MaterialSideData GetTexture(Material mat)
         {
+            if (mat < Material.MAX)
+            {
+                return TexturesDefault[(int)mat];
+            }
             MaterialSideData text;
             if (Textures.TryGetValue((ushort)mat, out text))
             {

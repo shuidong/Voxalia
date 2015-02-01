@@ -19,7 +19,9 @@ namespace Voxalia.Shared
         /// <summary>Grass block = 3.</summary>
         GRASS = 3,
         /// <summary>Wood block = 4.</summary>
-        WOOD = 4
+        WOOD = 4,
+        /// <summary>How many materials there are by default</summary>
+        MAX = 5
     }
 
     public static class MaterialExtensions

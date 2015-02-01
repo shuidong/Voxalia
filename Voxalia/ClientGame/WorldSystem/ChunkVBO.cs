@@ -26,10 +26,10 @@ namespace Voxalia.ClientGame.WorldSystem
         /// <summary>
         /// All vertices on this VBO.
         /// </summary>
-        public List<Vector3> Vecs = new List<Vector3>();
+        public List<Vector3> Vecs = new List<Vector3>(100);
 
-        List<Vector3> Norms = new List<Vector3>();
-        List<Vector2> Texs = new List<Vector2>();
+        List<Vector3> Norms = new List<Vector3>(100);
+        List<Vector2> Texs = new List<Vector2>(100);
         List<uint> Inds = new List<uint>();
         
         /// <summary>
@@ -201,10 +201,10 @@ namespace Voxalia.ClientGame.WorldSystem
             Normals = Norms.ToArray();
             TexCoords = Texs.ToArray();
             Indices = Inds.ToArray();
-            Vecs = new List<Vector3>();
-            Norms = new List<Vector3>();
-            Texs = new List<Vector2>();
-            Inds = new List<uint>();
+            Vecs = new List<Vector3>(100);
+            Norms = new List<Vector3>(100);
+            Texs = new List<Vector2>(100);
+            Inds = new List<uint>(100);
             // Normal buffer
             GL.GenBuffers(1, out VBONormals);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VBONormals);

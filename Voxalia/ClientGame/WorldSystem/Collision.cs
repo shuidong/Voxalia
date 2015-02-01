@@ -82,22 +82,21 @@ namespace Voxalia.ClientGame.WorldSystem
             Location tend = end;
             Location normal;
             Location fnormal = Location.Zero;
+            Location low = CollisionUtil.GetLow(start, end);
+            Location high = CollisionUtil.GetHigh(start, end);
             foreach (KeyValuePair<Location, Chunk> chunk in ClientMain.Chunks)
             {
                 Location cpos = new Location(chunk.Value.X * 30, chunk.Value.Y * 30, chunk.Value.Z * 30);
-                if (CollisionUtil.BoxContains(cpos, cpos + new Location(30), start + mins, start + maxes)
-                    || !CollisionUtil.AABBClosestBox(cpos, Location.Zero, new Location(30), mins, maxes, start, tend, out normal).IsNaN())
+                if (CollisionUtil.BoxContains(cpos, cpos + new Location(30), low + mins, high + maxes))
                 {
                     // TODO: Less stupid code.
                     for (int z = 0; z < 30; z++)
                     {
-                        if (CollisionUtil.BoxContains(cpos + new Location(0, 0, z), cpos + new Location(30, 30, z + 1), start + mins, start + maxes)
-                            || !CollisionUtil.AABBClosestBox(cpos, new Location(0, 0, z), new Location(30, 30, z + 1), mins, maxes, start, end, out normal).IsNaN())
+                        if (CollisionUtil.BoxContains(cpos + new Location(0, 0, z), cpos + new Location(30, 30, z + 1), low + mins, high + maxes))
                         {
                             for (int x = 0; x < 30; x++)
                             {
-                                if (CollisionUtil.BoxContains(cpos + new Location(x, 0, z), cpos + new Location(x + 1, 30, z + 1), start + mins, start + maxes)
-                                    || !CollisionUtil.AABBClosestBox(cpos, new Location(x, 0, z), new Location(x + 1, 30, z + 1), mins, maxes, start, end, out normal).IsNaN())
+                                if (CollisionUtil.BoxContains(cpos + new Location(x, 0, z), cpos + new Location(x + 1, 30, z + 1), low + mins, high + maxes))
                                 {
                                     for (int y = 0; y < 30; y++)
                                     {
@@ -109,6 +108,8 @@ namespace Voxalia.ClientGame.WorldSystem
                                             {
                                                 fnormal = normal;
                                                 tend = hit;
+                                                low = CollisionUtil.GetLow(start, tend);
+                                                high = CollisionUtil.GetHigh(start, tend);
                                             }
                                         }
                                     }

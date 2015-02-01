@@ -150,5 +150,31 @@ namespace Voxalia.Shared
                 return new Location(res.X, res.Y, res.Z);
             }
         }
+
+        /// <summary>
+        /// Gets the lowest point of two points.
+        /// </summary>
+        /// <param name="one">The first point</param>
+        /// <param name="two">The second point</param>
+        /// <returns>The lowest point</returns>
+        public static Location GetLow(Location one, Location two)
+        {
+            return new Location(one.X < two.X ? one.X : two.X,
+                one.Y < two.Y ? one.Y : two.Y,
+                one.Z < two.Z ? one.Z : two.Z);
+        }
+
+        /// <summary>
+        /// Gets the highest point of two points.
+        /// </summary>
+        /// <param name="one">The first point</param>
+        /// <param name="two">The second point</param>
+        /// <returns>The highest point</returns>
+        public static Location GetHigh(Location one, Location two)
+        {
+            return new Location(one.X > two.X ? one.X : two.X,
+                one.Y > two.Y ? one.Y : two.Y,
+                one.Z > two.Z ? one.Z : two.Z);
+        }
     }
 }
