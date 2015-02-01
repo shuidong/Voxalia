@@ -114,6 +114,7 @@
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\CommandPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\MoveKeysPacketOut.cs" />
     <Compile Include="ClientGame\NetworkSystem\PacketsOut\PingPacketOut.cs" />
+    <Compile Include="ClientGame\NetworkSystem\PacketsOut\SelectionPacketOut.cs" />
     <Compile Include="ClientGame\UISystem\KeyHandler.cs" />
     <Compile Include="ClientGame\UISystem\MouseHandler.cs" />
     <Compile Include="ClientGame\UISystem\UIConsole.cs" />
@@ -139,6 +140,7 @@
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\DisconnectPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\MoveKeysPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsIn\PingPacketIn.cs" />
+    <Compile Include="ServerGame\NetworkSystem\PacketsIn\SelectionPacketIn.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\ChunkPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\BlockPacketOut.cs" />
     <Compile Include="ServerGame\NetworkSystem\PacketsOut\DespawnPacketOut.cs" />
@@ -159,6 +161,7 @@
     <Compile Include="ServerGame\WorldSystem\Chunk.cs" />
     <Compile Include="ServerGame\WorldSystem\Collision.cs" />
     <Compile Include="ServerGame\WorldSystem\InternalBlockData.cs" />
+    <Compile Include="ServerGame\WorldSystem\Item.cs" />
     <Compile Include="Shared\CollisionUtil.cs" />
     <Compile Include="Shared\ConsoleHandler.cs" />
     <Compile Include="Shared\DataStream.cs" />

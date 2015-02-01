@@ -141,6 +141,50 @@ namespace Voxalia.ServerGame.EntitySystem
         public double LastMoveWarningTime = 0;
 
         /// <summary>
+        /// All items in this player's quick bar.
+        /// </summary>
+        public List<Item> QuickBar = new List<Item>();
+
+        /// <summary>
+        /// What slot in the quick bar is selected.
+        /// </summary>
+        public int QuickBarPos = 0;
+
+        /// <summary>
+        /// Returns an item in the quick bar.
+        /// Can return air.
+        /// </summary>
+        /// <param name="slot">The slot, any number is permitted</param>
+        /// <returns>A valid item</returns>
+        public Item GetItemForSlot(int slot)
+        {
+            while (slot < 0)
+            {
+                slot += QuickBar.Count + 1;
+            }
+            while (slot > QuickBar.Count)
+            {
+                slot -= QuickBar.Count + 1;
+            }
+            if (slot == 0)
+            {
+                return new Item()
+                {
+                    Color = 0,
+                    Texture = "clear",
+                    Name = "Air",
+                    Description = "An empty slot.",
+                    Material = Material.AIR,
+                    Quantity = 0
+                };
+            }
+            else
+            {
+                return QuickBar[slot - 1];
+            }
+        }
+
+        /// <summary>
         /// Constructs a player entity.
         /// </summary>
         /// <param name="conn">The network connection to use</param>
@@ -150,6 +194,15 @@ namespace Voxalia.ServerGame.EntitySystem
             Network = conn;
             Position = new Location(99999f, 99999f, 99999f);
             Scale = new Location(10);
+            QuickBar.Add(new Item()
+            {
+                Material = Material.STONE,
+                Description = "A stone block.",
+                Texture = "blocks/solid/stone",
+                Quantity = 1,
+                Name = "stone"
+            }
+            );
         }
 
         /// <summary>
@@ -300,6 +353,10 @@ namespace Voxalia.ServerGame.EntitySystem
         /// </summary>
         public Location SelectedBlock;
 
+        double LastBreak;
+
+        double LastPlace;
+
         public override void Tick()
         {
             if (tdisco)
@@ -326,15 +383,45 @@ namespace Voxalia.ServerGame.EntitySystem
             {
                 SelectedBlock = Location.NaN;
             }
+            // Break
             if (Attack && !SelectedBlock.IsNaN())
             {
-                Location sel_block = SelectedBlock.GetBlockLocation();
-                Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(SelectedBlock.GetBlockLocation()));
-                if (ch.Blocks[(int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30)].Type != 0)
+                if (ServerMain.GlobalTickTime - 0.5 >= LastBreak)
                 {
-                    ch.SetBlock((int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30), (ushort)Material.AIR);
-                    InWorld.BroadcastBlock(sel_block);
+                    LastBreak = ServerMain.GlobalTickTime;
+                    Location sel_block = SelectedBlock.GetBlockLocation();
+                    Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(sel_block));
+                    if (ch.Blocks[(int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30)].Type != 0)
+                    {
+                        ch.SetBlock((int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30), (ushort)Material.AIR);
+                        InWorld.BroadcastBlock(sel_block);
+                    }
                 }
+            }
+            if (!Attack)
+            {
+                LastBreak = 0;
+            }
+            // Place
+            Item HeldItem = GetItemForSlot(QuickBarPos);
+            if (Secondary && HeldItem.Material != Material.AIR)
+            {
+                if (ServerMain.GlobalTickTime - 0.3 >= LastPlace)
+                {
+                    Location back_a_block = Collision.BoxRayTrace(InWorld, new Location(-0.001), new Location(0.001), eye, seltarg, 1);
+                    LastPlace = ServerMain.GlobalTickTime;
+                    Location sel_block = back_a_block.GetBlockLocation();
+                    Chunk ch = InWorld.LoadChunk(World.GetChunkLocation(sel_block));
+                    if (ch.Blocks[(int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30)].Type != (ushort)HeldItem.Material)
+                    {
+                        ch.SetBlock((int)(sel_block.X - ch.X * 30), (int)(sel_block.Y - ch.Y * 30), (int)(sel_block.Z - ch.Z * 30), (ushort)HeldItem.Material);
+                        InWorld.BroadcastBlock(sel_block);
+                    }
+                }
+            }
+            if (!Secondary)
+            {
+                LastPlace = 0;
             }
             // TODO: Better tracking of what chunks to send
             List<Location> locs = GetChunksNear(World.GetChunkLocation(Position));

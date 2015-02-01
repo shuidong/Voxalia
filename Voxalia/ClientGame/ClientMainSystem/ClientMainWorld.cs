@@ -66,7 +66,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
                     Color = Color4.Transparent,
                     Image = Texture.Clear,
                     Name = "Air",
-                    Description = "An empty slot."
+                    Description = "An empty slot.",
+                    Quantity = 0
                 };
             }
             else

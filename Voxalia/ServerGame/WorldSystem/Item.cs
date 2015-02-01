@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Voxalia.Shared;
-using Voxalia.ClientGame.GraphicsSystem;
-using OpenTK;
-using OpenTK.Graphics;
 
-namespace Voxalia.ClientGame.WorldSystem
+namespace Voxalia.ServerGame.WorldSystem
 {
     /// <summary>
     /// Represents a holdable item.
@@ -20,19 +17,24 @@ namespace Voxalia.ClientGame.WorldSystem
         public string Name;
 
         /// <summary>
-        /// The texture used by the item.
+        /// The texture of the item.
         /// </summary>
-        public Texture Image;
+        public string Texture;
 
         /// <summary>
-        /// The shader used when rendering the item.
+        /// The shader used to render the item.
         /// </summary>
-        public Shader ImageModifier;
+        public string Shader;
 
         /// <summary>
-        /// The color of the item.
+        /// How many of the item there are.
         /// </summary>
-        public Color4 Color;
+        public int Quantity;
+
+        /// <summary>
+        /// What color this item is.
+        /// </summary>
+        public uint Color = uint.MaxValue;
 
         /// <summary>
         /// A description of the item.
@@ -40,8 +42,8 @@ namespace Voxalia.ClientGame.WorldSystem
         public string Description;
 
         /// <summary>
-        /// How many of this item there are.
+        /// What material this item would place.
         /// </summary>
-        public int Quantity;
+        public Material Material = Material.AIR;
     }
 }

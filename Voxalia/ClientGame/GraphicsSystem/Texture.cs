@@ -185,6 +185,7 @@ namespace Voxalia.ClientGame.GraphicsSystem
                 OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmp_data.Scan0);
             bmp.UnlockBits(bmp_data);
             // Disable mipmapping
+            // TODO: Enable mipmapping optionally?
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
         }

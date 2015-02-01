@@ -258,6 +258,9 @@ namespace Voxalia.ServerGame.NetworkSystem
                                     case 3:
                                         packet = new CommandPacketIn(player, IsChunkNetwork);
                                         break;
+                                    case 4:
+                                        packet = new SelectionPacketIn(player, IsChunkNetwork);
+                                        break;
                                     case 255:
                                         packet = new DisconnectPacketIn(player, IsChunkNetwork);
                                         return;
