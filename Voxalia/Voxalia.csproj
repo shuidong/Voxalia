@@ -78,6 +78,8 @@
     <Compile Include="ClientGame\CommandSystem\UICommands\CaptureCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\BackwardCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\AttackCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\ItemPrevCommand.cs" />
+    <Compile Include="ClientGame\CommandSystem\UICommands\ItemNextCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\UseCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\SecondaryCommand.cs" />
     <Compile Include="ClientGame\CommandSystem\UICommands\WalkCommand.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="ClientGame\WorldSystem\ChunkVBO.cs" />
     <Compile Include="ClientGame\WorldSystem\Collision.cs" />
     <Compile Include="ClientGame\WorldSystem\InternalBlockData.cs" />
+    <Compile Include="ClientGame\WorldSystem\Item.cs" />
     <Compile Include="ClientGame\WorldSystem\MaterialTexture.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

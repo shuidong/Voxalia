@@ -45,6 +45,8 @@ namespace Voxalia.ClientGame.UISystem
             BindKey(Key.E, "+use");
             BindKey(Key.Escape, "quit");
             BindKey(Key.LControl, "capture");
+            BindKey(Key.F32, "itemnext");
+            BindKey(Key.F31, "itemprev");
             namestokeys = new Dictionary<string, Key>();
             keystonames = new Dictionary<Key, string>();
             RegKey("a", Key.A); RegKey("b", Key.B); RegKey("c", Key.C);
@@ -82,6 +84,8 @@ namespace Voxalia.ClientGame.UISystem
             RegKey("mouse1", Key.F35);
             RegKey("mouse2", Key.F34);
             RegKey("mouse3", Key.F33);
+            RegKey("mousewheelup", Key.F32);
+            RegKey("mousewheeldown", Key.F31);
         }
 
         static void RegKey(string name, Key key)
@@ -185,6 +189,20 @@ namespace Voxalia.ClientGame.UISystem
                             KeyPresses.Enqueue(Key.F33);
                             break;
                         // TODO: More mouse buttons?
+                    }
+                }
+            }
+        }
+
+        public static void Mouse_Wheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.DeltaPrecise != 0)
+            {
+                lock (Locker)
+                {
+                    if (_BindsValid)
+                    {
+                        KeyPresses.Enqueue(e.DeltaPrecise < 0 ? Key.F31: Key.F32);
                     }
                 }
             }

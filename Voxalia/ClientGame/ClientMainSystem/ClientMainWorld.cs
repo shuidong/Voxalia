@@ -5,6 +5,9 @@ using System.Text;
 using Voxalia.ClientGame.WorldSystem;
 using Voxalia.ClientGame.EntitySystem;
 using Voxalia.Shared;
+using OpenTK;
+using OpenTK.Graphics;
+using Voxalia.ClientGame.GraphicsSystem;
 
 namespace Voxalia.ClientGame.ClientMainSystem
 {
@@ -31,6 +34,48 @@ namespace Voxalia.ClientGame.ClientMainSystem
         public static Player ThePlayer;
 
         /// <summary>
+        /// All items in the quick bar.
+        /// </summary>
+        public static List<Item> QuickBar = new List<Item>();
+
+        /// <summary>
+        /// The current position in the quick bar.
+        /// </summary>
+        public static int QuickBarPos = 0;
+
+        /// <summary>
+        /// Returns an item in the quick bar.
+        /// Can return air.
+        /// </summary>
+        /// <param name="slot">The slot, any number is permitted</param>
+        /// <returns>A valid item</returns>
+        public static Item GetItemForSlot(int slot)
+        {
+            while (slot < 0)
+            {
+                slot += QuickBar.Count + 1;
+            }
+            while (slot > QuickBar.Count)
+            {
+                slot -= QuickBar.Count + 1;
+            }
+            if (slot == 0)
+            {
+                return new Item()
+                {
+                    Color = Color4.Transparent,
+                    Image = Texture.Clear,
+                    Name = "Air",
+                    Description = "An empty slot."
+                };
+            }
+            else
+            {
+                return QuickBar[slot - 1];
+            }
+        }
+
+        /// <summary>
         /// Prepares the world.
         /// </summary>
         public static void InitWorld()
@@ -42,6 +87,13 @@ namespace Voxalia.ClientGame.ClientMainSystem
             ThePlayer.ID = ulong.MaxValue;
             Entities.Add(ThePlayer);
             Tickers.Add(ThePlayer);
+            QuickBar.Add(new Item()
+            {
+                Name = "Stone",
+                Description = "A common stone block.",
+                Color = Color4.White,
+                Image = Texture.GetTexture("blocks/solid/stone")
+            });
         }
 
         /// <summary>

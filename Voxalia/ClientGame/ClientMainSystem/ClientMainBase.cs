@@ -60,6 +60,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
             Window.KeyDown += new EventHandler<KeyboardKeyEventArgs>(KeyHandler.PrimaryGameWindow_KeyDown);
             Window.MouseDown += new EventHandler<MouseButtonEventArgs>(KeyHandler.Mouse_ButtonDown);
             Window.MouseUp += new EventHandler<MouseButtonEventArgs>(KeyHandler.Mouse_ButtonUp);
+            Window.MouseWheel += new EventHandler<MouseWheelEventArgs>(KeyHandler.Mouse_Wheel);
             SysConsole.Output(OutputType.INIT, "Running window startup sequence...");
             Window.Run(60, 60);
         }
@@ -81,6 +82,8 @@ namespace Voxalia.ClientGame.ClientMainSystem
             FontSet.Init();
             SysConsole.Output(OutputType.INIT, "Loading 3D model engine...");
             Model.Init();
+            SysConsole.Output(OutputType.INIT, "Loading rendering helper engine...");
+            Renderer.Init();
             SysConsole.Output(OutputType.INIT, "Adjusting OpenGL settings...");
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);

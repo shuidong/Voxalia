@@ -123,7 +123,16 @@ namespace Voxalia.ClientGame.ClientMainSystem
 
         static void Run2D()
         {
-            FontSet.Standard.DrawColoredText("^0^e^7Hello World! " + ThePlayer.Position.ToString(), new Location(0, 0, 0));
+            // Draw some debug output
+            FontSet.Standard.DrawColoredText("^0(Debug)Position: " + ThePlayer.Position.ToString(), new Location(0, 0, 0));
+            // Draw the quickbar
+            int center = Window.Width / 2;
+            Renderer.RenderItem(GetItemForSlot(QuickBarPos - 2), new Location(center - (32 + 32 + 32 + 3), Window.Height - (32 + 16), 0), 32);
+            Renderer.RenderItem(GetItemForSlot(QuickBarPos - 1), new Location(center - (32 + 32 + 2), Window.Height - (32 + 16), 0), 32);
+            Renderer.RenderItem(GetItemForSlot(QuickBarPos + 1), new Location(center + (32 + 1), Window.Height - (32 + 16), 0), 32);
+            Renderer.RenderItem(GetItemForSlot(QuickBarPos + 2), new Location(center + (32 + 32 + 2), Window.Height - (32 + 16), 0), 32);
+            Renderer.RenderItem(GetItemForSlot(QuickBarPos), new Location(center - (32 + 1), Window.Height - 64, 0), 64);
+            // Draw the console
             UIConsole.Draw();
         }
 

@@ -17,28 +17,6 @@ namespace Voxalia.ClientGame.GraphicsSystem
     /// </summary>
     public class Texture
     {
-        public static Texture CreateNullTexture(int size_w, int size_h)
-        {
-            uint texture;
-            // load texture 
-            GL.GenTextures(1, out texture);
-
-            // Still required else TexImage2D will be applyed on the last bound texture
-            GL.BindTexture(TextureTarget.Texture2D, texture);
-
-            // generate null texture
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, size_w, size_h, 0,
-            OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
-
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
-            GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
-            // TODO: Do mimaps have a point? Are we using them correctly?
-            return new Texture() { Internal_Texture = texture, Original_InternalID = texture, Width = size_w, Height = size_h };
-        }
-
         /// <summary>
         /// A full list of currently loaded textures.
         /// </summary>
@@ -48,6 +26,11 @@ namespace Voxalia.ClientGame.GraphicsSystem
         /// A default white texture.
         /// </summary>
         public static Texture White = null;
+
+        /// <summary>
+        /// A default clear texture.
+        /// </summary>
+        public static Texture Clear = null;
 
         /// <summary>
         /// A default black texture.
@@ -93,6 +76,8 @@ namespace Voxalia.ClientGame.GraphicsSystem
             LoadedTextures.Add(White);
             Black = GenerateForColor(Color.Black, "black");
             LoadedTextures.Add(Black);
+            Clear = GenerateForColor(Color.Transparent, "clear");
+            LoadedTextures.Add(Clear);
         }
 
         /// <summary>
