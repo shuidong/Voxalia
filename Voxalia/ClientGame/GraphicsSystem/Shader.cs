@@ -48,6 +48,11 @@ namespace Voxalia.ClientGame.GraphicsSystem
         public static Shader BlackRemoverShader;
 
         /// <summary>
+        /// The shader to use for 3D geometry.
+        /// </summary>
+        public static Shader ThreeD_Geometry;
+
+        /// <summary>
         /// Starts or restarts the shader system.
         /// </summary>
         public static void InitShaderSystem()
@@ -72,10 +77,12 @@ namespace Voxalia.ClientGame.GraphicsSystem
             LoadedShaders.Add(White);
             Black = CreateBlack("black");
             LoadedShaders.Add(Black);
-            ColorMultShader = CreateMultiplier("colormultiplier");
+            ColorMultShader = CreateMultiplier("colormultiplier_internal");
             LoadedShaders.Add(ColorMultShader);
+            ColorMultShader = GetShader("color_mult");
             BlackRemoverShader = CreateBlackRemover("blackremover");
             LoadedShaders.Add(BlackRemoverShader);
+            ThreeD_Geometry = GetShader("3d_geom");
         }
 
         /// <summary>

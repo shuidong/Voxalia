@@ -97,7 +97,7 @@ namespace Voxalia.ClientGame.ClientMainSystem
         static void Setup3D()
         {
             GL.Color4(Color4.White);
-            Shader.ColorMultShader.Bind();
+            Shader.ThreeD_Geometry.Bind();
             GL.MatrixMode(MatrixMode.Projection);
             GL.Enable(EnableCap.DepthTest);
             proj = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(CameraFOV), Window.Width / Window.Height, CameraZNear, CameraZFar);
@@ -123,16 +123,16 @@ namespace Voxalia.ClientGame.ClientMainSystem
             {
                 ent.Render3D();
             }
+        }
+
+        static void End3D()
+        {
             GL.Disable(EnableCap.DepthTest);
             if (!ThePlayer.SelectedBlock.IsNaN())
             {
                 Location targ = ThePlayer.SelectedBlock.GetBlockLocation();
                 Renderer.HighlightBlock(targ);
             }
-        }
-
-        static void End3D()
-        {
         }
 
         static void Setup2D()
