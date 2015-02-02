@@ -1,2 +1,0 @@
-Some textures in this folder are from http://www.curse.com/texture-packs/minecraft/mystical-textures-128x "Mystical Textures" (Minecraft Texture pack)
-including: crimson, dirt, grass, grass_side, gravel, log_oak, log_oak_top, stone, stone2, wood, wood2

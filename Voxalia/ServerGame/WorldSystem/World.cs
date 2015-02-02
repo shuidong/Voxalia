@@ -67,7 +67,7 @@ namespace Voxalia.ServerGame.WorldSystem
                         {
                             if (z > 15)
                             {
-                                chunk.SetBlock(x, y, z, (ushort)(Utilities.UtilRandom.Next(4) + 1));
+                                chunk.SetBlock(x, y, z, (ushort)(Utilities.UtilRandom.Next((int)Material.MAX - 1) + 1));
                             }
                             else
                             {

@@ -24,18 +24,14 @@ namespace Voxalia.ClientGame.WorldSystem
         {
             Textures = new Dictionary<ushort, MaterialSideData>();
             TexturesDefault[0] = null;
-            Textures.Add(0, null);
             TexturesDefault[1] = new MaterialSideData(Texture.GetTexture("blocks/solid/stone"));
-            Textures.Add(1, TexturesDefault[1]);
             TexturesDefault[2] = new MaterialSideData(Texture.GetTexture("blocks/solid/dirt"));
-            Textures.Add(2, TexturesDefault[2]);
             MaterialSideData grass = new MaterialSideData(Texture.GetTexture("blocks/solid/grass_side"));
             grass.Textures[(int)Sides.TOP] = Texture.GetTexture("blocks/solid/grass");
             grass.Textures[(int)Sides.BOTTOM] = Texture.GetTexture("blocks/solid/dirt");
             TexturesDefault[3] = grass;
-            Textures.Add(3, grass);
             TexturesDefault[4] = new MaterialSideData(Texture.GetTexture("blocks/solid/wood"));
-            Textures.Add(4, TexturesDefault[4]);
+            TexturesDefault[5] = new MaterialSideData(Texture.GetTexture("blocks/solid/redstone"));
         }
 
         public static MaterialSideData GetTexture(Material mat)
