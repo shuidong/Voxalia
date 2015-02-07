@@ -154,6 +154,16 @@ namespace Voxalia.Shared
         }
 
         /// <summary>
+        /// Reflect a location vector against a normal.
+        /// </summary>
+        /// <param name="normal">The normal vector</param>
+        /// <returns>The reflected vector</returns>
+        public Location Reflect(Location normal)
+        {
+            return this - (2 * this.Dot(normal) * normal);
+        }
+
+        /// <summary>
         /// Converts the Location to a simple byte[] representation.
         /// Contains 12 bytes.
         /// Inverts .FromBytes()
